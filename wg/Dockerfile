@@ -25,4 +25,5 @@ RUN apt-get update \
       iproute2 iptables \
       resolvconf tcpdump
 
-CMD ["bash", "-c", "'wg-quick up wg0 && sleep infinity'"]
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
