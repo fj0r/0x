@@ -25,4 +25,4 @@ RUN apt-get update \
       iproute2 iptables \
       resolvconf tcpdump
 
-CMD ["wg-quick", "up", "$1"]
+CMD ["bash", "-c", "'wg-quick up wg0 && sleep infinity'"]
