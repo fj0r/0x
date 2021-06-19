@@ -11,7 +11,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-      locales tzdata curl xz-utils jq ca-certificates \
+      locales tzdata curl xz-utils jq ca-certificates procps \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   ; echo "$TIMEZONE" > /etc/timezone \
   ; sed -i /etc/locale.gen \
@@ -27,3 +27,9 @@ RUN set -eux \
   ; chmod +x /usr/local/bin/ossutil \
   \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+ENV SYNC_CONFIG=/ossutilconfig
+ENV SYNC_SRC=/data
+ENV SYNC_DIST=bucket/
+COPY sync /sync
+ENTRYPOINT [ "bash", "/sync/watch.sh" ]
