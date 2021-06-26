@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard
+  namespace: tunnel
+  labels:
+    app: wireguard
+spec:
+  selector:
+    matchLabels:
+      app: wireguard
+  template:
+    metadata:
+      namespace: tunnel
+      labels:
+        app: wireguard
+    spec:
+      containers:
+      - name: boringtun
+        image: fj0rd/0x:wg
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN", "SYS_MODULE"]
+        env:
+          - name: _1234
+            value: service.ns:80
+        volumeMounts:
+        - name: config
+          mountPath: /etc/wireguard
+          readOnly: true
+        - name: device
+          mountPath: /dev/net/tun
+      volumes:
+      - name: config
+        configMap:
+          name: wireguard-config
+      - name: device
+        hostPath:
+          path: /dev/net/tun
