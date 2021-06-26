@@ -24,7 +24,7 @@ RUN apt-get update \
       wireguard-tools inetutils-ping \
       iproute2 iptables \
       resolvconf tcpdump \
-      socat curl
+      procps socat curl
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

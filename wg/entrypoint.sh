@@ -1,21 +1,32 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
+wg-quick up wg0
 
-stop () {
-    echo "exit"
-    pid=$(cat /var/run/sleep)
-    kill -SIGTERM "${pid}"
-    wait "${pid}"
+DAEMON=socat
+
+piddir=/var/run/$DAEMON
+mkdir -p $piddir
+touch $piddir/$DAEMON.pid
+
+stop() {
+    echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
+    # Set TERM
+    kill -SIGTERM $(cat $piddir/$DAEMON.pid)
+    # Wait for exit
+    wait $(cat $piddir/$DAEMON.pid)
+    # All done.
+    echo "Done."
 }
 
 trap stop SIGINT SIGTERM
-wg-quick up wg0 &
-pid="$!"
-echo "${pid}" > /var/run/wg0
+for i in "${!_@}"; do
+    port=${i:1}
+    url=$(eval "echo \"\$$i\"")
+    cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
+    eval "$cmd &"
+    pid="$!"
+    echo "listen:$port --> $url"
+    echo -n "${pid} " >> $piddir/$DAEMON.pid
+done
 
-sleep infinity &
-pid="$!"
-echo "${pid}" > /var/run/sleep
-wait "${pid}"
-
+wait $(cat $piddir/$DAEMON.pid) && exit $?
