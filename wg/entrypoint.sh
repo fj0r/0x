@@ -21,12 +21,14 @@ stop() {
 trap stop SIGINT SIGTERM
 for i in "${!_@}"; do
     port=${i:1}
-    url=$(eval "echo \"\$$i\"")
-    cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
-    eval "$cmd &"
-    pid="$!"
-    echo "listen:$port --> $url"
-    echo -n "${pid} " >> $piddir/$DAEMON.pid
+    if [ ! -z "$port" ]; then
+        url=$(eval "echo \"\$$i\"")
+        cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
+        eval "$cmd &"
+        pid="$!"
+        echo "listen:$port --> $url"
+        echo -n "${pid} " >> $piddir/$DAEMON.pid
+    fi
 done
 
 wait $(cat $piddir/$DAEMON.pid) && exit $?

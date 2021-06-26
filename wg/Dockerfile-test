@@ -1,0 +1,2 @@
+FROM fj0rd/0x:wg
+COPY entrypoint.sh /entrypoint.sh
