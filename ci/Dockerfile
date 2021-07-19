@@ -10,5 +10,5 @@ RUN set -eux \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   ; echo "$TIMEZONE" > /etc/timezone \
   ; pip3 --no-cache-dir install \
-        pyyaml requests furl
+        pyyaml requests furl markdown
 
