@@ -1,0 +1,1 @@
+{"type":"ci","name":"test","children":[{"name":"仓库","value":"repo"},{"name":"分支","value":"branch"},{"name":"备注","value":"remark"},{"name":"作者","value":"auth"},{"name":"镜像","value":"image"}]}
