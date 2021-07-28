@@ -1,0 +1,7 @@
+#!/bin/sh
+/opt/nginx/sbin/nginx -t
+if [ $? -eq 0 ]
+then
+        echo "[$(date -Iseconds)] Reloading Nginx Configuration"
+        /opt/nginx/sbin/nginx -s reload
+fi

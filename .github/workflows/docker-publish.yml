@@ -54,6 +54,23 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Build v2
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: v2ray
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v2
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build clash
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: v2ray
+          file: Dockerfile-clash
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
+          labels: ${{ steps.meta.outputs.labels }}
+
       - name: build pg2ch
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
