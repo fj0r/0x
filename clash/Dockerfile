@@ -1,16 +1,10 @@
-FROM debian:bullseye-slim
-
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
-
+FROM fj0rd/io:base
 
 RUN set -eux \
   ; apt-get update \
   ; DEBIAN_FRONTEND=noninteractive \
   ; apt-get install -y --no-install-recommends \
-        ca-certificates tzdata curl unzip jq \
-  \
-  ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
-  ; echo "$TIMEZONE" > /etc/timezone \
+        ca-certificates \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; clash_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/Dreamacro/clash/releases | jq -r '[.[]|select(.tag_name == "premium")][0].name' | cut -c 9-) \

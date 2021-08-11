@@ -1,6 +1,4 @@
-FROM debian:bullseye-slim
-
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
+FROM fj0rd/io:base
 
 ARG v2ray_repo=v2fly/v2ray-core
 ARG v2ray_files="\
@@ -11,14 +9,6 @@ geosite.dat \
 "
 
 RUN set -eux \
-  ; apt-get update \
-  ; DEBIAN_FRONTEND=noninteractive \
-  ; apt-get install -y --no-install-recommends \
-        ca-certificates tzdata curl unzip jq \
-  \
-  ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
-  ; echo "$TIMEZONE" > /etc/timezone \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; mkdir -p /usr/bin/v2ray \
   ; mkdir /var/log/v2ray/ \
@@ -61,8 +51,6 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-    sudo tzdata ca-certificates \
-    iproute2 procps curl jq xz-utils \
     $DEV_DEPS \
     $BUILD_DEPS \
   \
