@@ -1,4 +1,4 @@
-name: Docker
+name: pg2ch
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -46,27 +46,10 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - name: Build wg
+      - name: build pg2ch
         uses: docker/build-push-action@v2
         with:
-          context: wg
+          context: pg2ch
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg2ch
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build clash
-        uses: docker/build-push-action@v2
-        with:
-          context: clash
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build v2
-        uses: docker/build-push-action@v2
-        with:
-          context: v2ray
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v2
-          labels: ${{ steps.meta.outputs.labels }}
-
