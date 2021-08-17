@@ -2,7 +2,7 @@ FROM fj0rd/io:base
 
 ARG OSSUTIL_URL=https://gosspublic.alicdn.com/ossutil/1.7.3/ossutil64?spm=a2c4g.11186623.2.10.b79f7385xBOwEo
 ARG watchexec_repo=watchexec/watchexec
-ARG github_header="Accept: application/vnd.github.v3+json"
+ARG github_header="Accept:application/vnd.github.v3+json"
 ARG github_api=https://api.github.com/repos
 
 RUN set -eux \

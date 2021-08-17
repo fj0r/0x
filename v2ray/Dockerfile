@@ -31,7 +31,7 @@ COPY server.json /etc/v2ray/config.json
 ARG s6overlay_repo=just-containers/s6-overlay
 ARG watchexec_repo=watchexec/watchexec
 
-ARG github_header="Accept: application/vnd.github.v3+json"
+ARG github_header="Accept:application/vnd.github.v3+json"
 ARG github_api=https://api.github.com/repos
 ARG nginx_repo=nginx/nginx
 ARG nchan_repo=slact/nchan

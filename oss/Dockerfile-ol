@@ -1,7 +1,0 @@
-FROM fj0rd/0x:oss
-
-ENV SYNC_CONFIG=/ossutilconfig
-ENV SYNC_SRC=/data
-ENV SYNC_DIST=eng-test/
-COPY sync /sync
-ENTRYPOINT [ "bash", "/sync/watch.sh" ]
