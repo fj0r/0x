@@ -13,11 +13,11 @@ RUN set -eux \
   ; mkdir -p /usr/bin/v2ray \
   ; mkdir /var/log/v2ray/ \
   \
-  ; v2ray_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${v2ray_repo}/releases | jq -r '.[0].tag_name') \
+  ; v2ray_version=$(xh https://api.github.com/repos/${v2ray_repo}/releases Accept:application/vnd.github.v3+json | jq -r '.[0].tag_name') \
   ; v2ray_url=https://github.com/${v2ray_repo}/releases/download/${v2ray_version}/v2ray-linux-64.zip \
   ; mkdir -p /tmp/v2ray \
   ; cd /tmp/v2ray \
-  ; curl -sSLo v2ray.zip ${v2ray_url} \
+  ; xh -Fo v2ray.zip ${v2ray_url} \
   ; unzip v2ray.zip \
   ; mv ${v2ray_files} /usr/bin/v2ray \
   ; cd .. \
@@ -54,14 +54,14 @@ RUN set -eux \
     $DEV_DEPS \
     $BUILD_DEPS \
   \
-  ; NGINX_VER=$(curl -sSL -H "'$github_header'" $github_api/${nginx_repo}/tags | jq -r '.[0].name' | cut -c 9-) \
-  ; curl -sSL https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
+  ; NGINX_VER=$(xh $github_api/${nginx_repo}/tags $github_header | jq -r '.[0].name' | cut -c 9-) \
+  ; xh -F https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
   \
   ; mkdir njs \
-  ; curl -sSL http://hg.nginx.org/njs/archive/tip.tar.gz | tar -zxf - --strip-component=1 -C njs \
+  ; xh -F http://hg.nginx.org/njs/archive/tip.tar.gz | tar -zxf - --strip-component=1 -C njs \
   \
-  ; NCHAN_VER=$(curl -sSL -H "'$github_header'" $github_api/${nchan_repo}/tags | jq -r '.[0].name' | cut -c 2-) \
-  ; curl -sSL https://github.com/${nchan_repo}/archive/v${NCHAN_VER}.tar.gz | tar -zxf - \
+  ; NCHAN_VER=$(xh $github_api/${nchan_repo}/tags $github_header | jq -r '.[0].name' | cut -c 2-) \
+  ; xh -F https://github.com/${nchan_repo}/archive/v${NCHAN_VER}.tar.gz | tar -zxf - \
   ; cd nginx-${NGINX_VER} \
   ; ./configure --prefix=/opt/nginx \
         --with-threads \
@@ -91,13 +91,13 @@ RUN set -eux \
   ; echo 'export or=/etc/nginx' >> /root/.bashrc \
   ; echo 'export logs=/opt/nginx/logs' >> /root/.bashrc \
   \
-  ; s6overlay_ver=$(curl -sSL -H "'$github_header'" $github_api/${s6overlay_repo}/releases | jq -r '.[0].tag_name') \
+  ; s6overlay_ver=$(xh $github_api/${s6overlay_repo}/releases $github_header | jq -r '.[0].tag_name') \
   ; s6overlay_url=https://github.com/${s6overlay_repo}/releases/download/${s6overlay_ver}/s6-overlay-amd64.tar.gz \
-  ; curl --fail --silent -L ${s6overlay_url} | tar xzvf - -C / \
+  ; xh -F ${s6overlay_url} | tar xzvf - -C / \
   \
-  ; watchexec_ver=$(curl -sSL -H "'$github_header'" $github_api/${watchexec_repo}/releases | jq -r '.[0].tag_name' | cut -c 6-) \
+  ; watchexec_ver=$(xh $github_api/${watchexec_repo}/releases $github_header | jq -r '.[0].tag_name' | cut -c 6-) \
   ; watchexec_url=https://github.com/${watchexec_repo}/releases/download/cli-v${watchexec_ver}/watchexec-${watchexec_ver}-x86_64-unknown-linux-musl.tar.xz \
-  ; curl -sSL ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin watchexec-${watchexec_ver}-x86_64-unknown-linux-musl/watchexec \
+  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin watchexec-${watchexec_ver}-x86_64-unknown-linux-musl/watchexec \
   \
   ; apt-get -y remove ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
