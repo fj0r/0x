@@ -7,7 +7,7 @@ name: mdbook
 
 on:
   push:
-    branches: [ main ]
+    branches: [ mdbook ]
 
 env:
   REGISTRY: docker.io

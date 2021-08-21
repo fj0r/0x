@@ -7,7 +7,7 @@ name: oss
 
 on:
   push:
-    branches: [ main ]
+    branches: [ oss ]
 
 env:
   REGISTRY: docker.io

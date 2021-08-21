@@ -1,4 +1,4 @@
-name: Docker
+name: wireguard
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: Docker
 
 on:
   push:
-    branches: [ main ]
+    branches: [ wg ]
 
 env:
   REGISTRY: docker.io
@@ -52,21 +52,5 @@ jobs:
           context: wg
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build clash
-        uses: docker/build-push-action@v2
-        with:
-          context: clash
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build v2
-        uses: docker/build-push-action@v2
-        with:
-          context: v2ray
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v2
           labels: ${{ steps.meta.outputs.labels }}
 
