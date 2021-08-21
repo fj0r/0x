@@ -17,7 +17,7 @@ stop() {
 
 trap stop SIGINT SIGTERM
 
-cmd="/usr/local/bin/reproxy --listen=0.0.0.0:80 --assets.location=/srv --static.enabled"
+cmd="/usr/local/bin/reproxy --listen=0.0.0.0:80 --gzip --max=0 --assets.location=/srv --static.enabled"
 #--static.rule='*,^/api/(.*),http://${UPSTREAM_API}/api/$1'
 for i in "${!RP_@}"; do
     url=${i:3}
