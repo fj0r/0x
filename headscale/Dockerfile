@@ -1,6 +1,6 @@
 FROM fj0rd/io:base
 
-WORKDIR /headscale
+WORKDIR /app
 
 RUN set -eux \
   ; apt-get update \
@@ -11,11 +11,11 @@ RUN set -eux \
   \
   ; url=$(xh https://api.github.com/repos/juanfont/headscale/releases Accept:application/vnd.github.v3+json \
         | jq -r '.[0].assets[].browser_download_url' | grep linux_amd64) \
-  ; xh -F ${url} /usr/local/bin/headscale \
-  ; chmod +x /usr/local/bin/headscale \
+  ; xh -F ${url} > headscale \
+  ; chmod +x headscale \
   ; xh -F https://raw.githubusercontent.com/juanfont/headscale/main/config.json.sqlite.example > config.json
  
 
-ENTRYPOINT [ "headscale"]
+ENTRYPOINT [ "/app/headscale"]
 CMD [ "serve" ]
 
