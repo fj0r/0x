@@ -1,0 +1,7 @@
+run:
+    podman run --rm \
+        -v $PWD/private.key:/app/private.key \
+        -v $PWD/derp.yaml:/app/derp.yaml \
+        fj0rd/0x:headscale \
+        serve
+        #namespaces create ttt
