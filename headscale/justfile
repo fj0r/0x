@@ -1,7 +1,17 @@
 run:
-    podman run --rm \
+    podman run -d \
+        --name headscale \
+        -p 8000:8000 \
         -v $PWD/private.key:/app/private.key \
         -v $PWD/derp.yaml:/app/derp.yaml \
+        -v $PWD/db.sqlite:/app/db.sqlite \
+        -v $PWD:/world \
+        -e GIN_MODE=release \
         fj0rd/0x:headscale \
         serve
-        #namespaces create ttt
+
+key:
+    wg genkey > private.key
+
+namespace ns:
+    podman exec headscale /app/headscale namespaces create {{ns}}
