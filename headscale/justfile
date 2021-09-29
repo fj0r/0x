@@ -15,3 +15,6 @@ key:
 
 namespace ns:
     podman exec headscale /app/headscale namespaces create {{ns}}
+
+authkey ns:
+    podman exec headscale /app/headscale -n {{ns}} preauthkeys create --reusable --expiration 24h
