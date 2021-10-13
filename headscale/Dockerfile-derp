@@ -1,0 +1,12 @@
+FROM fj0rd/io:go as build
+
+RUN go install tailscale.com/cmd/derper@main
+
+FROM fj0rd/io:base
+
+WORKDIR /app
+
+COPY --from=build /root/go/bin/derper .
+
+
+ENTRYPOINT [ "/app/derper"]
