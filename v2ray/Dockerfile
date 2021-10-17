@@ -29,7 +29,6 @@ COPY server.json /etc/v2ray/config.json
 
 ###### s6
 ARG s6overlay_repo=just-containers/s6-overlay
-ARG watchexec_repo=watchexec/watchexec
 
 ARG github_header="Accept:application/vnd.github.v3+json"
 ARG github_api=https://api.github.com/repos
@@ -91,13 +90,12 @@ RUN set -eux \
   ; echo 'export or=/etc/nginx' >> /root/.bashrc \
   ; echo 'export logs=/opt/nginx/logs' >> /root/.bashrc \
   \
-  ; s6overlay_ver=$(xh $github_api/${s6overlay_repo}/releases $github_header | jq -r '.[0].tag_name') \
-  ; s6overlay_url=https://github.com/${s6overlay_repo}/releases/download/${s6overlay_ver}/s6-overlay-amd64.tar.gz \
+  ; s6overlay_url=$(xh $github_api/${s6overlay_repo}/releases $github_header | jq -r '.[0].assets[].browser_download_url' | grep -v sig | grep amd64.tar) \
   ; xh -F ${s6overlay_url} | tar xzvf - -C / \
   \
   ; watchexec_url=$(xh https://api.github.com/repos/watchexec/watchexec/releases Accept:application/vnd.github.v3+json \
                   | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'x86_64-unknown-linux-musl.tar') \
-  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /opt/assets --wildcards '*/watchexec' \
+  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
   \
   ; apt-get -y remove ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
