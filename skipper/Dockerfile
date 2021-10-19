@@ -1,8 +1,6 @@
 FROM alpine:3
 
 ARG BUILD_DEPS="\
-    jq \
-    curl \
     binutils \
     "
 
@@ -10,6 +8,8 @@ ENV TIMEZONE=Asia/Shanghai
 
 RUN set -eux \
   ; apk --update add --no-cache \
+    jq \
+    curl \
     bash \
     tzdata \
     openssl-dev \
