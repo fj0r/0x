@@ -1,0 +1,4 @@
+api:
+    PathSubTree("/api") -> modPath("/api", "") -> "http://backend";
+static:
+    PathSubTree("/") -> static("", "/srv") -> <shunt>;
