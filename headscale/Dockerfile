@@ -13,9 +13,9 @@ RUN set -eux \
         | jq -r '.[0].assets[].browser_download_url' | grep linux_amd64) \
   ; xh -F ${url} > headscale \
   ; chmod +x headscale \
-  ; xh -F https://raw.githubusercontent.com/juanfont/headscale/main/config.json.sqlite.example > config.json \
+  ; xh -F https://raw.githubusercontent.com/juanfont/headscale/main/config.yaml.sqlite.example > config.yaml \
   ; xh -F https://raw.githubusercontent.com/juanfont/headscale/main/derp.yaml > derp.yaml
- 
+
 
 ENTRYPOINT [ "/app/headscale"]
 CMD [ "serve" ]
