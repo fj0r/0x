@@ -7,7 +7,7 @@ name: wireguard
 
 on:
   push:
-    branches: [ wg ]
+    branches: [ main, wg ]
 
 env:
   REGISTRY: docker.io

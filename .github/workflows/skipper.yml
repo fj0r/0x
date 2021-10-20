@@ -7,7 +7,7 @@ name: skipper
 
 on:
   push:
-    branches: [ skipper ]
+    branches: [ main, skipper ]
 
 env:
   REGISTRY: docker.io
