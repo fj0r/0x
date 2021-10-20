@@ -1,3 +1,3 @@
 ```
-skipper -routes-file example.eskip
+skipper -routes-file example.eskip -inline-routes ...
 ```
