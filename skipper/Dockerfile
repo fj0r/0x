@@ -4,6 +4,8 @@ ARG BUILD_DEPS="\
     binutils \
     "
 
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 ENV TIMEZONE=Asia/Shanghai
 
 RUN set -eux \
@@ -13,15 +15,30 @@ RUN set -eux \
     bash \
     tzdata \
     openssl-dev \
+    openssh-server \
   ; apk add --no-cache --virtual .build-deps ${BUILD_DEPS} \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   ; echo "$TIMEZONE" > /etc/timezone \
+  \
+  ; sed -i /etc/ssh/sshd_config \
+        -e 's!.*\(AllowTcpForwarding\).*!\1 yes!' \
+        -e 's!.*\(GatewayPorts\).*!\1 yes!' \
+        -e 's!.*\(AuthorizedKeysFile\).*!\1 /etc/authorized_keys/%u!' \
+        -e 's!.*\(ChallengeResponseAuthentication\).*yes!\1 no!' \
+        -e 's!.*\(PasswordAuthentication\).*yes!\1 no!' \
+  \
+  ; websocat_url=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/vi/websocat/releases  \
+                  | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep amd64-linux-static | grep -v nossl) \
+  ; curl -sSLo /usr/local/bin/websocat ${websocat_url}; chmod +x /usr/local/bin/websocat \
+  ; strip -s /usr/local/bin/websocat \
+  \
   ; skipper_url=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/zalando/skipper/releases \
         | jq -r '.[0].assets[].browser_download_url' | grep linux-amd64) \
   ; curl -sSL ${skipper_url} | tar zxf - -C /usr/local/bin --strip-components 1 \
-  ; strip /usr/local/bin/skipper \
+  ; strip -s /usr/local/bin/skipper \
   ; apk del .build-deps
 
 COPY entrypoint.sh /
+COPY eskip /
 
 ENTRYPOINT /entrypoint.sh

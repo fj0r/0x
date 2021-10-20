@@ -1,0 +1,5 @@
+websocat:
+    PathSubTree("/websocat")
+    -> modPath("/websocat", "")
+    -> "http://127.0.0.1:9999"
+    ;
