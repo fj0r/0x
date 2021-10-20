@@ -7,7 +7,7 @@ name: clash
 
 on:
   push:
-    branches: [ clash ]
+    branches: [ main, clash ]
 
 env:
   REGISTRY: docker.io
