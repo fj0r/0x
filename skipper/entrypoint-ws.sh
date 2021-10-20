@@ -105,7 +105,7 @@ pid="$!"
 echo -n "${pid}" >> $piddir/sshd.pid
 
 ###########################
-/usr/local/bin/websocat -E -b ws-l:127.0.0.1:9999 tcp:127.0.0.1:22 &
+/usr/local/bin/websocat -E -b ws-l:0.0.0.0:9999 tcp:127.0.0.1:22 &
 pid="$!"
 echo -n "${pid}" >> $piddir/websocat.pid
 
