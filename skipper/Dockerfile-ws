@@ -10,12 +10,8 @@ ENV TIMEZONE=Asia/Shanghai
 
 RUN set -eux \
   ; apk --update add --no-cache \
-    jq \
-    curl \
-    bash \
-    tzdata \
-    openssl-dev \
-    openssh-server \
+    bash tzdata sudo shadow xz unzip \
+    jq curl openssl-dev openssh-server \
   ; apk add --no-cache --virtual .build-deps ${BUILD_DEPS} \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   ; echo "$TIMEZONE" > /etc/timezone \
