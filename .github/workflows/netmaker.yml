@@ -1,4 +1,4 @@
-name: wireguard
+name: nm
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: wireguard
 
 on:
   push:
-    branches: [ main, wg ]
+    branches: [ nm ]
 
 env:
   REGISTRY: docker.io
@@ -47,27 +47,12 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
 
-      - name: Build wg
-        uses: docker/build-push-action@v2
-        with:
-          context: wg
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build nm
-        uses: docker/build-push-action@v2
-        with:
-          context: wg
-          file: wg/Dockerfile.nm
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nm
-          labels: ${{ steps.meta.outputs.labels }}
-
       - name: Build netmaker
         uses: docker/build-push-action@v2
         with:
           context: netmaker
+          file: netmaker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:netmaker
           labels: ${{ steps.meta.outputs.labels }}
+
