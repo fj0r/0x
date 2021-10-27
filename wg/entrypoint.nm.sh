@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-wg-quick up wg0
-addr=$(ip addr show $(wg | awk 'NR==1 {print $2}') | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
+/usr/local/bin/netclient join --daemon off -t ${NM_TOKEN}
+addr=$(netclient list | jq -r '.networks[0].current_node.private_ipv4')
+name=$(netclient list | jq -r '.networks[0].name')
 
 DAEMON=socat
 
@@ -11,6 +12,7 @@ touch $piddir/$DAEMON.pid
 
 stop() {
     echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
+    /usr/local/bin/netclient leave -n ${name}
     # Set TERM
     kill -SIGTERM $(cat $piddir/$DAEMON.pid)
     # Wait for exit
