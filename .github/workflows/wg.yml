@@ -63,3 +63,11 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nm
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build netmaker
+        uses: docker/build-push-action@v2
+        with:
+          context: netmaker
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:netmaker
+          labels: ${{ steps.meta.outputs.labels }}

@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv sh
+
+bash /generate_config_js.sh > /usr/share/nginx/html/config.js
+
+echo ">>>> backend set to: $BACKEND_URL <<<<<"
+
+echo >&2 "starting nginx"
+
+exec /opt/nginx/sbin/nginx 2>&1
