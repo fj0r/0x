@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 wg-quick up wg0
+addr=$(ip addr show $(wg | awk 'NR==1 {print $2}') | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
 
 DAEMON=socat
 
@@ -26,7 +27,7 @@ for i in "${!_@}"; do
         cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
         eval "$cmd &"
         pid="$!"
-        echo "listen:$port --> $url"
+        echo "$addr:$port --> $url"
         echo -n "${pid} " >> $piddir/$DAEMON.pid
     fi
 done

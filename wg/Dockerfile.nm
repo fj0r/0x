@@ -13,4 +13,4 @@ FROM fj0rd/0x:wg
 
 COPY --from=build /root/netclient /usr/local/bin
 COPY entrypoint.nm.sh /entrypoint.nm.sh
-ENTRYPOINT [/entrypoint.nm.sh]
+ENTRYPOINT ["/entrypoint.nm.sh"]
