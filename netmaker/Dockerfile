@@ -98,11 +98,11 @@ ENV GRPC_SSL=off \
     SERVER_GRPC_WIREGUARD=off \
     DATABASE=sqlite \
     DNS_MODE=on \
-    COREDNS_ADDR=localhost \
     WEB_PORT=18080 \
     API_PORT=18081 \
     GRPC_PORT=50051 \
     BACKEND_URL=' ' \
+    COREDNS_ADDR=localhost \
     SERVER_HOST=localhost
 
 EXPOSE 18080

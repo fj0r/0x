@@ -17,6 +17,7 @@ docker run --name netmaker \
     -v $PWD/netmaker:/app/data \
     -e MASTER_KEY="${NETMAKER_MASTER_KEY}" \
     -e SERVER_HOST=1.2.3.4 \
+    -e COREDNS_ADDR=1.2.3.4 \
     fj0rd/0x:netmaker
 ```
 
