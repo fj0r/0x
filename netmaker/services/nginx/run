@@ -6,4 +6,6 @@ echo ">>>> backend set to: $BACKEND_URL <<<<<"
 
 echo >&2 "starting nginx"
 
+envsubst < /etc/nginx/nginx.conf.tmpl > /etc/nginx/nginx.conf
+
 exec /opt/nginx/sbin/nginx 2>&1
