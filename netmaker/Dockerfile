@@ -91,7 +91,7 @@ COPY --from=build /root/assets /app
 COPY --from=web /app/netmaker-ui/build /usr/share/nginx/html
 COPY --from=web /app/netmaker-ui/generate_config_js.sh /
 COPY services /etc/services.d
-COPY nginx /etc/nginx
+COPY nginx/nginx.conf /etc/nginx/nginx.conf.tmpl
 
 ENV GRPC_SSL=off \
     CLIENT_MODE=on \
@@ -99,12 +99,14 @@ ENV GRPC_SSL=off \
     DATABASE=sqlite \
     DNS_MODE=on \
     COREDNS_ADDR=localhost \
+    WEB_PORT=18080 \
     API_PORT=18081 \
     GRPC_PORT=50051 \
     BACKEND_URL=' ' \
     SERVER_HOST=localhost
 
 EXPOSE 18080
+EXPOSE 18081
 EXPOSE 50051
 EXPOSE 53/udp
 EXPOSE 51821/udp
