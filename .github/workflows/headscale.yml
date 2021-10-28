@@ -7,7 +7,7 @@ name: headscale
 
 on:
   push:
-    branches: [ main, headscale ]
+    branches: [ headscale ]
 
 env:
   REGISTRY: docker.io

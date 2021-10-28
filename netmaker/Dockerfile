@@ -99,12 +99,12 @@ ENV GRPC_SSL=off \
     DATABASE=sqlite \
     DNS_MODE=on \
     COREDNS_ADDR=localhost \
-    API_PORT=8081 \
+    API_PORT=18081 \
     GRPC_PORT=50051 \
     BACKEND_URL=' ' \
     SERVER_HOST=localhost
 
-EXPOSE 80
+EXPOSE 18080
 EXPOSE 50051
 EXPOSE 53/udp
 EXPOSE 51821/udp
