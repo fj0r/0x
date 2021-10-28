@@ -6,6 +6,10 @@ echo ">>>> backend set to: $BACKEND_URL <<<<<"
 
 echo >&2 "starting nginx"
 
-envsubst < /etc/nginx/nginx.conf.tmpl > /etc/nginx/nginx.conf
+
+sed -e 's!${WEB_PORT}!'"${WEB_PORT}"'!' \
+    -e 's!${API_PORT}!'"${API_PORT}"'!' \
+    /etc/nginx/nginx.conf.tmpl \
+  > /etc/nginx/nginx.conf
 
 exec /opt/nginx/sbin/nginx 2>&1

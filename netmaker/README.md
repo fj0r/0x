@@ -1,3 +1,4 @@
+##### start
 ```
 export REPLACE_MASTER_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 30 ; echo '')
 export NETMAKER_MASTER_KEY=${NETMAKER_MASTER_KEY:-$REPLACE_MASTER_KEY}
@@ -17,4 +18,11 @@ docker run --name netmaker \
     -e MASTER_KEY="${NETMAKER_MASTER_KEY}" \
     -e SERVER_HOST=1.2.3.4 \
     fj0rd/0x:netmaker
+```
+
+##### clean
+if start with `--network=host`, should clean with:
+
+```
+ip link delete dev nm-xxx
 ```

@@ -5,7 +5,7 @@ echo >&2 "starting coredns"
 cat << EOF > /app/config/dnsconfig/Corefile
 . {
     reload 15s
-    hosts /root/dnsconfig/netmaker.hosts {
+    hosts /app/config/dnsconfig/netmaker.hosts {
         fallthrough
     }
     forward . 8.8.8.8 8.8.4.4
