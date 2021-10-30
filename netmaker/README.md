@@ -5,7 +5,6 @@ export NETMAKER_MASTER_KEY=${NETMAKER_MASTER_KEY:-$REPLACE_MASTER_KEY}
 
 docker run --name netmaker \
     -d --restart=always \
-    --network=host \
     --cap-add=NET_ADMIN \
     --cap-add=SYS_MODULE \
     -p 18080:18080 \
