@@ -2,6 +2,7 @@
 ```
 export REPLACE_MASTER_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 30 ; echo '')
 export NETMAKER_MASTER_KEY=${NETMAKER_MASTER_KEY:-$REPLACE_MASTER_KEY}
+echo key: $NETMAKER_MASTER_KEY
 
 docker run --name netmaker \
     -d --restart=always \

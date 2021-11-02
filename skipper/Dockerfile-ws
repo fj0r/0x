@@ -24,7 +24,7 @@ RUN set -eux \
         -e 's!.*\(PasswordAuthentication\).*yes!\1 no!' \
   \
   ; websocat_url=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/vi/websocat/releases  \
-                  | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep amd64-linux-static | grep -v nossl) \
+                  | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep linux64) \
   ; curl -sSLo /usr/local/bin/websocat ${websocat_url}; chmod +x /usr/local/bin/websocat \
   ; strip -s /usr/local/bin/websocat \
   \
