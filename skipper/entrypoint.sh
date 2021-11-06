@@ -24,7 +24,16 @@ for i in "${!R_@}"; do
     routes="${routes}${n}: ${r};"
 done
 
-cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 -inline-routes '${routes}'"
+if [ ! -z "$routes" ]; then
+    routes="-inline-routes '${routes}'"
+fi
+
+routefile=""
+if [ !z "$ROUTEFILE" ]; then
+    routefile="-routes-file ${ROUTEFILE}"
+fi
+
+cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 ${routefile} ${routes}"
 
 eval "$cmd &"
 pid="$!"

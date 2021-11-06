@@ -123,7 +123,12 @@ if [ ! -z "$routes" ]; then
     routes="-inline-routes '${routes}'"
 fi
 
-cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 -routes-file /eskip ${routes}"
+routefile=""
+if [ !z "$ROUTEFILE" ]; then
+    routefile="-routes-file ${ROUTEFILE}"
+fi
+
+cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 ${routefile} ${routes}"
 
 eval "$cmd &"
 pid="$!"

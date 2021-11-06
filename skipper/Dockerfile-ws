@@ -36,5 +36,6 @@ RUN set -eux \
 
 COPY entrypoint-ws.sh /entrypoint.sh
 COPY eskip /
+ENV ROUTEFILE=/eskip
 
 ENTRYPOINT /entrypoint.sh
