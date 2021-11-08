@@ -124,7 +124,7 @@ if [ ! -z "$routes" ]; then
 fi
 
 routefile=""
-if [ !z "$ROUTEFILE" ]; then
+if [ ! -z "$ROUTEFILE" ]; then
     routefile="-routes-file ${ROUTEFILE}"
 fi
 
