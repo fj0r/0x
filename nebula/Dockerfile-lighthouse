@@ -22,7 +22,7 @@ RUN set -eux \
 
 
 FROM fj0rd/io:base
-WORKDIR /app
+WORKDIR /world
 
 RUN set -eux \
   ; s6overlay_url=$(xh https://api.github.com/repos/just-containers/s6-overlay/releases Accept:application/vnd.github.v3+json \
@@ -31,8 +31,8 @@ RUN set -eux \
 
 COPY --from=build /root/assets /usr/local/bin
 COPY services /etc/services.d
-COPY config.yaml /app/config.yaml.tmpl
-COPY join.bash /
+COPY config.yaml /config.yaml.tmpl
+COPY join /usr/local/bin
 EXPOSE 51821/udp
 ENV NETWORK_ID NEBULA_CONFIG
 ENV VHOST VCIDR

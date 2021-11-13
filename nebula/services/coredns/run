@@ -2,8 +2,8 @@
 
 echo >&2 "starting coredns"
 
-if [ ! -f /app/dnsconfig/Corefile ]; then
-cat << EOF > /app/dnsconfig/Corefile
+if [ ! -f /world/dnsconfig/Corefile ]; then
+cat << EOF > /world/dnsconfig/Corefile
 . {
 
     import zones/*
@@ -22,10 +22,10 @@ cat << EOF > /app/dnsconfig/Corefile
 EOF
 fi
 
-mkdir -p /app/dnsconfig/zones
+mkdir -p /world/dnsconfig/zones
 
-if [ ! -f /app/dnsconfig/zones/example ]; then
-cat << EOF >  /app/dnsconfig/zones/example
+if [ ! -f /world/dnsconfig/zones/example ]; then
+cat << EOF >  /world/dnsconfig/zones/example
 template IN A self {
     answer "{{ .Name }} IN A 127.0.0.1"
     fallthrough
@@ -40,4 +40,4 @@ template IN A ip {
 EOF
 fi
 
-exec /usr/local/bin/coredns -conf /app/dnsconfig/Corefile 2>&1
+exec /usr/local/bin/coredns -conf /world/dnsconfig/Corefile 2>&1

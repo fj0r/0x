@@ -16,7 +16,7 @@ RUN set -eux \
 
 
 FROM fj0rd/io:base
-WORKDIR /app
+WORKDIR /world
 
 COPY --from=build /root/assets /usr/local/bin
 COPY entrypoint.sh /

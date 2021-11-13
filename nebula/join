@@ -1,0 +1,23 @@
+#!/bin/bash
+vcidr=${VCIDR:-16}
+vgroup=${3:-default}
+port=${HOST_PORT:-51821}
+
+echo network=${NETWORK_ID} groups="$vgroup" cidr=$VHOST/$vcidr endpoint=$HOST_IP:$HOST_PORT
+
+cd /world
+nebula-cert sign -name $1 -ip $2/${vcidr} -groups "${vgroup}"
+
+mkdir -p /world/config
+
+cat /config.yaml.tmpl | yq e '
+.listen.port = 0
+| .lighthouse.am_lighthouse = false
+| .lighthouse.hosts += ["'${VHOST}'"]
+| .static_host_map["'${VHOST}'"] += ["'${HOST_IP}:${port}'"]
+| .pki.ca = "'"$(cat /world/ca.crt)"'"
+| .pki.cert = "'"$(cat /world/$1.crt)"'"
+| .pki.key = "'"$(cat /world/$1.key)"'"
+' - > /world/config/$1.yaml
+
+rm -f $1.{key,crt}

@@ -2,24 +2,30 @@
 
 echo >&2 "starting nebula"
 
-cd /app
-config=${NEBULA_CONFIG:-/app/config.yaml}
+cd /world
+config=${NEBULA_CONFIG:-/world/config.yaml}
+vcidr=${VCIDR:-16}
+vgroup=${VGROUPS:-default}
+port=${HOST_PORT:-51821}
 
-if [ ! -f /app/ca.crt ]; then
+echo config=$config groups="$vgroup"
+echo network=${NETWORK_ID} cidr=$VHOST/$vcidr endpoint=$HOST_IP:$HOST_PORT
+
+if [ ! -f /world/ca.crt ]; then
     nebula-cert ca -name "${NETWORK_ID}"
 fi
 
-if [ ! -f /app/lighthouse.crt ]; then
-    nebula-cert sign -name lighthouse -ip ${HOST_IP}/${VCIDR:-16}
+if [ ! -f /world/lighthouse.crt ]; then
+    echo nebula-cert sign -name lighthouse -ip "${VHOST}/${vcidr}" -groups "${vgroup}"
+    nebula-cert sign -name lighthouse -ip "${VHOST}/${vcidr}" -groups "${vgroup}"
 fi
 
 if [ ! -f $config ]; then
-    cat /app/config.yaml.tmpl | yq e '
-        .listen.port = '${HOST_PORT:-51821}'
+    cat /config.yaml.tmpl | yq e '
+        .listen.port = '${port}'
         | .pki.cert = "./lighthouse.crt"
         | .pki.key = "./lighthouse.key"
         | .lighthouse.am_lighthouse = true
-        | .static_host_map["'${VHOST}'"] += ["'${HOST_IP}:${HOST_PORT:-51821}'"]
     ' - > $config
 fi
 

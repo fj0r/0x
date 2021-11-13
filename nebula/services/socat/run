@@ -15,9 +15,11 @@ for i in "${!_@}"; do
     if [ ! -z "$port" ]; then
         url=$(eval "echo \"\$$i\"")
         cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
-        eval "$cmd 2>&1"
+        eval "$cmd &"
         pid="$!"
         echo "$addr:$port --> $url"
         echo -n "${pid} " >> $piddir/$DAEMON.pid
     fi
 done
+
+wait $(cat $piddir/$DAEMON.pid)
