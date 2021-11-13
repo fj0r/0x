@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-/usr/local/bin/nebula -config ${CONFIGFILE:-/config.yaml}
+/usr/local/bin/nebula -config ${NEBULA_CONFIG:-/config.yaml}
 addr=$(ip addr show nebula1 | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
 
 DAEMON=socat
