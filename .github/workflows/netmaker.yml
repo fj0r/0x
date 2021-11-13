@@ -50,8 +50,8 @@ jobs:
       - name: Build nm
         uses: docker/build-push-action@v2
         with:
-          context: wg
-          file: wg/Dockerfile.nm
+          context: netmaker
+          file: netmaker/Dockerfile.nm
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nm
           labels: ${{ steps.meta.outputs.labels }}
