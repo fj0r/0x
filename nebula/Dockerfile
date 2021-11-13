@@ -11,7 +11,7 @@ RUN set -eux \
   \
   ; url=$(xh https://api.github.com/repos/slackhq/nebula/releases Accept:application/vnd.github.v3+json \
         | jq -r '.[0].assets[].browser_download_url' | grep linux-amd64) \
-  ; xh -F ${url} | tar zcvf - \
+  ; xh -F ${url} | tar zxf - \
   ; strip -s nebula*
 
 

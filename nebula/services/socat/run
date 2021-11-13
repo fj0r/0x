@@ -1,0 +1,23 @@
+#!/usr/bin/with-contenv bash
+
+echo >&2 "starting socat"
+addr=$(ip addr show nebula1 | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
+
+DAEMON=socat
+
+piddir=/var/run/$DAEMON
+mkdir -p $piddir
+touch $piddir/$DAEMON.pid
+
+
+for i in "${!_@}"; do
+    port=${i:1}
+    if [ ! -z "$port" ]; then
+        url=$(eval "echo \"\$$i\"")
+        cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
+        eval "$cmd 2>&1"
+        pid="$!"
+        echo "$addr:$port --> $url"
+        echo -n "${pid} " >> $piddir/$DAEMON.pid
+    fi
+done
