@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-wg-quick up wg0
-addr=$(ip addr show $(wg | awk 'NR==1 {print $2}') | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
+addrs=""
+for i in $(ls /etc/wireguard/ | grep '.*\.conf' | cut -d '.' -f 1); do
+    wg-quick up $i
+    addrs+="$(ip addr show $i | awk 'NR==3 {print $2}' | cut -d'/' -f 1) "
+done
 
 DAEMON=socat
 
@@ -20,6 +23,7 @@ stop() {
 }
 
 trap stop SIGINT SIGTERM
+echo "==> wg addr: ${addrs}"
 for i in "${!_@}"; do
     port=${i:1}
     if [ ! -z "$port" ]; then
@@ -27,7 +31,7 @@ for i in "${!_@}"; do
         cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
         eval "$cmd &"
         pid="$!"
-        echo "$addr:$port --> $url"
+        echo ":$port --> $url"
         echo -n "${pid} " >> $piddir/$DAEMON.pid
     fi
 done
