@@ -23,6 +23,6 @@ RUN set -eux \
 
 ENV SYNC_CONFIG=/ossutilconfig
 ENV SYNC_SRC=/data
-ENV SYNC_DIST=bucket/
+ENV SYNC_TG=bucket/
 COPY sync /sync
 ENTRYPOINT [ "bash", "/sync/watch.sh" ]
