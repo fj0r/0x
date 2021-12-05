@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bash
+echo >&2 "starting watcher"
+
+sleep 2
+exec watchexec -p -w /etc/postfix/ -- /usr/bin/postfix restart 2>&1
+exec watchexec -p -w /etc/dovecot/ -- service dovecot restart 2>&1
+exec watchexec -p -w /etc/opendkim.conf -- service opendkim restart 2>&1

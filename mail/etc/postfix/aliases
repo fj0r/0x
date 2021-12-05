@@ -1,0 +1,4 @@
+# See man 5 aliases for format
+postmaster:    root
+root: USER@DOMAIN.TLD
+postmaster: USER@DOMAIN.TLD
