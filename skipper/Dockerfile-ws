@@ -19,7 +19,6 @@ RUN set -eux \
   ; sed -i /etc/ssh/sshd_config \
         -e 's!.*\(AllowTcpForwarding\).*!\1 yes!' \
         -e 's!.*\(GatewayPorts\).*!\1 yes!' \
-        -e 's!.*\(AuthorizedKeysFile\).*!\1 /etc/authorized_keys/%u!' \
         -e 's!.*\(ChallengeResponseAuthentication\).*yes!\1 no!' \
         -e 's!.*\(PasswordAuthentication\).*yes!\1 no!' \
   \

@@ -15,9 +15,18 @@ print_fingerprints() {
     done
 }
 
-ssh_init() {
-    env | grep _ >> /etc/environment
+# Add users if $1=user:uid:gid set
+set_user () {
+    IFS=':' read -ra UA <<< "$1"
+    _NAME=${UA[0]}
+    _UID=${UA[1]:-1000}
+    _GID=${UA[2]:-1000}
 
+    getent group ${_NAME} >/dev/null 2>&1 || groupadd -g ${_GID} ${_NAME}
+    getent passwd ${_NAME} >/dev/null 2>&1 || useradd -m -u ${_UID} -g ${_GID} -G sudo -s /bin/zsh -c "$2" ${_NAME}
+}
+
+init_ssh() {
     if [[ "${SSH_OVERRIDE_HOST_KEYS}" == "true" ]]; then
         rm -rf /etc/ssh/ssh_host_*
     fi
@@ -32,6 +41,21 @@ ssh_init() {
         print_fingerprints /etc/ssh
     fi
 
+    if [ -n "$user" ]; then
+        for u in $(echo $user | tr "," "\n"); do
+            set_user ${u} 'SSH User'
+        done
+    fi
+
+    for i in "${!ed25519_@}"; do
+        _AU=${i:8}
+        _HOME_DIR=$(getent passwd ${_AU} | cut -d: -f6)
+        mkdir -p ${_HOME_DIR}/.ssh
+        eval "echo \"ssh-ed25519 \$$i\" >> ${_HOME_DIR}/.ssh/authorized_keys"
+        chown ${_AU} -R ${_HOME_DIR}/.ssh
+        chmod go-rwx -R ${_HOME_DIR}/.ssh
+    done
+
     # Fix permissions, if writable
     if [ -w ~/.ssh ]; then
         chown root:root ~/.ssh && chmod 700 ~/.ssh/
@@ -40,47 +64,18 @@ ssh_init() {
         chown root:root ~/.ssh/authorized_keys
         chmod 600 ~/.ssh/authorized_keys
     fi
-    if [ -w /etc/authorized_keys ]; then
-        chown root:root /etc/authorized_keys
-        chmod 755 /etc/authorized_keys
-        find /etc/authorized_keys/ -type f -exec chmod 644 {} \;
-    fi
 
-    # Add users if SSH_USERS=user:uid:gid set
-    if [ -n "${SSH_USERS}" ]; then
-        USERS=$(echo $SSH_USERS | tr "," "\n")
-        for U in $USERS; do
-            IFS=':' read -ra UA <<< "$U"
-            _NAME=${UA[0]}
-            _UID=${UA[1]}
-            _GID=${UA[2]}
-
-            echo ">> Adding user ${_NAME} with uid: ${_UID}, gid: ${_GID}."
-            if [ ! -e "/etc/authorized_keys/${_NAME}" ]; then
-                echo "WARNING: No SSH authorized_keys found for ${_NAME}!"
-            fi
-            getent group ${_NAME} >/dev/null 2>&1 || groupadd -g ${_GID} ${_NAME}
-            getent passwd ${_NAME} >/dev/null 2>&1 || useradd -r -m -p '' -u ${_UID} -g ${_GID} -s '' -c 'SSHD User' ${_NAME}
-        done
+    # Lock root account, if Disabled
+    if [[ "${SSH_DISABLE_ROOT}" == "true" ]]; then
+        echo "WARNING: root account is now locked. Unset SSH_DISABLE_ROOT to unlock the account."
     else
-        # Warn if no authorized_keys
-        if [ ! -e ~/.ssh/authorized_keys ] && [ ! $(ls -A /etc/authorized_keys) ]; then
-            echo "WARNING: No SSH authorized_keys found!"
-        fi
-    fi
-
-    # Unlock root account, if enabled
-    if [[ "${SSH_ENABLE_ROOT}" == "true" ]]; then
         usermod -p '' root
-    else
-        echo "WARNING: root account is now locked by default. Set SSH_ENABLE_ROOT=true to unlock the account."
     fi
 
     # Update MOTD
     if [ -v MOTD ]; then
         echo -e "$MOTD" > /etc/motd
     fi
-
 }
 
 stop() {
@@ -99,7 +94,8 @@ piddir=/var/run/$DAEMON
 mkdir -p $piddir
 
 ###########################
-ssh_init
+env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' >> /etc/environment
+init_ssh
 /usr/sbin/sshd -D -e &
 pid="$!"
 echo -n "${pid}" >> $piddir/sshd.pid
