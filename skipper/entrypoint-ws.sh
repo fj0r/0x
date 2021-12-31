@@ -94,7 +94,10 @@ piddir=/var/run/$DAEMON
 mkdir -p $piddir
 
 ###########################
-env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' >> /etc/environment
+env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' \
+    | grep -Ev '^(_|HOME|USER)=' \
+   >> /etc/environment
+
 init_ssh
 /usr/sbin/sshd -D -e &
 pid="$!"
