@@ -12,9 +12,9 @@ RUN set -eux \
     apt-get install -y --no-install-recommends \
       locales ca-certificates \
   \
-  ; watchexec_ver=$(xh $github_api/${watchexec_repo}/releases $github_header | jq -r '.[0].tag_name' | cut -c 6-) \
-  ; watchexec_url=https://github.com/${watchexec_repo}/releases/download/cli-v${watchexec_ver}/watchexec-${watchexec_ver}-x86_64-unknown-linux-musl.tar.xz \
-  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin watchexec-${watchexec_ver}-x86_64-unknown-linux-musl/watchexec \
+  ; watchexec_url=$(xh https://api.github.com/repos/watchexec/watchexec/releases Accept:application/vnd.github.v3+json \
+                  | jq -r '[.[]|select(.prerelease==false and (.tag_name|startswith("cli")))][0].assets[].browser_download_url' | grep 'x86_64-unknown-linux-musl.tar') \
+  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
   \
   ; xh -F ${OSSUTIL_URL} -o /usr/local/bin/ossutil \
   ; chmod +x /usr/local/bin/ossutil \
