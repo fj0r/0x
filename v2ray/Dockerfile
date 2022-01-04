@@ -1,6 +1,5 @@
 FROM fj0rd/io:base
 
-ARG v2ray_repo=v2fly/v2ray-core
 ARG v2ray_files="\
 v2ray \
 v2ctl \
@@ -13,8 +12,9 @@ RUN set -eux \
   ; mkdir -p /usr/bin/v2ray \
   ; mkdir /var/log/v2ray/ \
   \
-  ; v2ray_version=$(xh https://api.github.com/repos/${v2ray_repo}/releases Accept:application/vnd.github.v3+json | jq -r '.[0].tag_name') \
-  ; v2ray_url=https://github.com/${v2ray_repo}/releases/download/${v2ray_version}/v2ray-linux-64.zip \
+  ; v2ray_url=$(xh https://api.github.com/repos/v2fly/v2ray-core/releases Accept:application/vnd.github.v3+json \
+              | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' \
+              | grep -v dgst | grep linux-64) \
   ; mkdir -p /tmp/v2ray \
   ; cd /tmp/v2ray \
   ; xh -Fo v2ray.zip ${v2ray_url} \
@@ -94,8 +94,8 @@ RUN set -eux \
   ; xh -F ${s6overlay_url} | tar xzvf - -C / \
   \
   ; watchexec_url=$(xh https://api.github.com/repos/watchexec/watchexec/releases Accept:application/vnd.github.v3+json \
-                  | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'x86_64-unknown-linux-musl.tar') \
-  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
+                  | jq -r '[.[]|select(.prerelease==false and (.tag_name|startswith("cli")))][0].assets[].browser_download_url' | grep 'x86_64-unknown-linux-musl.tar') \
+  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /opt/assets --wildcards '*/watchexec' \
   \
   ; apt-get -y remove ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
