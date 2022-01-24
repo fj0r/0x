@@ -45,8 +45,8 @@ RUN set -eux \
     sqlite3 $DEV_DEPS $BUILD_DEPS \
   \
   ; s6overlay_url=$(xh https://api.github.com/repos/just-containers/s6-overlay/releases Accept:application/vnd.github.v3+json \
-      | jq -r '.[0].assets[].browser_download_url' | grep -v sig | grep amd64.tar) \
-  ; xh -F ${s6overlay_url} | tar xzvf - -C / \
+      | jq -r '.[0].assets[].browser_download_url' | grep -v sha256 | grep -E 'x86_64|s6-overlay-noarch') \
+  ; for url in ${s6overlay_url}; do xh -F ${url} | tar xJvf - -C /; done \
   \
   ; build_dir=/app/build \
   ; mkdir -p $build_dir \

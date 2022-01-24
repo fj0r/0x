@@ -90,8 +90,8 @@ RUN set -eux \
   ; echo 'export or=/etc/nginx' >> /root/.bashrc \
   ; echo 'export logs=/opt/nginx/logs' >> /root/.bashrc \
   \
-  ; s6overlay_url=$(xh $github_api/${s6overlay_repo}/releases $github_header | jq -r '.[0].assets[].browser_download_url' | grep -v sig | grep amd64.tar) \
-  ; xh -F ${s6overlay_url} | tar xzvf - -C / \
+  ; s6overlay_url=$(xh $github_api/${s6overlay_repo}/releases $github_header | jq -r '.[0].assets[].browser_download_url' | grep -v sha256 | grep -E 'x86_64|s6-overlay-noarch') \
+  ; for url in ${s6overlay_url}; do xh -F ${url} | tar xJvf - -C /; done \
   \
   ; watchexec_url=$(xh https://api.github.com/repos/watchexec/watchexec/releases Accept:application/vnd.github.v3+json \
                   | jq -r '[.[]|select(.prerelease==false and (.tag_name|startswith("cli")))][0].assets[].browser_download_url' | grep 'x86_64-unknown-linux-musl.tar') \
