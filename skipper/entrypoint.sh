@@ -1,17 +1,16 @@
 #!/bin/bash
 DAEMON=skipper
 
-piddir=/var/run/$DAEMON
-mkdir -p $piddir
-touch $piddir/$DAEMON.pid
-
 stop() {
-    echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
+    # Get PID
+    pid=$(cat /var/run/services)
+    echo "Received SIGINT or SIGTERM. Shutting down"
     # Set TERM
-    kill -SIGTERM $(cat $piddir/$DAEMON.pid)
+    kill -SIGTERM ${pid}
     # Wait for exit
-    wait $(cat $piddir/$DAEMON.pid)
+    wait ${pid}
     # All done.
+    echo -n '' > /var/run/services
     echo "Done."
 }
 
@@ -36,7 +35,6 @@ fi
 cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 ${routefile} ${routes}"
 
 eval "$cmd &"
-pid="$!"
-echo -n "${pid} " >> $piddir/$DAEMON.pid
+echo -n "$! " >> /var/run/services
 
-wait $(cat $piddir/$DAEMON.pid) && exit $?
+wait -n $(cat /var/run/services) && exit $?

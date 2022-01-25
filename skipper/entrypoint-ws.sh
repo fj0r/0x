@@ -23,7 +23,7 @@ set_user () {
     _GID=${UA[2]:-1000}
 
     getent group ${_NAME} >/dev/null 2>&1 || groupadd -g ${_GID} ${_NAME}
-    getent passwd ${_NAME} >/dev/null 2>&1 || useradd -m -u ${_UID} -g ${_GID} -G sudo -s /bin/zsh -c "$2" ${_NAME}
+    getent passwd ${_NAME} >/dev/null 2>&1 || useradd -m -u ${_UID} -g ${_GID} -G sudo -s /bin/bash -c "$2" ${_NAME}
 }
 
 init_ssh() {
@@ -79,19 +79,19 @@ init_ssh() {
 }
 
 stop() {
-    echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
+    # Get PID
+    pid=$(cat /var/run/services)
+    echo "Received SIGINT or SIGTERM. Shutting down"
     # Set TERM
-    kill -SIGTERM $(cat $piddir/$DAEMON.pid)
+    kill -SIGTERM ${pid}
     # Wait for exit
-    wait $(cat $piddir/$DAEMON.pid)
+    wait ${pid}
+    echo -n '' > /var/run/services
     # All done.
     echo "Done."
 }
 
 trap stop SIGINT SIGTERM
-
-piddir=/var/run/$DAEMON
-mkdir -p $piddir
 
 ###########################
 env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' \
@@ -100,13 +100,11 @@ env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' \
 
 init_ssh
 /usr/sbin/sshd -D -e &
-pid="$!"
-echo -n "${pid}" >> $piddir/sshd.pid
+echo -n "$! " >> /var/run/services
 
 ###########################
 /usr/local/bin/websocat -E -b ws-l:0.0.0.0:9999 tcp:127.0.0.1:22 &
-pid="$!"
-echo -n "${pid}" >> $piddir/websocat.pid
+echo -n "$! " >> /var/run/services
 
 ###########################
 DAEMON=skipper
@@ -130,8 +128,7 @@ fi
 cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 ${routefile} ${routes}"
 
 eval "$cmd &"
-pid="$!"
-echo -n "${pid}" >> $piddir/$DAEMON.pid
+echo -n "$! " >> /var/run/services
 ###########################
 
-wait $(cat $piddir/$DAEMON.pid) && exit $?
+wait -n $(cat /var/run/services) && exit $?

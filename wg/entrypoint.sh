@@ -8,17 +8,16 @@ done
 
 DAEMON=socat
 
-piddir=/var/run/$DAEMON
-mkdir -p $piddir
-touch $piddir/$DAEMON.pid
-
 stop() {
-    echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
+    # Get PID
+    pid=$(cat /var/run/services)
+    echo "Received SIGINT or SIGTERM. Shutting down"
     # Set TERM
-    kill -SIGTERM $(cat $piddir/$DAEMON.pid)
+    kill -SIGTERM ${pid}
     # Wait for exit
-    wait $(cat $piddir/$DAEMON.pid)
+    wait ${pid}
     # All done.
+    echo -n '' > /var/run/services
     echo "Done."
 }
 
@@ -30,10 +29,9 @@ for i in "${!_@}"; do
         url=$(eval "echo \"\$$i\"")
         cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
         eval "$cmd &"
-        pid="$!"
+        echo -n "$! " >> /var/run/services
         echo ":$port --> $url"
-        echo -n "${pid} " >> $piddir/$DAEMON.pid
     fi
 done
 
-wait $(cat $piddir/$DAEMON.pid) && exit $?
+wait -n $(cat /var/run/services) && exit $?

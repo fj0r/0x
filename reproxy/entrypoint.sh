@@ -29,4 +29,4 @@ eval "$cmd &"
 pid="$!"
 echo -n "${pid} " >> $piddir/$DAEMON.pid
 
-wait $(cat $piddir/$DAEMON.pid) && exit $?
+wait -n $(cat $piddir/$DAEMON.pid) && exit $?
