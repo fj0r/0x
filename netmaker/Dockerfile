@@ -44,10 +44,6 @@ RUN set -eux \
     apt-get install -y --no-install-recommends \
     sqlite3 $DEV_DEPS $BUILD_DEPS \
   \
-  ; s6overlay_url=$(xh https://api.github.com/repos/just-containers/s6-overlay/releases Accept:application/vnd.github.v3+json \
-      | jq -r '.[0].assets[].browser_download_url' | grep -v sha256 | grep -E 'x86_64|s6-overlay-noarch') \
-  ; for url in ${s6overlay_url}; do xh -F ${url} | tar xJvf - -C /; done \
-  \
   ; build_dir=/app/build \
   ; mkdir -p $build_dir \
   \
@@ -90,7 +86,7 @@ RUN set -eux \
 COPY --from=build /root/assets /app
 COPY --from=web /app/netmaker-ui/build /usr/share/nginx/html
 COPY --from=web /app/netmaker-ui/generate_config_js.sh /
-COPY services /etc/services.d
+COPY entrypoint.sh /
 COPY nginx/nginx.conf /etc/nginx/nginx.conf.tmpl
 
 ENV GRPC_SSL=off \

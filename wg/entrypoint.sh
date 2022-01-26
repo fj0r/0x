@@ -9,9 +9,9 @@ done
 DAEMON=socat
 
 stop() {
+    echo "Received SIGINT or SIGTERM. Shutting down"
     # Get PID
     pid=$(cat /var/run/services)
-    echo "Received SIGINT or SIGTERM. Shutting down"
     # Set TERM
     kill -SIGTERM ${pid}
     # Wait for exit
@@ -20,6 +20,10 @@ stop() {
     echo -n '' > /var/run/services
     echo "Done."
 }
+
+env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' \
+    | grep -Ev '^(_|HOME|USER)=' \
+   >> /etc/environment
 
 trap stop SIGINT SIGTERM
 echo "==> wg addr: ${addrs}"

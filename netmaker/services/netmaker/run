@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv sh
-
-echo >&2 "starting netmaker"
-
-touch /app/data/netmaker.db
-
-cd /app
-
-exec ./netmaker 2>&1

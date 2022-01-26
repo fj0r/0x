@@ -24,13 +24,8 @@ RUN set -eux \
 FROM fj0rd/io:base
 WORKDIR /world
 
-RUN set -eux \
-  ; s6overlay_url=$(xh https://api.github.com/repos/just-containers/s6-overlay/releases Accept:application/vnd.github.v3+json \
-      | jq -r '.[0].assets[].browser_download_url' | grep -v sha256 | grep -E 'x86_64|s6-overlay-noarch') \
-  ; for url in ${s6overlay_url}; do xh -F ${url} | tar xJvf - -C /; done
-
 COPY --from=build /root/assets /usr/local/bin
-COPY services /etc/services.d
+COPY entrypoint-lighthouse.sh /entrypoint.sh
 COPY config.yaml /config.yaml.tmpl
 COPY join /usr/local/bin
 EXPOSE 51821/udp
@@ -38,6 +33,5 @@ ENV NETWORK_ID NEBULA_CONFIG
 ENV VHOST VCIDR
 ENV HOST_IP HOST_PORT
 
-#s6
-ENTRYPOINT [ "/init"]
+ENTRYPOINT [ "/entrypoint.sh"]
 
