@@ -25,9 +25,6 @@ trap stop SIGINT SIGTERM
 ################################################################################
 echo "[$(date -Is)] starting conduit"
 ################################################################################
-sudo --preserve-env=CONDUIT_CONFIG -u www-data /usr/local/bin/conduit 2>&1 &
-echo -n "$! " >> /var/run/services
-
 if [ ! -z $SERVER_NAME ]; then
     host=$(echo "$SERVER_NAME" | sed 's!https*://\(.*\)!\1!' | awk -F':' '{print $1}')
     sed -i 's!https://matrix\.org!'$SERVER_NAME'!' /srv/config.json
@@ -35,10 +32,14 @@ if [ ! -z $SERVER_NAME ]; then
     sed -i 's!your\.server\.name!'$host'!' /var/lib/conduit/conduit.toml
 fi
 
+sudo --preserve-env=CONDUIT_CONFIG -u www-data /usr/local/bin/conduit 2>&1 &
+echo -n "$! " >> /var/run/services
+
+
 ################################################################################
 echo "[$(date -Is)] starting nginx"
 ################################################################################
-/opt/nginx/sbin/nginx 2>&1 &
+/usr/sbin/nginx 2>&1 &
 echo -n "$! " >> /var/run/services
 
 

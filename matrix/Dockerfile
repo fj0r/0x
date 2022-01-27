@@ -1,9 +1,5 @@
 FROM debian:bullseye-slim as nginx
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
-ENV DEV_DEPS apache2-utils libpcre3-dev libssl-dev zlib1g-dev
-ENV BUILD_DEPS lsb-release software-properties-common build-essential git gnupg
-
-ENV PATH=/opt/nginx/sbin:$PATH
 
 RUN set -eux \
   ; cp /etc/apt/sources.list /etc/apt/sources.list.origin \
@@ -13,7 +9,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-      $DEV_DEPS $BUILD_DEPS \
+      nginx ca-certificates \
       curl tzdata sudo jq rsync tcpdump socat htop \
       lsof inetutils-ping iproute2 nftables net-tools \
   \
@@ -21,41 +17,6 @@ RUN set -eux \
   ; echo "$TIMEZONE" > /etc/timezone \
   ; sed -i 's/^.*\(%sudo.*\)ALL$/\1NOPASSWD:ALL/g' /etc/sudoers \
   \
-  ; build_dir=/root/build \
-  ; mkdir -p $build_dir \
-  \
-  ; cd $build_dir \
-  ; NGINX_VER=$(curl -sSL https://api.github.com/repos/nginx/nginx/tags -H "Accept: application/vnd.github.v3+json" | jq -r '.[0].name' | cut -c 9-) \
-  ; curl -sSL https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
-  \
-  ; cd nginx-${NGINX_VER} \
-  ; ./configure --prefix=/opt/nginx \
-        --with-threads \
-        --with-file-aio \
-        --with-http_v2_module \
-        --with-http_ssl_module \
-        --with-http_auth_request_module \
-        --with-http_addition_module \
-        --with-http_gzip_static_module \
-        --with-http_random_index_module \
-        --with-http_slice_module \
-        --with-http_sub_module \
-        --with-http_stub_status_module \
-        --with-http_realip_module \
-        --with-stream \
-        --with-stream_ssl_module \
-        --with-stream_realip_module \
-        --with-stream_ssl_preread_module \
-        --http-log-path=/var/log/nginx/access.log \
-        --error-log-path=/var/log/nginx/error.log \
-  ; make \
-  ; make install \
-  \
-  ; rm -rf $build_dir \
-  ; ln -fs /opt/nginx/conf /etc/nginx \
-  ; mkdir -p /etc/nginx/conf.d \
-  \
-  ; apt-get -y remove ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 
