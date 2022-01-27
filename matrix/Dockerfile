@@ -1,0 +1,101 @@
+FROM debian:bullseye-slim as nginx
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
+ENV DEV_DEPS apache2-utils libpcre3-dev libssl-dev zlib1g-dev
+ENV BUILD_DEPS lsb-release software-properties-common build-essential git gnupg
+
+ENV PATH=/opt/nginx/sbin:$PATH
+
+RUN set -eux \
+  ; cp /etc/apt/sources.list /etc/apt/sources.list.origin \
+  ; sed -i 's/\(.*\)\(security\|deb\).debian.org\(.*\)main/\1mirrors.ustc.edu.cn\3main contrib non-free/g' /etc/apt/sources.list \
+  \
+  ; apt-get update \
+  ; apt-get upgrade -y \
+  ; DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --no-install-recommends \
+      $DEV_DEPS $BUILD_DEPS \
+      tzdata sudo jq rsync tcpdump socat htop \
+      lsof inetutils-ping iproute2 nftables net-tools \
+  \
+  ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
+  ; echo "$TIMEZONE" > /etc/timezone \
+  ; sed -i 's/^.*\(%sudo.*\)ALL$/\1NOPASSWD:ALL/g' /etc/sudoers \
+  \
+  ; build_dir=/root/build \
+  ; mkdir -p $build_dir \
+  \
+  ; cd $build_dir \
+  ; NGINX_VER=$(curl -sSL https://api.github.com/repos/nginx/nginx/tags -H "Accept: application/vnd.github.v3+json" | jq -r '.[0].name' | cut -c 9-) \
+  ; curl -sSL https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
+  \
+  ; cd nginx-${NGINX_VER} \
+  ; ./configure --prefix=/opt/nginx \
+        --with-threads \
+        --with-file-aio \
+        --with-http_v2_module \
+        --with-http_ssl_module \
+        --with-http_auth_request_module \
+        --with-http_addition_module \
+        --with-http_gzip_static_module \
+        --with-http_random_index_module \
+        --with-http_slice_module \
+        --with-http_sub_module \
+        --with-http_stub_status_module \
+        --with-http_realip_module \
+        --with-stream \
+        --with-stream_ssl_module \
+        --with-stream_realip_module \
+        --with-stream_ssl_preread_module \
+        --http-log-path=/var/log/nginx/access.log \
+        --error-log-path=/var/log/nginx/error.log \
+  ; make \
+  ; make install \
+  \
+  ; rm -rf $build_dir \
+  ; ln -fs /opt/nginx/conf /etc/nginx \
+  ; mkdir -p /etc/nginx/conf.d \
+  \
+  ; apt-get -y remove ${BUILD_DEPS} \
+  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+
+
+
+FROM fj0rd/io:rs as build
+
+ENV RUST_BACKTRACE=1
+WORKDIR /world
+RUN set -eux \
+  ; apt update \
+  ; apt install libclang-dev \
+  ; git clone --depth=1 https://gitlab.com/famedly/conduit.git \
+  ; cd conduit && cargo build --release \
+  ; strip -s target/release/conduit
+
+
+
+
+FROM nginx
+COPY --from=build /world/target/release/conduit /usr/local/bin/
+
+RUN set -eux \
+  ; addgroup -Sg 82 www-data 2>/dev/null \
+  ; adduser -S -D -H -h /srv/conduit -G www-data -g www-data www-data 2>/dev/null \
+  ; addgroup www-data www-data 2>/dev/null && exit 0 ; exit 1 \
+  ; chown www-data:www-data -R /var/lib/conduit \
+  \
+  ; element_url=$(curl -sSL https://api.github.com/repos/vector-im/element-web/releases -H "Accept: application/vnd.github.v3+json" \
+                | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep -v '.asc$' | grep 'tar.gz$') \
+  ; curl -sSL ${element_url} | tar zxvf - -C /srv --strip-components=1
+
+
+#USER www-data
+WORKDIR /var/lib/conduit
+
+COPY conduit.toml /var/lib/conduit/conduit.toml
+COPY entrypoint.sh /entrypoint.sh
+COPY nginx.conf /etc/nginx/nginx.conf
+
+ENV RUST_BACKTRACE=1
+ENV CONDUIT_CONFIG=/var/lib/conduit/conduit.toml
+ENTRYPOINT [ "/entrypoint.sh" ]

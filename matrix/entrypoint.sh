@@ -23,9 +23,9 @@ trap stop SIGINT SIGTERM
 
 
 ################################################################################
-echo "[$(date -Is)] starting v2ray"
+echo "[$(date -Is)] starting conduit"
 ################################################################################
-/usr/bin/v2ray/v2ray -config=/etc/v2ray/config.json 2>&1 &
+sudo --preserve-env=CONDUIT_CONFIG -u www-data /usr/local/bin/conduit 2>&1 &
 echo -n "$! " >> /var/run/services
 
 
@@ -33,9 +33,6 @@ echo -n "$! " >> /var/run/services
 echo "[$(date -Is)] starting nginx"
 ################################################################################
 /opt/nginx/sbin/nginx 2>&1 &
-echo -n "$! " >> /var/run/services
-
-watchexec -p -w /etc/nginx -- reload-nginx 2>&1
 echo -n "$! " >> /var/run/services
 
 
