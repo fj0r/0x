@@ -95,6 +95,7 @@ RUN set -eux \
 #USER www-data
 WORKDIR /var/lib/conduit
 
+COPY config.json /srv/config.json
 COPY conduit.toml /var/lib/conduit/conduit.toml
 COPY entrypoint.sh /entrypoint.sh
 COPY nginx.conf /etc/nginx/nginx.conf
