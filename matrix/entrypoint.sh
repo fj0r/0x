@@ -28,6 +28,12 @@ echo "[$(date -Is)] starting conduit"
 sudo --preserve-env=CONDUIT_CONFIG -u www-data /usr/local/bin/conduit 2>&1 &
 echo -n "$! " >> /var/run/services
 
+if [ ! -z $SERVER_NAME ]; then
+    host=$(echo "$SERVER_NAME" | sed 's!https*://\(.*\)!\1!' | awk -F':' '{print $1}')
+    sed -i 's!https://matrix\.org!'$SERVER_NAME'!' /srv/config.json
+    sed -i 's!matrix\.org!'$host'!' /srv/config.json
+    sed -i 's!your\.server\.name!'$host'!' /var/lib/conduit/conduit.toml
+fi
 
 ################################################################################
 echo "[$(date -Is)] starting nginx"
