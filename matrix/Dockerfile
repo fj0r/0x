@@ -7,14 +7,14 @@ ENV PATH=/opt/nginx/sbin:$PATH
 
 RUN set -eux \
   ; cp /etc/apt/sources.list /etc/apt/sources.list.origin \
-  ; sed -i 's/\(.*\)\(security\|deb\).debian.org\(.*\)main/\1mirrors.ustc.edu.cn\3main contrib non-free/g' /etc/apt/sources.list \
+  #; sed -i 's/\(.*\)\(security\|deb\).debian.org\(.*\)main/\1mirrors.ustc.edu.cn\3main contrib non-free/g' /etc/apt/sources.list \
   \
   ; apt-get update \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
       $DEV_DEPS $BUILD_DEPS \
-      tzdata sudo jq rsync tcpdump socat htop \
+      curl tzdata sudo jq rsync tcpdump socat htop \
       lsof inetutils-ping iproute2 nftables net-tools \
   \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
@@ -67,7 +67,8 @@ ENV RUST_BACKTRACE=1
 WORKDIR /world
 RUN set -eux \
   ; apt update \
-  ; apt install libclang-dev \
+  ; apt-get install -y --no-install-recommends \
+        libclang-dev \
   ; git clone --depth=1 https://gitlab.com/famedly/conduit.git \
   ; cd conduit && cargo build --release \
   ; strip -s target/release/conduit
@@ -76,12 +77,14 @@ RUN set -eux \
 
 
 FROM nginx
-COPY --from=build /world/target/release/conduit /usr/local/bin/
+
+#COPY --from=build /world/target/release/conduit /usr/local/bin/
+RUN set -eux \
+  ; curl -sSL 'https://gitlab.com/famedly/conduit/-/jobs/artifacts/master/raw/conduit-x86_64-unknown-linux-musl?job=build:release:cargo:x86_64-unknown-linux-musl' > /usr/local/bin/conduit \
+  ; chmod +x /usr/local/bin/conduit
 
 RUN set -eux \
-  ; addgroup -Sg 82 www-data 2>/dev/null \
-  ; adduser -S -D -H -h /srv/conduit -G www-data -g www-data www-data 2>/dev/null \
-  ; addgroup www-data www-data 2>/dev/null && exit 0 ; exit 1 \
+  ; mkdir -p /var/lib/conduit \
   ; chown www-data:www-data -R /var/lib/conduit \
   \
   ; element_url=$(curl -sSL https://api.github.com/repos/vector-im/element-web/releases -H "Accept: application/vnd.github.v3+json" \
