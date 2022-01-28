@@ -36,6 +36,8 @@ if [ ! -z $SERVER_NAME ]; then
         > /var/lib/conduit/conduit.toml
 fi
 
+touch /var/lib/conduit/conduit.db
+chown www-data:www-data -R /var/lib/conduit
 sudo --preserve-env=CONDUIT_CONFIG -u www-data /usr/local/bin/conduit 2>&1 &
 echo -n "$! " >> /var/run/services
 
