@@ -26,15 +26,19 @@ trap stop SIGINT SIGTERM
 echo "[$(date -Is)] starting conduit"
 ################################################################################
 if [ ! -z $SERVER_NAME ]; then
-    host=$(echo "$SERVER_NAME" | sed 's!https*://\(.*\)!\1!' | awk -F':' '{print $1}')
+    HOST=$(echo "$SERVER_NAME" | sed 's!https*://\(.*\)!\1!' | awk -F':' '{print $1}')
     cat /config.json | \
         sed -e 's!https://matrix\.org!'$SERVER_NAME'!' \
-            -e 's!matrix\.org!'$host'!' \
+            -e 's!matrix\.org!'$HOST'!' \
         > /srv/config.json
-    cat /conduit.toml | \
-        sed 's!your\.server\.name!'$host'!' \
-        > /var/lib/conduit/conduit.toml
-    sed -i 's!SERVER_NAME_PLACEHOLDER!'$SERVER_NAME'!' /etc/nginx/nginx.conf
+
+    sed -i 's!SERVER_NAME_PLACEHOLDER!'$HOST':'${SERVER_PORT:-443}'!' /etc/nginx/nginx.conf
+
+    if [ -f '/var/lib/conduit/conduit.toml' ]; then
+        cat /conduit.toml | \
+            sed 's!your\.server\.name!'$HOST'!' \
+            > /var/lib/conduit/conduit.toml
+    fi
 fi
 
 touch /var/lib/conduit/conduit.db
