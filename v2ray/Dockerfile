@@ -12,12 +12,12 @@ RUN set -eux \
   ; mkdir -p /usr/bin/v2ray \
   ; mkdir /var/log/v2ray/ \
   \
-  ; v2ray_url=$(xh https://api.github.com/repos/v2fly/v2ray-core/releases Accept:application/vnd.github.v3+json \
+  ; v2ray_url=$(curl -sSL https://api.github.com/repos/v2fly/v2ray-core/releases -H 'Accept: application/vnd.github.v3+json' \
               | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' \
               | grep -v dgst | grep linux-64) \
   ; mkdir -p /tmp/v2ray \
   ; cd /tmp/v2ray \
-  ; xh -Fo v2ray.zip ${v2ray_url} \
+  ; curl -sSLo v2ray.zip ${v2ray_url} \
   ; unzip v2ray.zip \
   ; mv ${v2ray_files} /usr/bin/v2ray \
   ; cd .. \
@@ -27,7 +27,7 @@ ENV PATH /usr/bin/v2ray:$PATH
 
 COPY server.json /etc/v2ray/config.json
 
-ARG github_header="Accept:application/vnd.github.v3+json"
+ARG github_header='Accept: application/vnd.github.v3+json'
 ARG github_api=https://api.github.com/repos
 ARG nginx_repo=nginx/nginx
 ARG nchan_repo=slact/nchan
@@ -50,14 +50,14 @@ RUN set -eux \
     $DEV_DEPS \
     $BUILD_DEPS \
   \
-  ; NGINX_VER=$(xh $github_api/${nginx_repo}/tags $github_header | jq -r '.[0].name' | cut -c 9-) \
-  ; xh -F https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
+  ; NGINX_VER=$(curl -sSL $github_api/${nginx_repo}/tags -H $github_header | jq -r '.[0].name' | cut -c 9-) \
+  ; curl -sSL https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
   \
   ; mkdir njs \
-  ; xh -F http://hg.nginx.org/njs/archive/tip.tar.gz | tar -zxf - --strip-component=1 -C njs \
+  ; curl -sSL http://hg.nginx.org/njs/archive/tip.tar.gz | tar -zxf - --strip-component=1 -C njs \
   \
-  ; NCHAN_VER=$(xh $github_api/${nchan_repo}/tags $github_header | jq -r '.[0].name' | cut -c 2-) \
-  ; xh -F https://github.com/${nchan_repo}/archive/v${NCHAN_VER}.tar.gz | tar -zxf - \
+  ; NCHAN_VER=$(curl -sSL $github_api/${nchan_repo}/tags -H $github_header | jq -r '.[0].name' | cut -c 2-) \
+  ; curl -sSL https://github.com/${nchan_repo}/archive/v${NCHAN_VER}.tar.gz | tar -zxf - \
   ; cd nginx-${NGINX_VER} \
   ; ./configure --prefix=/opt/nginx \
         --with-threads \
@@ -87,9 +87,9 @@ RUN set -eux \
   ; echo 'export or=/etc/nginx' >> /root/.bashrc \
   ; echo 'export logs=/opt/nginx/logs' >> /root/.bashrc \
   \
-  ; watchexec_url=$(xh https://api.github.com/repos/watchexec/watchexec/releases Accept:application/vnd.github.v3+json \
+  ; watchexec_url=$(curl -sSL https://api.github.com/repos/watchexec/watchexec/releases -H 'Accept: application/vnd.github.v3+json' \
                   | jq -r '[.[]|select(.prerelease==false and (.tag_name|startswith("cli")))][0].assets[].browser_download_url' | grep 'x86_64-unknown-linux-musl.tar') \
-  ; xh -F ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
+  ; curl -sSL ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
   \
   ; apt-get -y remove ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*

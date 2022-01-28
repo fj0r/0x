@@ -2,9 +2,9 @@ FROM fj0rd/io as build
 
 RUN set -eux \
   ; cd /root \
-  ; nm_url=$(xh https://api.github.com/repos/gravitl/netmaker/releases Accept:application/vnd.github.v3+json \
+  ; nm_url=$(curl -sSL https://api.github.com/repos/gravitl/netmaker/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'netclient$') \
-  ; xh -Fd ${nm_url} -o netclient \
+  ; curl -sSL ${nm_url} -o netclient \
   ; chmod +x netclient \
   ; strip -s netclient
 

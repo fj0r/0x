@@ -2,15 +2,15 @@ FROM fj0rd/io as build
 
 RUN set -eux \
   ; mkdir /root/assets && cd /root/assets \
-  ; nm_url=$(xh https://api.github.com/repos/gravitl/netmaker/releases Accept:application/vnd.github.v3+json \
+  ; nm_url=$(curl -sSL https://api.github.com/repos/gravitl/netmaker/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'netmaker$') \
-  ; xh -Fd ${nm_url} -o netmaker \
+  ; curl -sSL ${nm_url} -o netmaker \
   ; chmod +x netmaker \
   ; strip -s netmaker \
   \
-  ; coredns_url=$(xh https://api.github.com/repos/coredns/coredns/releases Accept:application/vnd.github.v3+json \
+  ; coredns_url=$(curl -sSL https://api.github.com/repos/coredns/coredns/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tgz$') \
-  ; xh -F ${coredns_url} | tar zxf - \
+  ; curl -sSL ${coredns_url} | tar zxf - \
   ; chmod +x coredns \
   ; strip -s coredns
 
@@ -48,8 +48,8 @@ RUN set -eux \
   ; mkdir -p $build_dir \
   \
   ; cd $build_dir \
-  ; NGINX_VER=$(xh https://api.github.com/repos/nginx/nginx/tags Accept:application/vnd.github.v3+json | jq -r '.[0].name' | cut -c 9-) \
-  ; xh -F https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
+  ; NGINX_VER=$(curl -sSL https://api.github.com/repos/nginx/nginx/tags -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].name' | cut -c 9-) \
+  ; curl -sSL https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
   \
   ; cd nginx-${NGINX_VER} \
   ; ./configure --prefix=/opt/nginx \
@@ -77,7 +77,7 @@ RUN set -eux \
   ; apt-get -y remove ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
-  ; xh -F https://github.com/gravitl/netmaker/archive/refs/heads/master.tar.gz \
+  ; curl -sSL https://github.com/gravitl/netmaker/archive/refs/heads/master.tar.gz \
       | tar zxf - -C /app netmaker-master/config --strip-components=1 \
   \
   ; mkdir -p /app/config/dnsconfig \

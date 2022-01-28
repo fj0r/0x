@@ -9,9 +9,9 @@ RUN set -eux \
   \
   ; mkdir /root/assets && cd /root/assets \
   \
-  ; url=$(xh https://api.github.com/repos/slackhq/nebula/releases Accept:application/vnd.github.v3+json \
+  ; url=$(curl -sSL https://api.github.com/repos/slackhq/nebula/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '.[0].assets[].browser_download_url' | grep linux-amd64) \
-  ; xh -F ${url} | tar zxf - \
+  ; curl -sSL ${url} | tar zxf - \
   ; strip -s nebula*
 
 
