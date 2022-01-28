@@ -34,6 +34,7 @@ if [ ! -z $SERVER_NAME ]; then
     cat /conduit.toml | \
         sed 's!your\.server\.name!'$host'!' \
         > /var/lib/conduit/conduit.toml
+    sed -i 's!SERVER_NAME_PLACEHOLDER!'$SERVER_NAME'!' /etc/nginx/nginx.conf
 fi
 
 touch /var/lib/conduit/conduit.db
