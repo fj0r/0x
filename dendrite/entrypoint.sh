@@ -34,7 +34,7 @@ if [ ! -z $SERVER_NAME ]; then
 
     sed -i 's!SERVER_NAME_PLACEHOLDER!'$HOST':'${SERVER_PORT:-443}'!' /etc/nginx/nginx.conf
 
-    if [ ! -f '/var/dendrite/dendrite.yaml' ]
+    if [ ! -f '/var/dendrite/dendrite.yaml' ]; then
         yq e '.global.server_name="'$HOST'" | .global.well_known_server_name="'$HOST':'${SERVER_PORT:-443}'"' \
             /etc/dendrite.yaml > /var/dendrite/dendrite.yaml
     fi
