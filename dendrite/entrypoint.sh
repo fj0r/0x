@@ -33,10 +33,14 @@ if [ ! -z $SERVER_NAME ]; then
         > /srv/config.json
 
     sed -i 's!SERVER_NAME_PLACEHOLDER!'$HOST':'${SERVER_PORT:-443}'!' /etc/nginx/nginx.conf
-    yq -i e '.global.server_name="'$HOST'" | .global.well_known_server_name="'$HOST':'${SERVER_PORT:-443}'"' /etc/dendrite.yaml
+
+    if [ ! -f '/var/dendrite/dendrite.yaml' ]
+        yq e '.global.server_name="'$HOST'" | .global.well_known_server_name="'$HOST':'${SERVER_PORT:-443}'"' \
+            /etc/dendrite.yaml > /var/dendrite/dendrite.yaml
+    fi
 fi
 
-sudo -u www-data /usr/bin/dendrite-monolith-server 2>&1 &
+sudo -u www-data /usr/bin/dendrite-monolith-server -config /var/dendrite/dendrite.yaml 2>&1 &
 echo -n "$! " >> /var/run/services
 
 

@@ -34,7 +34,7 @@ if [ ! -z $SERVER_NAME ]; then
 
     sed -i 's!SERVER_NAME_PLACEHOLDER!'$HOST':'${SERVER_PORT:-443}'!' /etc/nginx/nginx.conf
 
-    if [ -f '/var/lib/conduit/conduit.toml' ]; then
+    if [ ! -f '/var/lib/conduit/conduit.toml' ]; then
         cat /conduit.toml | \
             sed 's!your\.server\.name!'$HOST'!' \
             > /var/lib/conduit/conduit.toml
