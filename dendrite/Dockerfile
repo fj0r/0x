@@ -22,46 +22,42 @@ RUN set -eux \
 
 
 
-FROM fj0rd/io:rs as build
+FROM fj0rd/io:go AS dendrite
 
-ENV RUST_BACKTRACE=1
-WORKDIR /world
+WORKDIR /build
+
 RUN set -eux \
-  ; apt update \
-  ; apt-get install -y --no-install-recommends \
-        libclang-dev \
-  ; git clone --depth=1 https://gitlab.com/famedly/conduit.git \
-  ; cd conduit && cargo build --release \
-  ; strip -s target/release/conduit
+  ; dendrite_url=$(curl -sSL https://api.github.com/repos/matrix-org/dendrite/releases -H "Accept: application/vnd.github.v3+json" \
+                 | jq -r '[.[]|select(.prerelease == false)][0].tarball_url') \
+  ; curl -sSL ${dendrite_url} | tar zxf - --strip-components=1 \
+  ; mkdir -p bin \
+  ; go build -trimpath -o bin/ ./cmd/dendrite-monolith-server \
+  ; go build -trimpath -o bin/ ./cmd/goose \
+  ; go build -trimpath -o bin/ ./cmd/create-account \
+  ; go build -trimpath -o bin/ ./cmd/generate-keys \
+  ; yq_url=$(curl -sSL https://api.github.com/repos/mikefarah/yq/releases -H 'Accept: application/vnd.github.v3+json' \
+           | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tar') \
+  ; curl -sSL ${yq_url} | tar zxf - && mv yq_linux_amd64 bin/yq
 
 
 
 
 FROM nginx
 
-#COPY --from=build /world/target/release/conduit /usr/local/bin/
-RUN set -eux \
-  ; curl -sSL 'https://gitlab.com/famedly/conduit/-/jobs/artifacts/master/raw/conduit-x86_64-unknown-linux-musl?job=build:release:cargo:x86_64-unknown-linux-musl' > /usr/local/bin/conduit \
-  ; chmod +x /usr/local/bin/conduit
+COPY --from=dendrite /build/bin/* /usr/bin/
+
+VOLUME /etc/dendrite
+WORKDIR /etc/dendrite
 
 RUN set -eux \
-  ; mkdir -p /var/lib/conduit \
-  ; chown www-data:www-data -R /var/lib/conduit \
-  \
   ; element_url=$(curl -sSL https://api.github.com/repos/vector-im/element-web/releases -H "Accept: application/vnd.github.v3+json" \
                 | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep -v '.asc$' | grep 'tar.gz$') \
   ; curl -sSL ${element_url} | tar zxvf - -C /srv --strip-components=1
 
 
-#USER www-data
-WORKDIR /var/lib/conduit
-VOLUME /var/lib/conduit
-
 COPY config.json /config.json
-COPY conduit.toml /conduit.toml
+COPY dendrite.yaml /etc/dendrite.yaml
 COPY entrypoint.sh /entrypoint.sh
 COPY nginx.conf /etc/nginx/nginx.conf
 
-ENV RUST_BACKTRACE=1
-ENV CONDUIT_CONFIG=/var/lib/conduit/conduit.toml
 ENTRYPOINT [ "/entrypoint.sh" ]
