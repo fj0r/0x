@@ -22,10 +22,24 @@ RUN set -eux \
 
 
 
+FROM fj0rd/io:rs as build
+
+ENV RUST_BACKTRACE=1
+WORKDIR /world
+RUN set -eux \
+  ; apt update \
+  ; apt-get install -y --no-install-recommends \
+        libclang-dev \
+  ; git clone --depth=1 https://gitlab.com/famedly/conduit.git \
+  ; cd conduit && cargo build --release \
+  ; strip -s target/release/conduit
+
+
 
 
 FROM nginx
 
+#COPY --from=build /world/target/release/conduit /usr/local/bin/
 RUN set -eux \
   ; curl -sSL 'https://gitlab.com/famedly/conduit/-/jobs/artifacts/master/raw/conduit-x86_64-unknown-linux-musl?job=build:release:cargo:x86_64-unknown-linux-musl' > /usr/local/bin/conduit \
   ; chmod +x /usr/local/bin/conduit
@@ -34,11 +48,16 @@ RUN set -eux \
   ; mkdir -p /var/lib/conduit \
   ; chown www-data:www-data -R /var/lib/conduit \
   \
+  ; mkdir -p /srv/element \
+  ; element_url=$(curl -sSL https://api.github.com/repos/vector-im/element-web/releases -H "Accept: application/vnd.github.v3+json" \
+                | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep -v '.asc$' | grep 'tar.gz$') \
+  ; curl -sSL ${element_url} | tar zxvf - -C /srv/element --strip-components=1 \
+  \
+  ; mkdir -p /srv/cinny \
   ; cinny_url=$(curl -sSL https://api.github.com/repos/ajbura/cinny/releases -H "Accept: application/vnd.github.v3+json" \
                 | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'tar.gz$') \
-  ; curl -sSL ${cinny_url} | tar zxvf - -C /srv --strip-components=1 \
+  ; curl -sSL ${cinny_url} | tar zxvf - -C /srv/cinny --strip-components=1 \
   ; chown -R 33:33 /srv/*
-
 
 #USER www-data
 WORKDIR /var/lib/conduit
@@ -51,4 +70,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 ENV RUST_BACKTRACE=1
 ENV CONDUIT_CONFIG=/var/lib/conduit/conduit.toml
+ENV MATRIX_CLIENT=element
 ENTRYPOINT [ "/entrypoint.sh" ]

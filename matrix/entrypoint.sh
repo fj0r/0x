@@ -28,23 +28,25 @@ echo "[$(date -Is)] starting conduit"
 if [ ! -z $SERVER_NAME ]; then
     HOST=$(echo "$SERVER_NAME" | sed 's!https*://\(.*\)!\1!' | awk -F':' '{print $1}')
 
-    sed -i 's!SERVER_NAME_PLACEHOLDER!'$HOST':'${SERVER_PORT:-443}'!' /etc/nginx/nginx.conf
-
     if [ ! -f '/var/lib/conduit/conduit.toml' ]; then
         cat /conduit.toml | \
             sed 's!your\.server\.name!'$HOST'!' \
             > /var/lib/conduit/conduit.toml
     fi
 
-    if [ "$CLIENT_TYPE" == "element" ]; then
+    sed -e 's!SERVER_NAME_PLACEHOLDER!'$HOST':'${SERVER_PORT:-443}'!' \
+        -e 's!\(set $root\).*$!\1    '"\'/srv/$MATRIX_CLIENT\'"';!' \
+        -i /etc/nginx/nginx.conf
+
+    if [ "$MATRIX_CLIENT" = "element" ]; then
         cat /config.json | \
             sed -e 's!https://matrix\.org!'$SERVER_NAME'!' \
                 -e 's!matrix\.org!'$HOST'!' \
-            > /srv/config.json
+            > /srv/$MATRIX_CLIENT/config.json
     else
         echo '{"defaultHomeserver": 0, "homeserverList": []}' \
             | jq '.homeserverList += ["'$HOST'"]' \
-            > /srv/config.json
+            > /srv/$MATRIX_CLIENT/config.json
     fi
 
 fi
