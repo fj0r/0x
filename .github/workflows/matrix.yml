@@ -47,13 +47,13 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
 
-      - name: Build dendrite
-        uses: docker/build-push-action@v2
-        with:
-          context: dendrite
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dendrite
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build dendrite
+      #  uses: docker/build-push-action@v2
+      #  with:
+      #    context: dendrite
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dendrite
+      #    labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build matrix
         uses: docker/build-push-action@v2
@@ -61,4 +61,13 @@ jobs:
           context: matrix
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:matrix
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build matrix
+        uses: docker/build-push-action@v2
+        with:
+          context: matrix
+          file: matrix/Dockerfile-element
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:element
           labels: ${{ steps.meta.outputs.labels }}
