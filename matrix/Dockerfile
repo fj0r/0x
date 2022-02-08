@@ -36,7 +36,8 @@ RUN set -eux \
   \
   ; cinny_url=$(curl -sSL https://api.github.com/repos/ajbura/cinny/releases -H "Accept: application/vnd.github.v3+json" \
                 | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'tar.gz$') \
-  ; curl -sSL ${cinny_url} | tar zxvf - -C /srv --strip-components=1
+  ; curl -sSL ${cinny_url} | tar zxvf - -C /srv --strip-components=1 \
+  ; chown -R 33:33 /srv/*
 
 
 #USER www-data
