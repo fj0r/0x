@@ -24,8 +24,8 @@ trap stop SIGINT SIGTERM
 ################################################################################
 echo "[$(date -Is)] starting coredns"
 ################################################################################
-if [ ! -f /world/dnsconfig/Corefile ]; then
-cat << EOF > /world/dnsconfig/Corefile
+if [ ! -f /app/config/dnsconfig/Corefile ]; then
+cat << EOF > /app/config/dnsconfig/Corefile
 . {
 
     import zones/*
@@ -44,10 +44,10 @@ cat << EOF > /world/dnsconfig/Corefile
 EOF
 fi
 
-mkdir -p /world/dnsconfig/zones
+mkdir -p /app/config/dnsconfig/zones
 
-if [ ! -f /world/dnsconfig/zones/example ]; then
-cat << EOF >  /world/dnsconfig/zones/example
+if [ ! -f /app/config/dnsconfig/zones/example ]; then
+cat << EOF >  /app/config/dnsconfig/zones/example
 template IN A self {
     answer "{{ .Name }} IN A 127.0.0.1"
     fallthrough
@@ -62,7 +62,7 @@ template IN A ip {
 EOF
 fi
 
-/usr/local/bin/coredns -conf /world/dnsconfig/Corefile 2>&1 &
+/usr/local/bin/coredns -conf /app/config/dnsconfig/Corefile 2>&1 &
 echo -n "$! " >> /var/run/services
 
 ################################################################################
