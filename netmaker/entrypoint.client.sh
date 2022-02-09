@@ -6,32 +6,35 @@ name=$(netclient list | jq -r '.networks[0].name')
 
 DAEMON=socat
 
-piddir=/var/run/$DAEMON
-mkdir -p $piddir
-touch $piddir/$DAEMON.pid
-
 stop() {
     echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
     /usr/local/bin/netclient leave -n ${name}
+    # Get PID
+    pid=$(cat /var/run/services)
     # Set TERM
-    kill -SIGTERM $(cat $piddir/$DAEMON.pid)
+    kill -SIGTERM ${pid}
     # Wait for exit
-    wait $(cat $piddir/$DAEMON.pid)
+    wait ${pid}
     # All done.
+    echo -n '' > /var/run/services
     echo "Done."
 }
 
+env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' \
+    | grep -Ev '^(_|HOME|USER)=' \
+   >> /etc/environment
+
 trap stop SIGINT SIGTERM
+echo "==> nm addr: ${addr}"
 for i in "${!_@}"; do
     port=${i:1}
     if [ ! -z "$port" ]; then
         url=$(eval "echo \"\$$i\"")
         cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
         eval "$cmd &"
-        pid="$!"
-        echo "$addr:$port --> $url"
-        echo -n "${pid} " >> $piddir/$DAEMON.pid
+        echo -n "$! " >> /var/run/services
+        echo ":$port --> $url"
     fi
 done
 
-wait $(cat $piddir/$DAEMON.pid) && exit $?
+wait -n $(cat /var/run/services) && exit $?

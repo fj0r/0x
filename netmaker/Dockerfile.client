@@ -3,7 +3,7 @@ FROM fj0rd/io as build
 RUN set -eux \
   ; cd /root \
   ; nm_url=$(curl -sSL https://api.github.com/repos/gravitl/netmaker/releases -H 'Accept: application/vnd.github.v3+json' \
-        | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'netclient$') \
+        | jq -r '[.[]|select(.prerelease == false)][].assets[].browser_download_url' | grep 'netclient$' | head -n 1) \
   ; curl -sSL ${nm_url} -o netclient \
   ; chmod +x netclient \
   ; strip -s netclient
@@ -12,5 +12,5 @@ RUN set -eux \
 FROM fj0rd/0x:wg
 
 COPY --from=build /root/netclient /usr/local/bin
-COPY entrypoint.nm.sh /entrypoint.nm.sh
-ENTRYPOINT ["/entrypoint.nm.sh"]
+COPY entrypoint.client.sh /entrypoint.client.sh
+ENTRYPOINT ["/entrypoint.client.sh"]

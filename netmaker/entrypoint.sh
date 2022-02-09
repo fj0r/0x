@@ -66,7 +66,7 @@ fi
 echo -n "$! " >> /var/run/services
 
 ################################################################################
-echo "[$(date -Is)] starting nebula"
+echo "[$(date -Is)] starting netmaker"
 ################################################################################
 touch /app/data/netmaker.db
 

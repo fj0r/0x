@@ -3,7 +3,7 @@ FROM fj0rd/io as build
 RUN set -eux \
   ; mkdir /root/assets && cd /root/assets \
   ; nm_url=$(curl -sSL https://api.github.com/repos/gravitl/netmaker/releases -H 'Accept: application/vnd.github.v3+json' \
-        | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'netmaker$') \
+        | jq -r '[.[]|select(.prerelease == false)][].assets[].browser_download_url' | grep 'netmaker$' | head -n 1) \
   ; curl -sSL ${nm_url} -o netmaker \
   ; chmod +x netmaker \
   ; strip -s netmaker \
@@ -34,47 +34,13 @@ RUN set -eux \
 FROM fj0rd/0x:wg
 WORKDIR /app
 
-ENV BUILD_DEPS lsb-release software-properties-common build-essential git gnupg
-ENV DEV_DEPS apache2-utils libpcre3-dev libssl-dev zlib1g-dev
-
 RUN set -eux \
   ; apt-get update \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-    sqlite3 $DEV_DEPS $BUILD_DEPS \
-  \
-  ; build_dir=/app/build \
-  ; mkdir -p $build_dir \
-  \
-  ; cd $build_dir \
-  ; NGINX_VER=$(curl -sSL https://api.github.com/repos/nginx/nginx/tags -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].name' | cut -c 9-) \
-  ; curl -sSL https://nginx.org/download/nginx-${NGINX_VER}.tar.gz | tar -zxf - \
-  \
-  ; cd nginx-${NGINX_VER} \
-  ; ./configure --prefix=/opt/nginx \
-        --with-threads \
-        --with-file-aio \
-        --with-http_v2_module \
-        --with-http_ssl_module \
-        --with-http_auth_request_module \
-        --with-http_addition_module \
-        --with-http_gzip_static_module \
-        --with-http_random_index_module \
-        --with-http_slice_module \
-        --with-http_sub_module \
-        --with-http_stub_status_module \
-        --with-http_realip_module \
-        --with-stream \
-        --with-stream_ssl_module \
-        --with-stream_realip_module \
-        --with-stream_ssl_preread_module \
-  ; make \
-  ; make install \
-  \
-  ; rm -rf $build_dir \
+    sqlite3 nginx ca-certificates \
   ; ln -fs /opt/nginx/conf /etc/nginx \
-  ; apt-get -y remove ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; curl -sSL https://github.com/gravitl/netmaker/archive/refs/heads/master.tar.gz \
