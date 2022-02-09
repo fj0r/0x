@@ -72,6 +72,10 @@ touch /app/data/netmaker.db
 
 cd /app
 
+REPLACE_MASTER_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 30 ; echo '')
+export MASTER_KEY=${MASTER_KEY:-$REPLACE_MASTER_KEY}
+echo MASTER_KEY[${MASTER_KEY}]
+
 ./netmaker 2>&1 &
 echo -n "$! " >> /var/run/services
 
@@ -82,10 +86,6 @@ bash /generate_config_js.sh > /usr/share/nginx/html/config.js
 
 echo ">>>> backend set to: $BACKEND_URL <<<<<"
 
-sed -e 's!${WEB_PORT}!'"${WEB_PORT}"'!' \
-    -e 's!${API_PORT}!'"${API_PORT}"'!' \
-    /etc/nginx/nginx.conf.tmpl \
-  > /etc/nginx/nginx.conf
 
 /opt/nginx/sbin/nginx 2>&1 &
 echo -n "$! " >> /var/run/services
