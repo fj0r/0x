@@ -15,7 +15,7 @@ RUN set -eux \
   ; strip -s coredns
 
 
-FROM node:12-buster-slim as web
+FROM node:16-buster-slim as web
 
 WORKDIR /app
 RUN set -eux \
@@ -53,22 +53,26 @@ COPY --from=build /root/assets /app
 COPY --from=web /app/netmaker-ui/build /usr/share/nginx/html
 COPY --from=web /app/netmaker-ui/generate_config_js.sh /
 COPY entrypoint.sh /
-COPY nginx/nginx.conf /etc/nginx/nginx.conf.tmpl
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 ENV GRPC_SSL=off \
     CLIENT_MODE=on \
     SERVER_GRPC_WIREGUARD=off \
     DATABASE=sqlite \
     DNS_MODE=on \
-    WEB_PORT=18080 \
-    API_PORT=18081 \
+    WEB_PORT=8080 \
+    API_PORT=8081 \
     GRPC_PORT=50051 \
     BACKEND_URL=' ' \
     COREDNS_ADDR=localhost \
-    SERVER_HOST=localhost
+    NETMAKER_ADDR=localhost \
+    SERVER_HOST=localhost \
+    SERVER_HTTP_HOST= \
+    SERVER_GRPC_HOST= \
+    MASTER_KEY=
 
-EXPOSE 18080
-EXPOSE 18081
+EXPOSE 8080
+#EXPOSE 8081
 EXPOSE 50051
 EXPOSE 53/udp
 EXPOSE 51821/udp
