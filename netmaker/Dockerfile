@@ -40,7 +40,6 @@ RUN set -eux \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
     sqlite3 nginx ca-certificates \
-  ; ln -fs /opt/nginx/conf /etc/nginx \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; curl -sSL https://github.com/gravitl/netmaker/archive/refs/heads/master.tar.gz \
@@ -77,4 +76,4 @@ EXPOSE 50051
 EXPOSE 53/udp
 EXPOSE 51821/udp
 
-ENTRYPOINT ["/init"]
+ENTRYPOINT ["/entrypoint.sh"]

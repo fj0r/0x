@@ -47,7 +47,7 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
 
-      - name: Build nm
+      - name: Build netclient
         uses: docker/build-push-action@v2
         with:
           context: netmaker
