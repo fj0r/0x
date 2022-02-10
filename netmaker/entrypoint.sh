@@ -62,7 +62,7 @@ template IN A ip {
 EOF
 fi
 
-/usr/local/bin/coredns -conf /app/config/dnsconfig/Corefile 2>&1 &
+/app/coredns -conf /app/config/dnsconfig/Corefile 2>&1 &
 echo -n "$! " >> /var/run/services
 
 ################################################################################
@@ -87,7 +87,7 @@ bash /generate_config_js.sh > /usr/share/nginx/html/config.js
 echo ">>>> backend set to: $BACKEND_URL <<<<<"
 
 
-/opt/nginx/sbin/nginx 2>&1 &
+/usr/sbin/nginx 2>&1 &
 echo -n "$! " >> /var/run/services
 
 ################################################################################
