@@ -65,9 +65,9 @@ ENV GRPC_SSL=off \
     BACKEND_URL=' ' \
     COREDNS_ADDR=localhost \
     NETMAKER_ADDR=localhost \
-    SERVER_HOST=localhost \
-    SERVER_HTTP_HOST= \
-    SERVER_GRPC_HOST= \
+    NODE_ID=server \
+    SERVER_API_CONN_STRING= \
+    SERVER_GRPC_CONN_STRING= \
     MASTER_KEY=
 
 EXPOSE 8080
