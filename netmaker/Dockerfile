@@ -42,9 +42,6 @@ RUN set -eux \
     sqlite3 nginx ca-certificates \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
-  ; curl -sSL https://github.com/gravitl/netmaker/archive/refs/heads/master.tar.gz \
-      | tar zxf - -C /app netmaker-master/config --strip-components=1 \
-  \
   ; mkdir -p /app/config/dnsconfig \
   ; mkdir -p /app/data
 
