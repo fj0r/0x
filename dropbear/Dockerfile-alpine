@@ -1,12 +1,11 @@
-FROM fj0rd/io as build
+FROM alpine as build
 
 RUN set -eux \
   ; apt-get update \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-        automake autoconf \
-        # libz libcrypto
-        libssl-dev zlib1g-dev \
+        automake autoconf gcc g++ make curl git \
+        openssl3-dev zlib-dev \
   ; mkdir /build /target
 
 WORKDIR /build
@@ -31,7 +30,7 @@ RUN set -eux \
   ; mkdir -p /target/server/libexec \
   ; mv sftp-server /target/server/libexec
 
-FROM debian:bullseye-slim
+FROM alpine:3
 
 COPY --from=build /target /target
 
