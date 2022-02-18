@@ -35,6 +35,6 @@ RUN set -eux \
 
 FROM alpine:3
 
-COPY --from=build /target /usr
+COPY --from=build /target /target
 
 
