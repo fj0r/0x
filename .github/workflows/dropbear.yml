@@ -47,14 +47,6 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
 
-      - name: Build dropbear
-        uses: docker/build-push-action@v2
-        with:
-          context: dropbear
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dropbear
-          labels: ${{ steps.meta.outputs.labels }}
-
       - name: Build dropbear alpine
         uses: docker/build-push-action@v2
         with:
@@ -63,3 +55,12 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dropbear-alpine
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build dropbear
+        uses: docker/build-push-action@v2
+        with:
+          context: dropbear
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dropbear
+          labels: ${{ steps.meta.outputs.labels }}
+

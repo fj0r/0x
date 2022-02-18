@@ -1,9 +1,7 @@
 FROM alpine as build
 
 RUN set -eux \
-  ; apt-get update \
-  ; DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --no-install-recommends \
+  ; apk add \
         automake autoconf gcc g++ make curl git \
         openssl3-dev zlib-dev \
   ; mkdir /build /target

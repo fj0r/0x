@@ -1,0 +1,14 @@
+FROM fj0rd/0x:dropbear-alpine as dropbear
+
+FROM alpine:3
+COPY --from=dropbear /target/server /usr
+
+ENV pubkey=
+RUN set -eux \
+  ; sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
+  # alpine
+  ; apk add libcrypto3 \
+  ; mkdir /etc/dropbear ~/.ssh \
+  ; echo $pubkey > ~/.ssh/authorized_keys
+
+ENTRYPOINT /usr/bin/dropbear -REFms -p 22
