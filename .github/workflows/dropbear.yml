@@ -7,7 +7,7 @@ name: dropbear
 
 on:
   push:
-    branches: [ dropbear ]
+    branches: [ main, dropbear ]
 
 env:
   REGISTRY: docker.io
