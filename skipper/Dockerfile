@@ -1,4 +1,7 @@
+FROM fj0rd/0x:dropbear-alpine as dropbear
+
 FROM alpine:3
+COPY --from=dropbear /target/server /usr
 
 ARG BUILD_DEPS="\
     binutils \
@@ -12,7 +15,8 @@ RUN set -eux \
     curl \
     bash \
     tzdata \
-    openssl-dev \
+    libssl3 \
+    #openssl-dev \
   ; apk add --no-cache --virtual .build-deps ${BUILD_DEPS} \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   ; echo "$TIMEZONE" > /etc/timezone \
@@ -20,7 +24,8 @@ RUN set -eux \
         | jq -r '.[0].assets[].browser_download_url' | grep linux-amd64) \
   ; curl -sSL ${skipper_url} | tar zxf - -C /usr/local/bin --strip-components 1 \
   ; strip /usr/local/bin/skipper \
-  ; apk del .build-deps
+  ; apk del .build-deps \
+  ; mkdir /etc/dropbear
 
 COPY entrypoint.sh /
 
