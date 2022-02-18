@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ ! -z $STARTUP_SCRIPT ]; then
+  bash $STARTUP_SCRIPT
+fi
+
 DAEMON=skipper
 
 stop() {
