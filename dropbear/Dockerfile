@@ -1,4 +1,4 @@
-FROM io as build
+FROM fj0rd/io as build
 
 RUN set -eux \
   ; apt-get update \
@@ -19,9 +19,9 @@ RUN set -eux \
   ; cd dropbear \
   ; ./configure \
   ; make PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp" \
-  ; mkdir -p /target/bin \
-  # dbclient dropbearkey dropbearconvert
-  ; mv dropbear scp /target/bin
+  ; mkdir -p /target/{server,tools}/bin \
+  ; mv dropbear scp /target/server/bin \
+  ; mv dbclient dropbearkey dropbearconvert target/tools/bin
 
 RUN set -eux \
 ; export https_proxy=http://192.168.99.247:7890 \
@@ -30,11 +30,11 @@ RUN set -eux \
   ; autoreconf \
   ; ./configure \
   ; make sftp-server \
-  ; mkdir -p /target/libexec \
-  ; mv sftp-server /target/libexec
+  ; mkdir -p /target/server/libexec \
+  ; mv sftp-server /target/server/libexec
 
-#FROM debian:bullseye-slim
-#
-#COPY --from=build /target /usr
+FROM alpine:3
+
+COPY --from=build /target /usr
 
 
