@@ -19,12 +19,12 @@ RUN set -eux \
   ; cd dropbear \
   ; ./configure \
   ; make PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp" \
-  ; mkdir -p /target/{server,tools}/bin \
+  ; mkdir -p /target/server/bin \
+  ; mkdir -p /target/tools/bin \
   ; mv dropbear scp /target/server/bin \
-  ; mv dbclient dropbearkey dropbearconvert target/tools/bin
+  ; mv dbclient dropbearkey dropbearconvert /target/tools/bin
 
 RUN set -eux \
-; export https_proxy=http://192.168.99.247:7890 \
   ; git clone --depth=1 https://github.com/openssh/openssh-portable.git \
   ; cd openssh-portable \
   ; autoreconf \
