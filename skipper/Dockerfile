@@ -1,7 +1,7 @@
 FROM fj0rd/0x:dropbear-alpine as dropbear
 
 FROM alpine:3
-COPY --from=dropbear /target /usr
+COPY --from=dropbear / /
 
 ARG BUILD_DEPS="\
     binutils \
