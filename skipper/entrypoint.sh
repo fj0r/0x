@@ -52,8 +52,8 @@ stop() {
     echo "Done."
 }
 
-env | grep -E '_|HOME|ROOT|PATH|VERSION|LANG|TIME|MODULE|BUFFERED' \
-    | grep -Ev '^(_|HOME|USER)=' \
+env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
+    | grep -Ev '^(_|HOME|USER|LS_COLORS)=' \
    >> /etc/environment
 
 trap stop SIGINT SIGTERM
