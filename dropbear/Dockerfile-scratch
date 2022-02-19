@@ -1,0 +1,5 @@
+FROM fj0rd/0x:dropbear-alpine as dropbear
+
+FROM scratch
+COPY --from=dropbear /target /usr
+

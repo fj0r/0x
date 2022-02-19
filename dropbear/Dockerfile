@@ -31,8 +31,8 @@ RUN set -eux \
   ; mkdir -p /target/libexec \
   ; mv sftp-server /target/libexec
 
-FROM debian:bullseye-slim
+FROM scratch
 
-COPY --from=build /target /target
+COPY --from=build /target /usr
 
 
