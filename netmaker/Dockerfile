@@ -3,7 +3,8 @@ FROM fj0rd/io as build
 RUN set -eux \
   ; mkdir /root/assets && cd /root/assets \
   ; nm_url=$(curl -sSL https://api.github.com/repos/gravitl/netmaker/releases -H 'Accept: application/vnd.github.v3+json' \
-        | jq -r '[.[]|select(.prerelease == false)][].assets[].browser_download_url' | grep 'netmaker$' | head -n 1) \
+        | jq -r '.[].assets[].browser_download_url' | grep 'netmaker$' | head -n 1) \
+        #| jq -r '[.[]|select(.prerelease == false)][].assets[].browser_download_url' | grep 'netmaker$' | head -n 1) \
   ; curl -sSL ${nm_url} -o netmaker \
   ; chmod +x netmaker \
   ; strip -s netmaker \
@@ -39,7 +40,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-    sqlite3 nginx ca-certificates \
+    sqlite3 nginx ca-certificates procps \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; mkdir -p /app/config/dnsconfig \
@@ -52,19 +53,21 @@ COPY entrypoint.sh /
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 ENV GRPC_SSL=off \
-    CLIENT_MODE=on \
-    SERVER_GRPC_WIREGUARD=off \
-    DATABASE=sqlite \
-    DNS_MODE=on \
-    WEB_PORT=8080 \
     API_PORT=8081 \
-    GRPC_PORT=50051 \
-    BACKEND_URL=' ' \
+    WEB_PORT=8080 \
+    GRPC_PORT=443 \
+    WG_SUDO=1 \
+    WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun \
+    DNS_MODE=on \
+    DATABASE=sqlite \
     COREDNS_ADDR=localhost \
     NETMAKER_ADDR=localhost \
     NODE_ID=server \
+    BACKEND_URL=' ' \
     SERVER_API_CONN_STRING= \
     SERVER_GRPC_CONN_STRING= \
+    CLIENT_MODE=on \
+    SERVER_GRPC_WIREGUARD=off \
     MASTER_KEY=
 
 EXPOSE 8080
