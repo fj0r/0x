@@ -40,7 +40,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-    sqlite3 nginx ca-certificates procps \
+    sqlite3 nginx ca-certificates \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; mkdir -p /app/config/dnsconfig \
