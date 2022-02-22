@@ -1,4 +1,4 @@
-FROM fj0rd/0x:tailscale-assets as assets
+FROM fj0rd/scratch:tailscale as assets
 
 FROM fj0rd/0x:wg
 

@@ -63,15 +63,6 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:headscale
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build tailscale assets
-        uses: docker/build-push-action@v2
-        with:
-          context: headscale
-          file: headscale/Dockerfile.assets
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:tailscale-assets
-          labels: ${{ steps.meta.outputs.labels }}
-
       - name: Build tailscale
         uses: docker/build-push-action@v2
         with:
