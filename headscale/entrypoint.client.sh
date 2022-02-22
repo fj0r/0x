@@ -8,7 +8,7 @@ if [ ! -z "$DERP_HOST" ]; then
     echo -n "$! " > /var/run/services
 fi
 
-tailscale up --login-server ${HOST} --authkey ${TOKEN}
+tailscale up --login-server ${HOST} --authkey ${TOKEN} &
 
 DAEMON=socat
 
