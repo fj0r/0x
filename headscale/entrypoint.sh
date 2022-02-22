@@ -33,13 +33,14 @@ yq  e "(.ip_prefixes += \"${IP_PREFIX:-10.10.0.0/16}\")
       " /headscale.config.yaml > /etc/headscale/config.yaml
 
 if [ ! -f /var/lib/headscale/derp.yaml ]; then
-   cp /derp-example.yaml /var/lib/headscale/derp.yaml 
+   cp /derp-example.yaml /var/lib/headscale/derp.yaml
 fi
 
-headscale serve
+headscale serve 2>&1 &
 echo -n "$! " >> /var/run/services
 
-headscale create $NAMESPACE
+headscale namespaces create $NAMESPACE
+
 token=$(headscale --namespace $NAMESPACE preauthkeys create --reusable --expiration 24h)
 echo "==> tailscale up --login-server ${SERVER_URL:-<SERVER_URL>} --authkey $token"
 
