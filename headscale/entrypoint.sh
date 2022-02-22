@@ -81,7 +81,7 @@ echo -n "$! " >> /var/run/services
 
 headscale create $NAMESPACE
 token=$(headscale --namespace $NAMESPACE preauthkeys create --reusable --expiration 24h)
-echo "==> tailscale up --login-server ${SERVER_HOST:-<SERVER_HOST>} --authkey $token"
+echo "==> tailscale up --login-server ${SERVER_URL:-<SERVER_URL>} --authkey $token"
 
 ################################################################################
 wait -n $(cat /var/run/services) && exit $?

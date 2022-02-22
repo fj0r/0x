@@ -23,4 +23,10 @@ COPY config.yaml /etc/headscale/config.yaml
 EXPOSE 8080
 EXPOSE 8081
 
+ENV IP_PREFIX
+ENV NAMESERVER
+ENV DOMAIN
+ENV SERVER_URL
+ENV NAMESPACE
+
 ENTRYPOINT ["/entrypoint.sh"]
