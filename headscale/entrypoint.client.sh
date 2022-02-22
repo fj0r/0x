@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+tailscaled 2>&1 &
+echo -n '' > /var/run/services
+
 tailscale up --login-server ${HOST} --authkey ${TOKEN}
 
 DAEMON=socat
