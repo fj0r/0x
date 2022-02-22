@@ -3,7 +3,6 @@ FROM fj0rd/io as build
 RUN set -eux \
   ; mkdir /root/assets && cd /root/assets \
   ; nm_url=$(curl -sSL https://api.github.com/repos/gravitl/netmaker/releases -H 'Accept: application/vnd.github.v3+json' \
-        #| jq -r '.[].assets[].browser_download_url' | grep 'netmaker$' | head -n 1) \
         | jq -r '[.[]|select(.prerelease == false)][].assets[].browser_download_url' | grep 'netmaker$' | head -n 1) \
   ; curl -sSL ${nm_url} -o netmaker \
   ; chmod +x netmaker \
