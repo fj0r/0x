@@ -26,9 +26,19 @@ echo "[$(date -Is)] starting headscale"
 ################################################################################
 touch /var/lib/headscale/db.sqlite
 
-yq  e "(.ip_prefixes += \"${IP_PREFIX:-10.10.0.0/16}\")
-      |(.dns_config.nameservers += \"${NAMESERVER:-8.8.8.8}\")
-      |(.dns_config.domains += \"${DOMAIN}\")
+if [ ! -z "$NAMESERVER" ]; then
+   yq -i e ".dns_config.nameservers += \"${NAMESERVER:-8.8.8.8}\"" /headscale.config.yaml
+fi
+
+if [ ! -z "$DOMAIN" ]; then
+   yq -i e ".dns_config.domains += \"${DOMAIN}\"" /headscale.config.yaml
+fi
+
+if [ ! -z "$BASE_DOMAIN" ]; then
+   yq -i e ".dns_config.base_domains = \"${BASE_DOMAIN}\"" /headscale.config.yaml
+fi
+
+yq e "(.ip_prefixes += \"${IP_PREFIX:-10.10.0.0/16}\")
       |(.server_url = \"${SERVER_URL:-http://127.0.0.1:8080}\")
       " /headscale.config.yaml > /etc/headscale/config.yaml
 

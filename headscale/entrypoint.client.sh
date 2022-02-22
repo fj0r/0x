@@ -3,12 +3,14 @@
 tailscaled 2>&1 &
 echo -n "$! " > /var/run/services
 
+tailscale up --login-server ${HOST} --authkey ${TOKEN}
+
 if [ ! -z "$DERP_HOST" ]; then
-    derper -hostname=${DERP_HOST} -verify-clients 2>&1 &
+    # -verify-clients
+    derper -a :10001 -stun -hostname=${DERP_HOST} 2>&1 &
     echo -n "$! " > /var/run/services
 fi
 
-tailscale up --login-server ${HOST} --authkey ${TOKEN} &
 
 DAEMON=socat
 

@@ -161,7 +161,7 @@ dns_config:
   # `base_domain` must be a FQDNs, without the trailing dot.
   # The FQDN of the hosts will be
   # `hostname.namespace.base_domain` (e.g., _myhost.mynamespace.example.com_).
-  base_domain: example.com
+  base_domain: n
 
 # Unix socket used for the CLI to connect without authentication
 # Note: for local development, you probably want to change this to:
