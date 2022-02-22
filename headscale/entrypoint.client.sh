@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+tailscaled 2>&1 &
+echo -n '' > /var/run/services
+
 tailscale up --login-server ${HOST} --authkey ${TOKEN}
 
 DAEMON=socat
@@ -23,7 +26,7 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
    >> /etc/environment
 
 trap stop SIGINT SIGTERM
-echo "==> nm addr: ${addr}"
+echo "==> tailscale addr: ${addr}"
 for i in "${!_@}"; do
     port=${i:1}
     if [ ! -z "$port" ]; then
