@@ -1,4 +1,4 @@
-cp config.yaml.bak config.out.yaml
+cp config.yaml config.out.yaml
 yq -i e "(.ip_prefixes += \"${IP_PREFIX:-10.10.0.0/16}\")
         |(.dns_config.nameservers += \"${NAMESERVER:-8.8.8.8}\")
         |(.dns_config.domains += \"${DOMAIN}\")

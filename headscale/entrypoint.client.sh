@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 tailscaled 2>&1 &
-echo -n '' > /var/run/services
+echo -n "$! " > /var/run/services
+
+if [ ! -z "$DERP_HOST" ]; then
+    derper -hostname=${DERP_HOST} -verify-clients 2>&1 &
+    echo -n "$! " > /var/run/services
+fi
 
 tailscale up --login-server ${HOST} --authkey ${TOKEN}
 

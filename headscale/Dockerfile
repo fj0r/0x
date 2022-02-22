@@ -18,11 +18,13 @@ RUN set -eux \
 
 
 COPY entrypoint.sh /
-COPY config.yaml /etc/headscale/config.yaml
+COPY config.yaml /headscale.config.yaml
+COPY derp-example.yaml /derp-example.yaml
 
 EXPOSE 8080
 EXPOSE 8081
 
+ENV GIN_MODE=release
 ENV IP_PREFIX=10.10.0.0/16
 ENV NAMESERVER=
 ENV DOMAIN=
