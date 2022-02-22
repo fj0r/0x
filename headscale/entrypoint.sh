@@ -70,6 +70,12 @@ echo "[$(date -Is)] starting headscale"
 ################################################################################
 touch /var/lib/headscale/db.sqlite
 
+yq -i e "(.ip_prefixes += \"${IP_PREFIX:-10.10.0.0/16}\")
+        |(.dns_config.nameservers += \"${NAMESERVER:-8.8.8.8}\")
+        |(.dns_config.domains += \"${DOMAIN}\")
+        |(.server_url = \"${SERVER_URL:-http://127.0.0.1:8080}\")" \
+/etc/headscale/config.yaml
+
 headscale serve
 echo -n "$! " >> /var/run/services
 
