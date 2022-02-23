@@ -51,7 +51,7 @@ echo "[$(date -Is)] starting coredns"
 ################################################################################
 if [ ! -z "$COREDNS" ]; then
     if [ ! -f /var/lib/tailscale/Corefile ]; then
-        cat <<- EOF > /app/config/dnsconfig/Corefile
+        cat <<- EOF > /var/lib/tailscale/Corefile
 . {
 
     import zones/*
@@ -73,7 +73,7 @@ EOF
     mkdir -p /var/lib/tailscale/zones
 
     if [ ! -f /var/lib/tailscale/zones/example ]; then
-        cat <<- EOF >  /app/config/dnsconfig/zones/example
+        cat <<- EOF >  /var/lib/tailscale/zones/example
 template IN A self {
     answer "{{ .Name }} IN A 127.0.0.1"
     fallthrough
