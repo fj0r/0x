@@ -49,7 +49,7 @@ fi
 ################################################################################
 echo "[$(date -Is)] starting coredns"
 ################################################################################
-if [ ! -z "$NAMESERVER" ]; then
+if [ ! -z "$COREDNS" ]; then
     if [ ! -f /var/lib/tailscale/Corefile ]; then
         cat <<- EOF > /app/config/dnsconfig/Corefile
 . {
