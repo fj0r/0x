@@ -17,6 +17,13 @@ tailscale up --hostname <NAME> --login-server YOUR_HEADSCALE_URL
 ```
 headscale --namespace myfirstnamespace nodes register --key <YOU_+MACHINE_KEY>
 ```
+## windows client
+regedit
+```
+计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Tailscale IPN
+```
+- UnattendedMode: always
+- LoginURL:
 
 ## systemd
 
