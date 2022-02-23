@@ -7,7 +7,7 @@ name: nm
 
 on:
   push:
-    branches: [ main, nm ]
+    branches: [ nm ]
 
 env:
   REGISTRY: docker.io
