@@ -3,9 +3,17 @@ FROM fj0rd/scratch:tailscale as assets
 FROM fj0rd/0x:wg
 
 COPY --from=assets /linux_amd64 /usr/local/bin
+COPY --from=assets /derper /usr/local/bin
 COPY entrypoint.client.sh /entrypoint.sh
 
+RUN set -eux \
+  ; mkdir -p /var/lib/derper
+
+EXPOSE 10001
+EXPOSE 3478
 ENV WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun
+ENV DERP_HOST=
+ENV NAME=
 ENV HOST=
 ENV TOKEN=
 ENTRYPOINT ["/entrypoint.sh"]

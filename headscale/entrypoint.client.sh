@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 
 tailscaled 2>&1 &
-echo -n '' > /var/run/services
+echo -n "$! " > /var/run/services
 
-tailscale up --login-server ${HOST} --authkey ${TOKEN}
+if [ ! -z "$TOKEN" ]; then
+    ARG_AUTH="--authkey ${TOKEN}"
+fi
+
+tailscale up --hostname ${NAME} --login-server ${HOST} ${ARG_AUTH}
+
+if [ -z "$DERP_NO_VERIFY_CLIENTS" ]; then
+    ARG_VERIFY="-verify-clients"
+fi
+
+if [ ! -z "$DERP_HOST" ]; then
+    derper -a :10001 -stun -hostname=${DERP_HOST} ${ARG_VERIFY} 2>&1 &
+    echo -n "$! " > /var/run/services
+fi
+
 
 DAEMON=socat
 
@@ -26,7 +40,7 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
    >> /etc/environment
 
 trap stop SIGINT SIGTERM
-echo "==> nm addr: ${addr}"
+echo "==> tailscale addr: ${addr}"
 for i in "${!_@}"; do
     port=${i:1}
     if [ ! -z "$port" ]; then

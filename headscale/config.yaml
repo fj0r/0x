@@ -48,8 +48,8 @@ ip_prefixes: []
 # to the clients.
 derp:
   # List of externally available DERP maps encoded in JSON
-  urls:
-    - https://controlplane.tailscale.com/derpmap/default
+  # urls:
+  #   - https://controlplane.tailscale.com/derpmap/default
 
   # Locally available DERP map files encoded in YAML
   #
@@ -59,7 +59,8 @@ derp:
   #
   # paths:
   #   - /etc/headscale/derp-example.yaml
-  paths: []
+  paths:
+    - /var/lib/headscale/derp.yaml
 
   # If enabled, a worker will be set up to periodically
   # refresh the given sources and update the derpmap
@@ -160,7 +161,7 @@ dns_config:
   # `base_domain` must be a FQDNs, without the trailing dot.
   # The FQDN of the hosts will be
   # `hostname.namespace.base_domain` (e.g., _myhost.mynamespace.example.com_).
-  base_domain: example.com
+  base_domain: n
 
 # Unix socket used for the CLI to connect without authentication
 # Note: for local development, you probably want to change this to:
