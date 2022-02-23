@@ -51,21 +51,21 @@ COPY --from=web /app/netmaker-ui/generate_config_js.sh /
 COPY entrypoint.sh /
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
-ENV GRPC_SSL=off \
+ENV BACKEND_URL='localhost' \
+    DATABASE=sqlite \
+    NODE_ID=netmaker-server-1 \
+    GRPC_SSL=off \
+    DNS_MODE=on \
+    CLIENT_MODE=on \
     API_PORT=8081 \
-    WEB_PORT=8080 \
     GRPC_PORT=443 \
+    COREDNS_ADDR=127.0.0.1 \
+    COREDNS_PORT=53 \
+    NETMAKER_ADDR=127.0.0.1 \
     WG_SUDO=1 \
     WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun \
-    DNS_MODE=on \
-    DATABASE=sqlite \
-    COREDNS_ADDR=localhost \
-    NETMAKER_ADDR=localhost \
-    NODE_ID=server \
-    BACKEND_URL='localhost' \
     SERVER_API_CONN_STRING= \
     SERVER_GRPC_CONN_STRING= \
-    CLIENT_MODE=on \
     MASTER_KEY=
 
 EXPOSE 8080
