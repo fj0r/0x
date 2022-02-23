@@ -3,11 +3,18 @@
 tailscaled 2>&1 &
 echo -n "$! " > /var/run/services
 
-tailscale up --login-server ${HOST} --authkey ${TOKEN}
+if [ ! -z "$TOKEN" ]; then
+    ARG_AUTH="--authkey ${TOKEN}"
+fi
+
+tailscale up --hostname ${NAME} --login-server ${HOST} ${ARG_AUTH}
+
+if [ ! -z "$DERP_NO_VERIFY_CLIENTS" ]; then
+    ARG_VERIFY="-verify-clients"
+fi
 
 if [ ! -z "$DERP_HOST" ]; then
-    # -verify-clients
-    derper -a :10001 -stun -hostname=${DERP_HOST} 2>&1 &
+    derper -a :10001 -stun -hostname=${DERP_HOST} ${ARG_VERIFY} 2>&1 &
     echo -n "$! " > /var/run/services
 fi
 

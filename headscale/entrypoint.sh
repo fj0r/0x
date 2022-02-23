@@ -38,6 +38,10 @@ if [ ! -z "$BASE_DOMAIN" ]; then
    yq -i e ".dns_config.base_domains = \"${BASE_DOMAIN}\"" /headscale.config.yaml
 fi
 
+if [ ! -z "$GRPC_LISTEN_ADDR" ]; then
+   yq -i e ".grpc_listen_addr = \"${GRPC_LISTEN_ADDR}\"" /headscale.config.yaml
+fi
+
 yq e "(.ip_prefixes += \"${IP_PREFIX:-10.10.0.0/16}\")
       |(.server_url = \"${SERVER_URL:-http://127.0.0.1:8080}\")
       " /headscale.config.yaml > /etc/headscale/config.yaml
