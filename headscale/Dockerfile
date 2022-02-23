@@ -1,4 +1,4 @@
-FROM fj0rd/0x:wg
+FROM fj0rd/io:base
 WORKDIR /app
 
 RUN set -eux \

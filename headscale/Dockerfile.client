@@ -1,6 +1,6 @@
 FROM fj0rd/scratch:tailscale as assets
 
-FROM fj0rd/0x:wg
+FROM fj0rd/io:base
 
 COPY --from=assets /linux_amd64 /usr/local/bin
 COPY --from=assets /derper /usr/local/bin
@@ -16,6 +16,7 @@ RUN set -eux \
 
 EXPOSE 10001
 EXPOSE 3478
+EXPOSE 22
 EXPOSE 53/udp
 ENV WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun
 ENV DERP_HOST=
