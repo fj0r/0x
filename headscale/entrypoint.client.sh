@@ -9,7 +9,7 @@ fi
 
 tailscale up --hostname ${NAME} --login-server ${HOST} ${ARG_AUTH}
 
-if [ ! -z "$DERP_NO_VERIFY_CLIENTS" ]; then
+if [ -z "$DERP_NO_VERIFY_CLIENTS" ]; then
     ARG_VERIFY="-verify-clients"
 fi
 

@@ -34,6 +34,8 @@ Environment=GIN_MODE=release
 [Install]
 WantedBy=multi-user.target
 EOF
+
+sudo systemctl enable --now tailscale.service
 ```
 
 # remote CLI
