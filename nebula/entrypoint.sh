@@ -27,8 +27,18 @@ for i in "${!_@}"; do
         cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
         eval "$cmd &"
         pid="$!"
-        echo "$addr:$port --> $url"
+        echo "tcp:$addr:$port --> $url"
         echo -n "${pid} " >> $piddir/$DAEMON.pid
+    fi
+done
+for i in "${!udp@}"; do
+    port=${i:3}
+    if [ ! -z "$port" ]; then
+        url=$(eval "echo \"\$$i\"")
+        cmd="socat udp-listen:$port,reuseaddr,fork udp:$url"
+        eval "$cmd &"
+        echo -n "$! " >> /var/run/services
+        echo "udp:$addr:$port --> $url"
     fi
 done
 

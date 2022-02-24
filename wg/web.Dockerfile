@@ -15,10 +15,18 @@ RUN set -eux \
 
 FROM fj0rd/0x:wg
 WORKDIR /app
+
 COPY --from=build /target /app
+RUN set -eux \
+  ; coredns_url=$(curl -sSL https://api.github.com/repos/coredns/coredns/releases -H 'Accept: application/vnd.github.v3+json' \
+        | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tgz$') \
+  ; curl -sSL ${coredns_url} | tar zxf - -C /usr/local/bin \
+  ; chmod +x /usr/local/bin/coredns
+
 COPY web.entrypoint.sh /entrypoint.sh
 COPY syncwg.sh /app/syncwg.sh
 
 EXPOSE 8080
+EXPOSE 53/udp
 
 CMD ["/entrypoint.sh"]
