@@ -17,6 +17,7 @@ FROM fj0rd/0x:wg
 WORKDIR /app
 COPY --from=build /target /app
 COPY web.entrypoint.sh /entrypoint.sh
+COPY syncwg.sh /app/syncwg.sh
 
 EXPOSE 8080
 

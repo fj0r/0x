@@ -30,9 +30,16 @@ for i in $(ls /etc/wireguard/ | grep '.*\.conf' | cut -d '.' -f 1); do
 done
 
 ################################################################################
+echo "[$(date -Is)] starting wg-gen-web"
+################################################################################
+cd /app
+./wg-gen-web-linux 2>&1 &
+echo -n "$! " >> /var/run/services
+
+################################################################################
 echo "[$(date -Is)] starting watchexec"
 ################################################################################
-watchexec -p -w /etc/wireguard -- wg syncconf wg0 <(wg-quick strip wg0) 2>&1
+watchexec -w /app/wireguard -- /app/syncwg.sh 2>&1 &
 echo -n "$! " >> /var/run/services
 
 ################################################################################
