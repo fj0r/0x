@@ -25,7 +25,7 @@ FROM fj0rd/io:base
 WORKDIR /world
 
 COPY --from=build /root/assets /usr/local/bin
-COPY entrypoint-lighthouse.sh /entrypoint.sh
+COPY lighthouse.entrypoint.sh /entrypoint.sh
 COPY config.yaml /config.yaml.tmpl
 COPY join /usr/local/bin
 EXPOSE 51821/udp

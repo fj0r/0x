@@ -67,7 +67,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: headscale
-          file: headscale/Dockerfile.client
+          file: headscale/client.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:tailscale
           labels: ${{ steps.meta.outputs.labels }}

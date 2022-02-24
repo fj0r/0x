@@ -4,7 +4,7 @@ FROM fj0rd/io:base
 
 COPY --from=assets /linux_amd64 /usr/local/bin
 COPY --from=assets /derper /usr/local/bin
-COPY entrypoint.client.sh /entrypoint.sh
+COPY client.entrypoint.sh /entrypoint.sh
 
 RUN set -eux \
   ; mkdir -p /var/lib/derper \

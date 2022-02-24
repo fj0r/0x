@@ -12,7 +12,7 @@ RUN set -eux \
 FROM fj0rd/0x:wg
 
 COPY --from=build /root/netclient /usr/local/bin
-COPY entrypoint.client.sh /entrypoint.client.sh
+COPY client.entrypoint.sh /entrypoint.sh
 
 ENV WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun
-ENTRYPOINT ["/entrypoint.client.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
