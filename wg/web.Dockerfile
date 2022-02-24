@@ -1,17 +1,16 @@
-ARG COMMIT="N/A"
-
-FROM fj0rd/io:go AS build-back
+FROM fj0rd/io:go AS build
 WORKDIR /app
 RUN set -eux \
   ; git clone --depth=1 https://github.com/vx3r/wg-gen-web.git /app \
-  ; go build -o wg-gen-web-linux -ldflags="-X 'github.com/vx3r/wg-gen-web/version.Version=${COMMIT}'" github.com/vx3r/wg-gen-web/cmd/wg-gen-web \
+  ; go build -o wg-gen-web-linux github.com/vx3r/wg-gen-web/cmd/wg-gen-web \
   \
+  ; cd ui \
   ; npm install \
-  ; npm run buildO \
+  ; npm run build \
   \
-  ; mkdir /target \
+  ; mkdir -p /target/ui \
   ; cp /app/wg-gen-web-linux /target \
-  ; cp /app/dist /target/ui/dist \
+  ; cp -r /app/ui/dist /target/ui \
   ; cp /app/.env /target
 
 FROM fj0rd/0x:wg
