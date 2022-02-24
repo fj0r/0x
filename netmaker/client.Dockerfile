@@ -14,5 +14,5 @@ FROM fj0rd/0x:wg
 COPY --from=build /root/netclient /usr/local/bin
 COPY client.entrypoint.sh /entrypoint.sh
 
-ENV WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun
+ENV WG_QUICK_USERSPACE_IMPLEMENTATION=/usr/local/bin
 ENTRYPOINT ["/entrypoint.sh"]
