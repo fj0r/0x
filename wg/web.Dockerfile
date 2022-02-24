@@ -16,8 +16,9 @@ RUN set -eux \
 
 FROM fj0rd/0x:wg
 WORKDIR /app
-COPY --fom=build /target /app
+COPY --from=build /target /app
+COPY web.entrypoint.sh /entrypoint.sh
 
 EXPOSE 8080
 
-CMD ["/app/wg-gen-web-linux"]
+CMD ["/entrypoint.sh"]

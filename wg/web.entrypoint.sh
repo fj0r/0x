@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-addrs=""
-for i in $(ls /etc/wireguard/ | grep '.*\.conf' | cut -d '.' -f 1); do
-    wg-quick up $i
-    addrs+="$(ip addr show $i | awk 'NR==3 {print $2}' | cut -d'/' -f 1) "
-done
-
-DAEMON=socat
-
 stop() {
     echo "Received SIGINT or SIGTERM. Shutting down"
     # Get PID
@@ -26,6 +18,26 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
    >> /etc/environment
 
 trap stop SIGINT SIGTERM
+
+################################################################################
+echo "[$(date -Is)] starting wireguard"
+################################################################################
+addrs=""
+
+for i in $(ls /etc/wireguard/ | grep '.*\.conf' | cut -d '.' -f 1); do
+    wg-quick up $i
+    addrs+="$(ip addr show $i | awk 'NR==3 {print $2}' | cut -d'/' -f 1) "
+done
+
+################################################################################
+echo "[$(date -Is)] starting watchexec"
+################################################################################
+watchexec -p -w /etc/wireguard -- wg syncconf wg0 <(wg-quick strip wg0) 2>&1
+echo -n "$! " >> /var/run/services
+
+################################################################################
+echo "[$(date -Is)] starting socat"
+################################################################################
 echo "==> wg addr: ${addrs}"
 for i in "${!_@}"; do
     port=${i:1}
@@ -38,4 +50,5 @@ for i in "${!_@}"; do
     fi
 done
 
+################################################################################
 wait -n $(cat /var/run/services) && exit $?
