@@ -1,4 +1,4 @@
-FROM fj0rd/0x:dropbear-alpine as dropbear
+FROM fj0rd/scratch:dropbear-alpine as dropbear
 
 FROM alpine:3
 COPY --from=dropbear / /

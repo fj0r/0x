@@ -13,11 +13,15 @@ RUN set -eux \
   ; cp -r /app/ui/dist /target/ui \
   ; cp /app/.env /target
 
+FROM fj0rd/scratch:dropbear as dropbear
 FROM fj0rd/0x:wg
 WORKDIR /app
 
+COPY --from=dropbear / /
 COPY --from=build /target /app
 RUN set -eux \
+  ; mkdir /etc/dropbear \
+  \
   ; coredns_url=$(curl -sSL https://api.github.com/repos/coredns/coredns/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tgz$') \
   ; curl -sSL ${coredns_url} | tar zxf - -C /usr/local/bin \
