@@ -46,9 +46,8 @@ echo -n "$! " >> /var/run/services
 ################################################################################
 echo "[$(date -Is)] starting coredns"
 ################################################################################
-if [ ! -z "$COREDNS" ]; then
-    if [ ! -f /app/wireguard/Corefile ]; then
-        cat <<- EOF > /app/wireguard/Corefile
+if [ ! -f /app/wireguard/Corefile ]; then
+    cat <<- EOF > /app/wireguard/Corefile
 . {
 
     import /app/wireguard/zones/*
@@ -65,12 +64,12 @@ if [ ! -z "$COREDNS" ]; then
     log
 }
 EOF
-    fi
+fi
 
-    mkdir -p /app/wireguard/zones
+mkdir -p /app/wireguard/zones
 
-    if [ ! -f /app/wireguard/zones/example ]; then
-        cat <<- EOF >  /app/wireguard/zones/example
+if [ ! -f /app/wireguard/zones/example ]; then
+    cat <<- EOF >  /app/wireguard/zones/example
 template IN A self {
     answer "{{ .Name }} IN A 127.0.0.1"
     fallthrough
@@ -83,11 +82,10 @@ template IN A ip {
     fallthrough
 }
 EOF
-    fi
-
-    /usr/local/bin/coredns -conf /app/wireguard/Corefile 2>&1 &
-    echo -n "$! " >> /var/run/services
 fi
+
+/usr/local/bin/coredns -conf /app/wireguard/Corefile 2>&1 &
+echo -n "$! " >> /var/run/services
 
 ################################################################################
 echo "[$(date -Is)] starting socat"
