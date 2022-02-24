@@ -51,7 +51,7 @@ if [ ! -z "$COREDNS" ]; then
         cat <<- EOF > /app/wireguard/Corefile
 . {
 
-    import zones/*
+    import /app/wireguard/zones/*
 
     #forward . 8.8.8.8 8.8.4.4 {
     #    policy sequential
