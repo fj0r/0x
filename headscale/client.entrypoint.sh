@@ -64,7 +64,6 @@ if [ ! -z "$COREDNS" ]; then
 
     reload 15s
     cache 120
-    errors
     log
 }
 EOF

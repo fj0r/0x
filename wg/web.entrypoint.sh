@@ -60,7 +60,6 @@ if [ ! -f /app/wireguard/Corefile ]; then
 
     reload 15s
     cache 120
-    errors
     log
 }
 EOF

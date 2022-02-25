@@ -30,15 +30,14 @@ cat << EOF > /app/config/dnsconfig/Corefile
 
     import zones/*
 
-    forward . 8.8.8.8 8.8.4.4 {
-        policy sequential
-        prefer_udp
-        expire 10s
-    }
+    #forward . 8.8.8.8 8.8.4.4 {
+    #    policy sequential
+    #    prefer_udp
+    #    expire 10s
+    #}
 
     reload 15s
     cache 120
-    errors
     log
 }
 EOF
