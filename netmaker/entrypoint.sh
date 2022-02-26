@@ -22,12 +22,38 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
 trap stop SIGINT SIGTERM
 
 ################################################################################
+echo "[$(date -Is)] starting netmaker"
+################################################################################
+touch /app/data/netmaker.db
+
+cd /app
+
+REPLACE_MASTER_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 30 ; echo '')
+export MASTER_KEY=${MASTER_KEY:-$REPLACE_MASTER_KEY}
+echo MASTER_KEY[${MASTER_KEY}]
+
+./netmaker 2>&1 &
+echo -n "$! " >> /var/run/services
+
+################################################################################
+echo "[$(date -Is)] starting nginx"
+################################################################################
+bash /generate_config_js.sh > /usr/share/nginx/html/config.js
+
+echo ">>>> backend set to: $BACKEND_URL <<<<<"
+
+
+/usr/sbin/nginx 2>&1 &
+echo -n "$! " >> /var/run/services
+
+################################################################################
 echo "[$(date -Is)] starting coredns"
 ################################################################################
 if [ ! -f /app/data/Corefile ]; then
 cat << EOF > /app/data/Corefile
 . {
 
+    import /app/config/dnsconfig/netmaker.hosts
     import /app/data/zones/*
 
     #forward . 8.8.8.8 8.8.4.4 {
@@ -62,31 +88,6 @@ EOF
 fi
 
 /app/coredns -conf /app/data/Corefile 2>&1 &
-echo -n "$! " >> /var/run/services
-
-################################################################################
-echo "[$(date -Is)] starting netmaker"
-################################################################################
-touch /app/data/netmaker.db
-
-cd /app
-
-REPLACE_MASTER_KEY=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 30 ; echo '')
-export MASTER_KEY=${MASTER_KEY:-$REPLACE_MASTER_KEY}
-echo MASTER_KEY[${MASTER_KEY}]
-
-./netmaker 2>&1 &
-echo -n "$! " >> /var/run/services
-
-################################################################################
-echo "[$(date -Is)] starting nginx"
-################################################################################
-bash /generate_config_js.sh > /usr/share/nginx/html/config.js
-
-echo ">>>> backend set to: $BACKEND_URL <<<<<"
-
-
-/usr/sbin/nginx 2>&1 &
 echo -n "$! " >> /var/run/services
 
 ################################################################################
