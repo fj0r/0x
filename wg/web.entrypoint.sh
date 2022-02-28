@@ -135,7 +135,7 @@ init_ssh () {
 }
 
 init_ssh
-/usr/bin/dropbear -REFms -p 22 &
+/usr/bin/dropbear -REFms -p 22 2>&1 &
 echo -n "$! " >> /var/run/services
 
 ################################################################################
