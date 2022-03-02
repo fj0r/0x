@@ -53,12 +53,13 @@ echo -n "$! " >> /var/run/services
 echo "[$(date -Is)] starting s3fs"
 ################################################################################
 
-echo "${ACCESS_KEY}:${SECRET_KEY}" > /.passwd-s3fs
-s3fs $BUCKET /data \
-    -o passwd_file=/.passwd-s3fs \
-    -o url=$URL \
-    -o endpoint=$ENDPOINT 2>&1 &
+echo -n "${S3ACCESS_KEY}:${S3SECRET_KEY}" > /.passwd-s3fs
+chmod go-rwx /.passwd-s3fs
 
-echo -n "$! " >> /var/run/services
+cmd="s3fs -f -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL -o endpoint=$S3ENDPOINT /data"
+echo $cmd
+eval $cmd 2>&1 &
+#echo -n "$! " >> /var/run/services
 
 wait -n $(cat /var/run/services) && exit $?
+

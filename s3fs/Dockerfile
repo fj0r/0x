@@ -23,7 +23,6 @@ RUN set -eux \
   #      -e 's/# \(en_US.UTF-8 UTF-8\)/\1/' \
   #      -e 's/# \(zh_CN.UTF-8 UTF-8\)/\1/' \
   #; locale-gen \
-  ; sed -i 's/^.*\(%sudo.*\)ALL$/\1NOPASSWD:ALL/g' /etc/sudoers \
   \
   ; mkdir -p /etc/dropbear \
   \
@@ -31,11 +30,12 @@ RUN set -eux \
 
 
 WORKDIR /data
-ENV URL=
-ENV BUCKET=
-ENV ENDPOINT=
-ENV ACCESS_KEY=
-ENV SECRET_KEY=
+ENV S3URL=
+ENV S3BUCKET=
+ENV S3PATH=/
+ENV S3ENDPOINT=
+ENV S3ACCESS_KEY=
+ENV S3SECRET_KEY=
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
