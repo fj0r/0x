@@ -2,6 +2,7 @@ FROM fj0rd/scratch:dropbear as dropbear
 
 FROM debian:bullseye-slim
 COPY --from=dropbear / /
+ENV TIMEZONE=Asia/Shanghai
 
 RUN set -eux \
   ; cp /etc/apt/sources.list /etc/apt/sources.list.ustc \
