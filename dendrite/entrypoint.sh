@@ -25,7 +25,7 @@ trap stop SIGINT SIGTERM
 ################################################################################
 echo "[$(date -Is)] starting dendrite"
 ################################################################################
-if [ ! -z $SERVER_NAME ]; then
+if [ ! -z "$SERVER_NAME" ]; then
     HOST=$(echo "$SERVER_NAME" | sed 's!https*://\(.*\)!\1!' | awk -F':' '{print $1}')
     cat /config.json | \
         sed -e 's!https://matrix\.org!'$SERVER_NAME'!' \
