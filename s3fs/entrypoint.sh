@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -z $STARTUP_SCRIPT ]; then
+if [ ! -z "${STARTUP_SCRIPT}" ]; then
   bash $STARTUP_SCRIPT
 fi
 
@@ -53,10 +53,13 @@ echo -n "$! " >> /var/run/services
 echo "[$(date -Is)] starting s3fs"
 ################################################################################
 
-echo -n "${S3ACCESS_KEY}:${S3SECRET_KEY}" > /.passwd-s3fs
+echo "${S3ACCESS_KEY}:${S3SECRET_KEY}" > /.passwd-s3fs
 chmod go-rwx /.passwd-s3fs
 
-cmd="s3fs -f -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL -o endpoint=$S3ENDPOINT /data"
+if [ ! -z "${S3ENDPOINT}" ]; then
+    _endpoint="-o endpoint=$S3ENDPOINT"
+fi
+cmd="s3fs -f -o use_path_request_style -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL $_endpoint /data"
 echo $cmd
 eval $cmd 2>&1 &
 #echo -n "$! " >> /var/run/services
