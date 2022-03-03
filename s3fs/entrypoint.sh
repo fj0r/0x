@@ -61,8 +61,10 @@ chmod go-rwx /.passwd-s3fs
 
 if [ ! -z "${S3ENDPOINT}" ]; then
     _endpoint="-o endpoint=$S3ENDPOINT"
+else
+    _endpoint="-o use_path_request_style"
 fi
-cmd="s3fs -f -o use_path_request_style -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL $_endpoint /data"
+cmd="s3fs -f -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL $_endpoint /data"
 echo $cmd
 eval $cmd 2>&1 &
 #echo -n "$! " >> /var/run/services
