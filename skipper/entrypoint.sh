@@ -58,9 +58,12 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
 
 trap stop SIGINT SIGTERM
 
-init_ssh
-/usr/bin/dropbear -REFms -p 22 2>&1 &
-echo -n "$! " >> /var/run/services
+__ssh=$(for i in "${!ed25519_@}"; do echo $i; done)
+if [ ! -z "$__ssh" ]; then
+    init_ssh
+    /usr/bin/dropbear -REFms -p 22 2>&1 &
+    echo -n "$! " >> /var/run/services
+fi
 
 
 routes=""
