@@ -3,6 +3,16 @@ if [ ! -z "$STARTUP_SCRIPT" ]; then
   bash $STARTUP_SCRIPT
 fi
 
+
+if [ -e /bin/zsh ]; then
+    __shell=/bin/zsh
+elif [ -e /bin/bash ]; then
+    __shell=/bin/bash
+else
+    __shell=/bin/sh
+fi
+
+
 set_user () {
     IFS=':' read -ra UA <<< "$1"
     _NAME=${UA[0]}
@@ -10,7 +20,7 @@ set_user () {
     _GID=${UA[2]:-1000}
 
     getent group ${_NAME} >/dev/null 2>&1 || groupadd -g ${_GID} ${_NAME}
-    getent passwd ${_NAME} >/dev/null 2>&1 || useradd -m -u ${_UID} -g ${_GID} -G sudo -s /bin/zsh -c "$2" ${_NAME}
+    getent passwd ${_NAME} >/dev/null 2>&1 || useradd -m -u ${_UID} -g ${_GID} -G sudo -s ${__shell} -c "$2" ${_NAME}
 }
 
 init_ssh () {
