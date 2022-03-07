@@ -56,6 +56,17 @@ fi
 echo "[$(date -Is)] starting s3fs"
 ################################################################################
 
+s3opt=""
+for i in "${!s3_@}"; do
+    _key=${i:3}
+    _value=$(eval "echo \$$i")
+    if [ -z "$_value" ]; then
+        s3opt+="-o $_key "
+    else
+        s3opt+="-o $_key=$_value "
+    fi
+done
+
 echo "${S3ACCESS_KEY}:${S3SECRET_KEY}" > /.passwd-s3fs
 chmod go-rwx /.passwd-s3fs
 
@@ -64,7 +75,7 @@ if [ ! -z "${S3ENDPOINT}" ]; then
 else
     _endpoint="-o use_path_request_style"
 fi
-cmd="s3fs -f -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL $_endpoint /data"
+cmd="s3fs -f $s3opt -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL $_endpoint /data"
 echo $cmd
 eval $cmd 2>&1 &
 echo -n "$! " >> /var/run/services
