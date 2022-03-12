@@ -1,7 +1,9 @@
 FROM fj0rd/scratch:dropbear-alpine as dropbear
+FROM fj0rd/scratch:utilities as utilities
 
 FROM alpine:3
 COPY --from=dropbear / /
+COPY --from=utilities /usr/local/bin/xh /usr/local/bin
 
 ARG BUILD_DEPS="\
     binutils \
@@ -29,4 +31,5 @@ RUN set -eux \
 
 COPY entrypoint.sh /
 
+WORKDIR /srv
 ENTRYPOINT /entrypoint.sh
