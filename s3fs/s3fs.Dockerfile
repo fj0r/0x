@@ -37,5 +37,5 @@ ENV S3ENDPOINT=
 ENV S3ACCESS_KEY=
 ENV S3SECRET_KEY=
 
-COPY entrypoint.sh /entrypoint.sh
+COPY s3fs.entrypoint.sh /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
