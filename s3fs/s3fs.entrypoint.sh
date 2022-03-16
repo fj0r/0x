@@ -76,7 +76,8 @@ if [ ! -z "$S3SECRET_KEY" ]; then
     else
         _region="-o use_path_request_style"
     fi
-    cmd="s3fs -f $s3opt -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3ENDPOINT $_region ${S3MOUNTPOINT:/data}"
+    mkdir -p $S3MOUNTPOINT
+    cmd="s3fs -f $s3opt -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3ENDPOINT $_region $S3MOUNTPOINT"
     echo $cmd
     eval $cmd 2>&1 &
     echo -n "$! " >> /var/run/services
