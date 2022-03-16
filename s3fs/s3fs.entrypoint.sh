@@ -53,26 +53,32 @@ if [ ! -z "$__ssh" ]; then
 fi
 
 ################################################################################
+echo "[$(date -Is)] starting s3fs"
 ################################################################################
+
 s3opt=""
 for i in "${!s3_@}"; do
     _key=${i:3}
     _value=$(eval "echo \$$i")
     if [ -z "$_value" ]; then
-        s3opt+="--$_key "
+        s3opt+="-o $_key "
     else
-        s3opt+="--$_key $_value "
+        s3opt+="-o $_key=$_value "
     fi
 done
-# $AWS_ACCESS_KEY_ID
-if [ ! -z "$AWS_SECRET_ACCESS_KEY" ]; then
-    echo "[$(date -Is)] starting goofys"
-    cmd="/usr/local/bin/goofys -f $s3opt --endpoint $S3ENDPOINT $S3BUCKET $S3MOUNTPOINT"
-    echo $cmd
-    eval $cmd 2>&1 &
-    echo -n "$! " >> /var/run/services
-fi
 
-################################################################################
+echo "${S3ACCESS_KEY}:${S3SECRET_KEY}" > /.passwd-s3fs
+chmod go-rwx /.passwd-s3fs
+
+if [ ! -z "${S3ENDPOINT}" ]; then
+    _endpoint="-o endpoint=$S3ENDPOINT"
+else
+    _endpoint="-o use_path_request_style"
+fi
+cmd="s3fs -f $s3opt -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL $_endpoint /data"
+echo $cmd
+eval $cmd 2>&1 &
+echo -n "$! " >> /var/run/services
+
 wait -n $(cat /var/run/services) && exit $?
 
