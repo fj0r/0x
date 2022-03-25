@@ -20,5 +20,5 @@ for i in "${!s3_@}"; do
     fi
 done
 
-cmd="s3fs -f $s3opt -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3URL $_endpoint /data"
+cmd="sudo -u ${S3USER:-root} s3fs -f $s3opt -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3ENDPOINT $_region $S3MOUNTPOINT"
 echo $cmd
