@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-/usr/local/bin/netclient join --name ${NM_NAME} --daemon off -t ${NM_TOKEN}
+/usr/local/bin/netclient join --name ${NM_NAME} --daemon off --network ${NM_NETWORK} -t ${NM_TOKEN}
 addr=$(netclient list | jq -r '.networks[0].current_node.private_ipv4')
 name=$(netclient list | jq -r '.networks[0].name')
 
