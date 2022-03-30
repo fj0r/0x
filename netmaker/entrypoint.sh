@@ -25,6 +25,7 @@ trap stop SIGINT SIGTERM
 echo "[$(date -Is)] starting netmaker"
 ################################################################################
 touch /app/data/netmaker.db
+touch /app/config/dnsconfig/netmaker.hosts
 
 cd /app
 
@@ -52,7 +53,6 @@ echo "[$(date -Is)] starting coredns"
 if [ ! -f /app/data/Corefile ]; then
 cat << EOF > /app/data/Corefile
 . {
-
     import /app/config/dnsconfig/netmaker.hosts
     import /app/data/zones/*
 
