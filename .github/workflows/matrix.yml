@@ -7,7 +7,7 @@ name: matrix
 
 on:
   push:
-    branches: [ main, matrix ]
+    branches: [ matrix ]
 
 env:
   REGISTRY: docker.io
