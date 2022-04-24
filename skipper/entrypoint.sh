@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ ! -z "$STARTUP_SCRIPT" ]; then
-  bash $STARTUP_SCRIPT
+if [ ! -z "${PREBOOT}" ]; then
+  bash $PREBOOT
 fi
 
 
@@ -97,4 +97,7 @@ cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 ${rout
 eval "$cmd &"
 echo -n "$! " >> /var/run/services
 
+if [ ! -z "${POSTBOOT}" ]; then
+  bash $POSTBOOT
+fi
 wait -n $(cat /var/run/services) && exit $?

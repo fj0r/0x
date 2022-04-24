@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ ! -z "${STARTUP_SCRIPT}" ]; then
-  bash $STARTUP_SCRIPT
+if [ ! -z "${PREBOOT}" ]; then
+  bash $PREBOOT
 fi
 
 init_ssh () {
@@ -84,6 +84,10 @@ if [ ! -z "$S3SECRET_KEY" ]; then
     echo $cmd
     eval $cmd 2>&1 &
     echo -n "$! " >> /var/run/services
+fi
+
+if [ ! -z "${POSTBOOT}" ]; then
+  bash $POSTBOOT
 fi
 
 wait -n $(cat /var/run/services) && exit $?
