@@ -5,6 +5,8 @@ FROM alpine:3
 COPY --from=dropbear / /
 COPY --from=utilities /usr/local/bin/xh /usr/local/bin
 
+EXPOSE 80 9911
+
 ARG BUILD_DEPS="\
     binutils \
     "

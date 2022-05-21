@@ -1,5 +1,7 @@
 FROM fj0rd/io:base
 
+EXPOSE 7890 7891
+VOLUME /config
 RUN set -eux \
   #; apt-get update \
   #; DEBIAN_FRONTEND=noninteractive \
