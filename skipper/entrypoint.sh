@@ -4,7 +4,9 @@ if [ ! -z "${PREBOOT}" ]; then
 fi
 
 
-if [ -e /bin/zsh ]; then
+if [ -e /usr/local/bin/nu ]; then
+    __shell=/usr/local/bin/nu
+elif [ -e /bin/zsh ]; then
     __shell=/bin/zsh
 elif [ -e /bin/bash ]; then
     __shell=/bin/bash
