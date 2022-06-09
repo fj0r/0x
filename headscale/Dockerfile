@@ -2,6 +2,10 @@ FROM fj0rd/io:base
 WORKDIR /app
 
 RUN set -eux \
+  ; yq_url=$(curl -sSL https://api.github.com/repos/mikefarah/yq/releases -H 'Accept: application/vnd.github.v3+json' \
+          | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tar') \
+  ; curl -sSL ${yq_url} | tar zxf - && mv yq_linux_amd64 /usr/local/bin/yq \
+  \
   ; hs_url=$(curl -sSL https://api.github.com/repos/juanfont/headscale/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '[.[]|select(.prerelease == false)][].assets[].browser_download_url' | grep 'linux_amd64$' | head -n 1) \
   ; apt-get update \
