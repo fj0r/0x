@@ -7,7 +7,7 @@ name: s3fs
 
 on:
   push:
-    branches: [ main, s3fs ]
+    branches: [ s3fs ]
 
 env:
   REGISTRY: docker.io
