@@ -19,7 +19,12 @@ stop() {
     echo "Done."
 }
 
+env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
+    | grep -Ev '^(_|HOME|USER|LS_COLORS)=' \
+   >> /etc/environment
+
 trap stop SIGINT SIGTERM
+echo "=====> "
 for i in "${!_@}"; do
     port=${i:1}
     if [ ! -z "$port" ]; then
