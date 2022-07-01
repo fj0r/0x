@@ -7,7 +7,7 @@ name: nebula
 
 on:
   push:
-    branches: [ nebula ]
+    branches: [ main, nebula ]
 
 env:
   REGISTRY: docker.io
