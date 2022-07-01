@@ -30,7 +30,6 @@ COPY server.json /etc/v2ray/config.json
 ARG github_header='Accept: application/vnd.github.v3+json'
 ARG github_api=https://api.github.com/repos
 ARG nginx_repo=nginx/nginx
-ARG nchan_repo=slact/nchan
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV DEV_DEPS \
@@ -56,8 +55,6 @@ RUN set -eux \
   ; mkdir njs \
   ; curl -sSL http://hg.nginx.org/njs/archive/tip.tar.gz | tar -zxf - --strip-component=1 -C njs \
   \
-  ; NCHAN_VER=$(curl -sSL $github_api/${nchan_repo}/tags -H $github_header | jq -r '.[0].name' | cut -c 2-) \
-  ; curl -sSL https://github.com/${nchan_repo}/archive/v${NCHAN_VER}.tar.gz | tar -zxf - \
   ; cd nginx-${NGINX_VER} \
   ; ./configure --prefix=/opt/nginx \
         --with-threads \
@@ -77,10 +74,9 @@ RUN set -eux \
         --with-stream_realip_module \
         --with-stream_ssl_preread_module \
 	    --add-module=../njs/nginx \
-        --add-dynamic-module=../nchan-${NCHAN_VER} \
   ; make \
   ; make install \
-  ; cd .. && rm -rf nginx-${NGINX_VER} nchan-${NCHAN_VER} njs \
+  ; cd .. && rm -rf nginx-${NGINX_VER} njs \
   ; ln -fs /opt/nginx/conf /etc/nginx \
   ; mkdir -p /etc/nginx/conf.d \
   ; echo 'shopt -s cdable_vars' >> /root/.bashrc \
