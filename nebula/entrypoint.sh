@@ -82,6 +82,8 @@ if [ ! -z "$NETWORK" ]; then
             | .pki.cert = \"./lighthouse.crt\"
             | .pki.key = \"./lighthouse.key\"
             | .ciphers = \"chachapoly\"
+            | .relay.am_relay = true
+            | .relay.use_relays= false
             | .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"host\": \"any\"}]
         " - > $config
     fi
