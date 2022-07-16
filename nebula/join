@@ -8,6 +8,7 @@ port=${HOST_PORT:-51821}
 
 echo network=${NETWORK} groups="$group" cidr=$VHOST/$vcidr endpoint=$HOST:$port
 
+mkdir -p /nebula/node
 cd /nebula
 nebula-cert sign -name $name -ip $ip/${vcidr} -groups "${group}"
 
@@ -15,8 +16,8 @@ nebula-cert sign -name $name -ip $ip/${vcidr} -groups "${group}"
 cat /nebula/config.yaml.tmpl | yq e "
 .listen.port = 0
 | .lighthouse.am_lighthouse = false
-| .lighthouse.hosts += [\"${VHOST}\"]
-| .static_host_map[\"${VHOST}\"] += [\"${endpoint}\"]
+| .lighthouse.hosts = [\"${VHOST}\"]
+| .static_host_map = {\"${VHOST}\": [\"${HOST}:${port}\"]}
 | .pki.ca = \"$(cat /nebula/ca.crt)\"
 | .pki.cert = \"$(cat /nebula/$name.crt)\"
 | .pki.key = \"$(cat /nebula/$name.key)\"
@@ -24,6 +25,6 @@ cat /nebula/config.yaml.tmpl | yq e "
 | .relay.use_relays = false
 | .relay.relays = [\"${VHOST}\"]
 | .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"host\": \"any\"}]
-" - > /nebula/config/$name.yaml
+" - > /nebula/node/$name.yaml
 
 rm -f $name.{key,crt}

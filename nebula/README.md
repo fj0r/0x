@@ -6,7 +6,6 @@ podman run --rm --name nebula
     -e VHOST=10.11.0.1 \
     --cap-add=NET_ADMIN \
     --cap-add=NET_RAW \
-    --cap-add=NET_BROADCAST \
     --device /dev/net/tun \
     fj0rd/0x:nebula
 ```
