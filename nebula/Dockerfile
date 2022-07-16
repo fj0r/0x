@@ -13,6 +13,12 @@ RUN set -eux \
   ; curl -sSL ${yq_url} | tar zxf - && mv yq_linux_amd64 /root/assets/yq && chmod +x /root/assets/yq \
   \
   ; cd /root/assets \
+  #\
+  #; coredns_url=$(curl -sSL https://api.github.com/repos/coredns/coredns/releases -H 'Accept: application/vnd.github.v3+json' \
+  #      | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tgz$') \
+  #; curl -sSL ${coredns_url} | tar zxf - \
+  #; chmod +x coredns \
+  #; strip -s coredns \
   \
   ; url=$(curl -sSL https://api.github.com/repos/slackhq/nebula/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '.[0].assets[].browser_download_url' | grep linux-amd64) \
