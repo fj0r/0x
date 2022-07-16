@@ -61,7 +61,7 @@ vgroup=${VGROUPS:-default}
 port=${HOST_PORT:-51821}
 
 echo config=$config groups="$vgroup"
-echo network=${NETWORK} cidr=$VHOST/$vcidr endpoint=$HOST_IP:$HOST_PORT
+echo network=${NETWORK} cidr=$VHOST/$vcidr endpoint=$HOST:$port
 
 if [ ! -z "$NETWORK" ]; then
     if [ ! -f /nebula/ca.crt ]; then

@@ -6,7 +6,7 @@ group=${3:-default}
 vcidr=${VCIDR:-16}
 port=${HOST_PORT:-51821}
 
-echo network=${NETWORK} groups="$group" cidr=$VHOST/$vcidr endpoint=$HOST_IP:$HOST_PORT
+echo network=${NETWORK} groups="$group" cidr=$VHOST/$vcidr endpoint=$HOST:$port
 
 cd /nebula
 nebula-cert sign -name $name -ip $ip/${vcidr} -groups "${group}"
@@ -16,7 +16,7 @@ cat /nebula/config.yaml.tmpl | yq e "
 .listen.port = 0
 | .lighthouse.am_lighthouse = false
 | .lighthouse.hosts += [\"${VHOST}\"]
-| .static_host_map[\"${VHOST}\"] += [\"${HOST_IP}:${port}\"]
+| .static_host_map[\"${VHOST}\"] += [\"${endpoint}\"]
 | .pki.ca = \"$(cat /nebula/ca.crt)\"
 | .pki.cert = \"$(cat /nebula/$name.crt)\"
 | .pki.key = \"$(cat /nebula/$name.key)\"
