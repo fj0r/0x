@@ -19,7 +19,8 @@ forward-ports() {
     ################################################################################
     echo "[$(date -Is)] starting socat"
     ################################################################################
-    addr=$(ip addr show nebula1 | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
+    addr=$VHOST
+    #addr=$(ip addr show nebula1 | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
     
     for i in "${!_@}"; do
         port=${i:1}
