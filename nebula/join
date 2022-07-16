@@ -24,6 +24,7 @@ cat /nebula/config.yaml.tmpl | yq e "
 | .relay.am_relay = true
 | .relay.use_relays = false
 | .relay.relays = [\"${VHOST}\"]
+| .tun.dev = null
 | .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"host\": \"any\"}]
 " - > /nebula/node/$name.yaml
 

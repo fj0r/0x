@@ -25,12 +25,11 @@ WORKDIR /nebula
 ENV NVIM_PRESET=core
 
 RUN set -eux \
-  ; nvim_url=$(curl -sSL https://api.github.com/repos/neovim/neovim/releases -H 'Accept: application/vnd.github.v3+json' \
-             | jq -r '.[0].assets[].browser_download_url' | grep -v sha256sum | grep linux64.tar.gz) \
+  ; nvim_url=$(curl -sSL https://api.github.com/repos/neovim/neovim/releases -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].assets[].browser_download_url' | grep -v sha256sum | grep linux64.tar.gz) \
   ; curl -sSL ${nvim_url} | tar zxf - -C /usr/local --strip-components=1 \
   \
-  ; curl -sSL $(curl -sSL https://api.github.com/repos/fj0r/nvim-lua/releases -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].assets[].browser_download_url') \
-    | tar zxf - -C $XDG_CONFIG_HOME --strip-components=1
+  ; config_url=$(curl -sSL https://api.github.com/repos/fj0r/nvim-lua/releases -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].assets[].browser_download_url') \
+  ; curl -sSL ${config_url} | tar zxf - -C $XDG_CONFIG_HOME
 
 COPY --from=build /root/assets /usr/local/bin
 COPY entrypoint.sh /entrypoint.sh
