@@ -29,9 +29,8 @@ RUN set -eux \
              | jq -r '.[0].assets[].browser_download_url' | grep -v sha256sum | grep linux64.tar.gz) \
   ; curl -sSL ${nvim_url} | tar zxf - -C /usr/local --strip-components=1 \
   \
-  ; mkdir -p /root/.config/nvim \
   ; curl -sSL $(curl -sSL https://api.github.com/repos/fj0r/nvim-lua/releases -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].assets[].browser_download_url') \
-    | tar zxf - -C /root/.config/nvim --strip-components=1
+    | tar zxf - -C $XDG_CONFIG_HOME --strip-components=1
 
 COPY --from=build /root/assets /usr/local/bin
 COPY entrypoint.sh /entrypoint.sh
