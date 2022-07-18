@@ -8,7 +8,7 @@ COPY --from=assets / /
 ENV WG_LOG_LEVEL=info \
     WG_THREADS=4 \
     WG_SUDO=1 \
-    WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun
+    WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun-cli
 
 
 RUN apt-get update \
