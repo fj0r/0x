@@ -1,14 +1,15 @@
 [Unit]
-Description=Nebula Client Daemon
+Description=Nebula Client Daemon for %I
 After=network.target
 Wants=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/nebula -config /etc/nebula.yaml
+SyslogIdentifier=nebula
+ExecStart=/usr/local/bin/nebula -config /etc/nebula/%i.yaml
+ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
 RestartSec=20s
-User=nobody
 LimitNOFILE=infinity
 
 [Install]
