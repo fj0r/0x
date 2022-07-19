@@ -99,8 +99,9 @@ if [ ! -z "$NETWORK" ]; then
             | .relay.am_relay = true
             | .relay.use_relays = false
             | .tun.dev = null
+            | .tun.disabled = false
             | .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"host\": \"any\"}]
-            | .sshd = {\"enabled\": true, \"listen\": \"127.0.0.1:2222\", \"host_key\": \"./ssh_host_ed25519_key\", \"authorized_users\": [{\"user\": \"root\", \"keys\": [\"${VSSHKEY}\"]}]}
+            | .sshd = {\"enabled\": true, \"listen\": \"127.0.0.1:2222\", \"host_key\": \"/nebula/ssh_host_ed25519_key\", \"authorized_users\": [{\"user\": \"root\", \"keys\": [\"ssh-ed25519 ${VSSHKEY}\"]}]}
         " - > $config
     fi
 
