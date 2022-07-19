@@ -73,6 +73,10 @@ if [ ! -z "$NETWORK" ]; then
         nebula-cert sign -name lighthouse -ip "${VHOST}/${vcidr}" -groups "${vgroup}"
     fi
     
+    if [ ! -f /nebula/ssh_host_ed25519_key ]; then
+        ssh-keygen -t ed25519 -f /nebula/ssh_host_ed25519_key -N "" < /dev/null
+    fi
+
     if [ ! -f $config ]; then
         cat /nebula/config.yaml.tmpl | yq e "
             .listen.port = ${port}
@@ -87,6 +91,7 @@ if [ ! -z "$NETWORK" ]; then
             | .relay.use_relays = false
             | .tun.dev = null
             | .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"host\": \"any\"}]
+            | .sshd = {\"enabled\": true, \"listen\": \"127.0.0.1:2222\", \"host_key\": \"./ssh_host_ed25519_key\", \"authorized_users\": [{\"user\": \"root\", \"keys\": [\"${VSSHKEY}\"]}]}
         " - > $config
     fi
 
