@@ -44,6 +44,17 @@ forward-ports() {
     done
 }
 
+gen-host-key() {
+    if [ ! -f "$1" ]; then
+        #ssh-keygen -t ed25519 -f /nebula/ssh_host_ed25519_key -N "" < /dev/null
+        dropbearkey -t ed25519 -f $1-bin
+        dropbearkey -y -f $1-bin | awk 'NR==2{print}' > $1.pub
+        dropbearconvert dropbear openssh $1-bin $1
+        rm -f $1-bin
+    fi
+
+}
+
 env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
     | grep -Ev '^(_|HOME|USER|LS_COLORS)=' \
    >> /etc/environment
@@ -73,9 +84,7 @@ if [ ! -z "$NETWORK" ]; then
         nebula-cert sign -name lighthouse -ip "${VHOST}/${vcidr}" -groups "${vgroup}"
     fi
     
-    if [ ! -f /nebula/ssh_host_ed25519_key ]; then
-        ssh-keygen -t ed25519 -f /nebula/ssh_host_ed25519_key -N "" < /dev/null
-    fi
+    gen-host-key /nebula/ssh_host_ed25519_key
 
     if [ ! -f $config ]; then
         cat /nebula/config.yaml.tmpl | yq e "
