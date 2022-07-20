@@ -23,6 +23,7 @@ trap stop SIGINT SIGTERM
 echo "[$(date -Is)] starting wireguard"
 ################################################################################
 addrs=""
+mkdir -p /app/wireguard/
 rsync -a /app/wireguard/wg0.conf /etc/wireguard/wg0.conf
 
 for i in $(ls /etc/wireguard/ | grep '.*\.conf' | cut -d '.' -f 1); do
@@ -35,12 +36,6 @@ echo "[$(date -Is)] starting wg-gen-web"
 ################################################################################
 cd /app
 ./wg-gen-web-linux 2>&1 &
-echo -n "$! " >> /var/run/services
-
-################################################################################
-echo "[$(date -Is)] starting watchexec"
-################################################################################
-watchexec -p -w /app/wireguard -- /app/syncwg.sh 2>&1 &
 echo -n "$! " >> /var/run/services
 
 ################################################################################
