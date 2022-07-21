@@ -26,6 +26,7 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
    >> /etc/environment
 
 trap stop SIGINT SIGTERM
+touch /var/run/services
 echo "==> wg addr: ${addrs}"
 for i in "${!_@}"; do
     port=${i:1}
