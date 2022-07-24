@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
-addrs=""
-for i in $(ls /etc/wireguard/ | grep '.*\.conf' | cut -d '.' -f 1); do
-    wg-quick up $i
-    addrs+="$(ip addr show $i | awk 'NR==3 {print $2}' | cut -d'/' -f 1) "
-done
+/usr/local/bin/netclient join --name ${NM_NAME} --daemon off --network ${NM_NETWORK} -t ${NM_TOKEN}
+addr=$(netclient list | jq -r '.networks[0].current_node.private_ipv4')
+name=$(netclient list | jq -r '.networks[0].name')
 
 DAEMON=socat
 
 stop() {
-    echo "Received SIGINT or SIGTERM. Shutting down"
+    echo "Received SIGINT or SIGTERM. Shutting down $DAEMON"
+    /usr/local/bin/netclient leave -n ${name}
     # Get PID
     pid=$(cat /var/run/services)
     # Set TERM
@@ -27,7 +26,7 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
 
 trap stop SIGINT SIGTERM
 touch /var/run/services
-echo "==> wg addr: ${addrs}"
+echo "==> nm addr: ${addr}"
 for i in "${!_@}"; do
     port=${i:1}
     if [ ! -z "$port" ]; then
@@ -49,4 +48,5 @@ for i in "${!udp@}"; do
     fi
 done
 
+################################################################################
 wait -n $(cat /var/run/services) && exit $?

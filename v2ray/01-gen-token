@@ -1,0 +1,24 @@
+#!/usr/bin/with-contenv sh
+
+
+export V2WSURL=${V2WSURL:-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 19)}
+echo "websocket url is \`/${V2WSURL}\`"
+export V2UUID=${V2UUID:-$(v2ctl uuid)}
+echo "v2ray uuid is \`${V2UUID}\`"
+
+sed -e 's!v2ray-endpoint!'"$V2WSURL"'!' \
+    -e 's!client-json!'"$V2UUID"'!' \
+    -i /etc/nginx/conf.d/default.conf
+
+cat /etc/v2ray/config.json | jq ".inbounds[0].settings.clients[0].id=\"${V2UUID}\" | .inbounds[0].streamSettings.wsSettings.path=\"/${V2WSURL}\"" > /server.json
+mv /server.json /etc/v2ray/config.json
+
+cat /etc/v2ray/client.json \
+| jq " .outbounds[0].settings.vnext[0].users[0].id=\"${V2UUID}\" \
+     | .outbounds[0].settings.vnext[0].users[0].alterId=${V2ALTERID:-64} \
+     | .outbounds[0].settings.vnext[0].address=\"${V2HOST:-localhost}\" \
+     | .outbounds[0].settings.vnext[0].port=${V2PORT:-443} \
+     | .outbounds[0].streamSettings.wsSettings.path=\"/${V2WSURL}\" \
+     | .outbounds[0].streamSettings.tlsSettings.serverName=\"${V2HOST:-localhost}\" \
+     " \
+> /client.json

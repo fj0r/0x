@@ -1,0 +1,12 @@
+[Unit]
+Description=tailscale
+After=network.target
+
+[Service]
+#WorkingDirectory=/etc/tailscale
+ExecStart=/usr/local/bin/tailscaled
+# Disable debug mode
+Environment=GIN_MODE=release
+
+[Install]
+WantedBy=multi-user.target

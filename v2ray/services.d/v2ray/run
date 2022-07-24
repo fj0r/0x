@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv sh
+
+echo >&2 "starting v2ray"
+
+exec /usr/bin/v2ray/v2ray -config=/etc/v2ray/config.json 2>&1
