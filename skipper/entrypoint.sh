@@ -40,15 +40,6 @@ init_ssh () {
         chown ${_AU} -R ${_HOME_DIR}/.ssh
         chmod go-rwx -R ${_HOME_DIR}/.ssh
     done
-
-    # Fix permissions, if writable
-    if [ -w ~/.ssh ]; then
-        chown root:root ~/.ssh && chmod 700 ~/.ssh/
-    fi
-    if [ -w ~/.ssh/authorized_keys ]; then
-        chown root:root ~/.ssh/authorized_keys
-        chmod 600 ~/.ssh/authorized_keys
-    fi
 }
 
 stop() {
@@ -71,7 +62,7 @@ env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
 trap stop SIGINT SIGTERM
 
 __ssh=$(for i in "${!ed25519_@}"; do echo $i; done)
-if [ ! -z "$__ssh" ]; then
+if [ ! -z "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
     init_ssh
     /usr/bin/dropbear -REFems -p 22 2>&1 &
     echo -n "$! " >> /var/run/services
