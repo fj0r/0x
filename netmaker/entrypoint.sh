@@ -56,7 +56,7 @@ cat << EOF > /app/data/Corefile
     import /app/config/dnsconfig/netmaker.hosts
     import /app/data/zones/*
 
-    #forward . 8.8.8.8 8.8.4.4 {
+    #forward . 1.1.1.1 8.8.8.8 {
     #    policy sequential
     #    prefer_udp
     #    expire 10s

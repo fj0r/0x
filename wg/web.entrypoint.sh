@@ -47,7 +47,7 @@ if [ ! -f /app/wireguard/Corefile ]; then
 
     import /app/wireguard/zones/*
 
-    #forward . 8.8.8.8 8.8.4.4 {
+    #forward . 1.1.1.1 8.8.8.8 {
     #    policy sequential
     #    prefer_udp
     #    expire 10s

@@ -27,7 +27,7 @@ echo "[$(date -Is)] starting headscale"
 touch /var/lib/headscale/db.sqlite
 
 if [ ! -z "$NAMESERVER" ]; then
-   yq -i e ".dns_config.nameservers += \"${NAMESERVER:-8.8.8.8}\"" /headscale.config.yaml
+   yq -i e ".dns_config.nameservers += \"${NAMESERVER:-1.1.1.1}\"" /headscale.config.yaml
 fi
 
 if [ ! -z "$DOMAIN" ]; then
