@@ -94,7 +94,7 @@ if [ ! -z "$routes" ]; then
 fi
 
 ################################################################################
-caddyfile="--config ${CADDYFILE:-/caddy.yaml} --adapter yaml"
+caddyfile="--config ${CADDYFILE:-/Caddyfile}"
 
 cmd="/usr/local/bin/caddy run ${caddyfile} ${routes}"
 
