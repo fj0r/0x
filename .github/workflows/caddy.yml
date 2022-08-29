@@ -1,4 +1,4 @@
-name: reproxy
+name: caddy
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: reproxy
 
 on:
   push:
-    branches: [ reproxy ]
+    branches: [ main, caddy ]
 
 env:
   REGISTRY: docker.io
@@ -46,10 +46,10 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - name: build reproxy
+      - name: build caddy core
         uses: docker/build-push-action@v2
         with:
-          context: reproxy
+          context: caddy
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:reproxy
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:caddy
           labels: ${{ steps.meta.outputs.labels }}
