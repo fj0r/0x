@@ -2,7 +2,6 @@ FROM fj0rd/io:base
 
 ARG v2ray_files="\
 v2ray \
-v2ctl \
 geoip.dat \
 geosite.dat \
 "
