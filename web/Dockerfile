@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM ubuntu:jammy
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 
 RUN set -eux \
