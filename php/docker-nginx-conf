@@ -17,7 +17,19 @@ http {
 
     gzip  on;
 
-    js_import bin.js;
+    log_format apm 'time=$time_iso8601 client=$remote_addr '
+               'method=$request_method uri=$request_uri proto=$server_protocol '
+               'req_len=$request_length '
+               'req_time=$request_time '
+               'stat=$status sent=$bytes_sent '
+               'body_sent=$body_bytes_sent '
+               'referer=$http_referer '
+               'ua="$http_user_agent" '
+               'us_addr=$upstream_addr '
+               'us_status=$upstream_status '
+               'ust_res=$upstream_response_time '
+               'ust_conn=$upstream_connect_time '
+               'ust_header=$upstream_header_time';
 
     server {
         set $root             '/srv';
@@ -40,8 +52,8 @@ http {
         proxy_send_timeout    1800s;
         client_max_body_size  10m;
 
-        resolver $ngx_resolver;
-        #access_log  /var/log/nginx/host.access.log  main;
+        #resolver 1.1.1.1;
+        #access_log  /var/log/nginx/access.log   apm;
 
         location / {
             index index.php index.html index.htm;
@@ -58,15 +70,18 @@ http {
             fastcgi_pass unix:/var/run/php/php-fpm.sock;
         }
 
-        location ~ /bin/(.*) {
-            set $op $1;
-            js_content bin.run;
+        location = /info.json {
+            content_by_lua_block {
+                local cjson = require "cjson"
+                local res = {
+                    hostname = os.getenv("HOSTNAME"),
+                    timezone = os.getenv("TIMEZONE"),
+                    version = 1
+                }
+                ngx.say(cjson.encode(res))
+                ngx.exit(200)
+            }
         }
-
-        #location / {
-        #    autoindex on;
-        #    autoindex_format json;
-        #}
 
         location ~ /([0-9]+)/(.*) {
             proxy_pass http://127.0.0.1:$1/$2;
@@ -88,10 +103,6 @@ http {
             root   /usr/share/nginx/html;
         }
 
-        location = /tunnel {
-            proxy_pass  http://127.0.0.1:9999;
-        }
-
         # location /path/to/ {
         #     rewrite ^/path/to/(.*)$ /$1 break;
         #     proxy_set_header Host route.s;
@@ -101,4 +112,3 @@ http {
     }
 
 }
-

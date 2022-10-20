@@ -88,8 +88,8 @@ if [ ! -z "$WEB_ROOT" ]; then
     sed -i 's!\(set $root\).*$!\1 '"\'$WEB_ROOT\'"';!' /etc/openresty/nginx.conf
 fi
 
-#if grep -q '$ngx_resolver' /etc/nginx/nginx.conf; then
-#    sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/nginx/nginx.conf
+#if grep -q '$ngx_resolver' /etc/openresty/nginx.conf; then
+#    sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/openresty/nginx.conf
 #fi
 
 /opt/openresty/bin/openresty 2>&1 &
