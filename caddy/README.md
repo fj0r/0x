@@ -1,3 +1,0 @@
-```
-caddy run --config ../Caddyfile
-```

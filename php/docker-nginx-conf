@@ -1,0 +1,104 @@
+#load_module modules/ngx_nchan_module.so;
+
+daemon off;
+#worker_processes  auto;
+user www-data;
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    sendfile        on;
+
+    keepalive_timeout  0;
+
+    gzip  on;
+
+    js_import bin.js;
+
+    server {
+        set $root             '/srv';
+        listen                80;
+        root                  $root;
+        charset               utf-8;
+       #default_type          application/octet-stream;
+        default_type          application/json;
+
+        proxy_http_version    1.1;
+        proxy_set_header      Host              $host;
+        proxy_set_header      X-Real-IP         $remote_addr;
+        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header      X-Forwarded-Proto $scheme;
+        proxy_set_header      X-Original-URI    $request_uri;
+        proxy_set_header      Connection        "upgrade";
+        proxy_set_header      Upgrade           $http_upgrade;
+        proxy_connect_timeout 1800s;
+        proxy_read_timeout    1800s;
+        proxy_send_timeout    1800s;
+        client_max_body_size  10m;
+
+        resolver $ngx_resolver;
+        #access_log  /var/log/nginx/host.access.log  main;
+
+        location / {
+            index index.php index.html index.htm;
+            if (!-e $request_filename) {
+                rewrite ^(.*)$ /index.php?s=$1 last;
+                break;
+            }
+        }
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_index  index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_pass unix:/var/run/php/php-fpm.sock;
+        }
+
+        location ~ /bin/(.*) {
+            set $op $1;
+            js_content bin.run;
+        }
+
+        #location / {
+        #    autoindex on;
+        #    autoindex_format json;
+        #}
+
+        location ~ /([0-9]+)/(.*) {
+            proxy_pass http://127.0.0.1:$1/$2;
+        }
+
+        location = /favicon.ico {
+            log_not_found off;
+            access_log off;
+        }
+
+        location = /robots.txt {
+            allow all;
+            log_not_found off;
+            access_log off;
+        }
+
+        error_page      500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        location = /tunnel {
+            proxy_pass  http://127.0.0.1:9999;
+        }
+
+        # location /path/to/ {
+        #     rewrite ^/path/to/(.*)$ /$1 break;
+        #     proxy_set_header Host route.s;
+        #     proxy_pass http://route.s;
+        # }
+
+    }
+
+}
+

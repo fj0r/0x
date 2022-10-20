@@ -1,0 +1,47 @@
+version: '3'
+services:
+    or:
+        image: fj0rd/or
+        restart: always
+        ports:
+            - 8080:80
+        volumes:
+            - ./volumes/srv:/srv:rw
+            - ./config-es/nginx/default.conf:/etc/openresty/conf.d/default.conf
+        links:
+            - es
+
+    file:
+        image: nginx
+        restart: always
+        volumes:
+            - ./volumes/srv:/srv:rw
+            - ./config-es/nginx/file.conf:/etc/nginx/conf.d/default.conf
+
+    es:
+        image: fj0rd/java:es
+        restart: always
+        #ports:
+        #    - 9200:9200
+        #    - 9300:9300
+        environment:
+            discovery.type: single-node
+        volumes:
+            - ./volumes/es:/usr/share/elasticsearch/data:rw
+            - ./config-es/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+            - ./config-es/elasticsearch/IKAnalyzer.cfg.xml:/usr/share/elasticsearch/config/analysis-ik/IKAnalyzer.cfg.xml
+        links:
+            - file
+
+
+    logstash:
+        image: fj0rd/java:logstash
+        restart: always
+        links:
+            - es
+        environment:
+            MYSQL_USER: ""
+            MYSQL_PASSWORD: ""
+            MYSQL_URL: ""
+        volumes:
+            - ./config-es/logstash:/usr/share/logstash/config

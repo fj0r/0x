@@ -1,0 +1,61 @@
+#!/bin/bash
+
+if [ ! -z "$UPLOAD_MAX_FILESIZE" ]; then
+    echo "-- \$UPLOAD_MAX_FILESIZE been set to $UPLOAD_MAX_FILESIZE(MB)"
+    sed -i 's!\(upload_max_filesize =\).*!\1 '"$UPLOAD_MAX_FILESIZE"'M!g' /etc/php/*/fpm/php.ini
+    sed -i 's!\(post_max_size =\).*!\1 '"$(($UPLOAD_MAX_FILESIZE * 4))"'M!g' /etc/php/*/fpm/php.ini
+    sed -i 's!\(client_max_body_size \).*!\1 '"$UPLOAD_MAX_FILESIZE"'m;!g' /etc/nginx/nginx.conf
+fi
+
+if [ ! -z "$PHP_FPM_SERVERS" ]; then
+    IFS=',' read -ra php_fpm_servers <<< "$PHP_FPM_SERVERS"
+    _PFSN=${php_fpm_servers[0]}
+    _PFSM=${php_fpm_servers[1]}
+    _PFSS=$[ $_PFSN + ( $_PFSM - $_PFSN ) / 2 ]
+    echo "-- \$PHP_FPM_SERVERS been set to $PHP_FPM_SERVERS, pm.start_servers=${_PFSS}"
+    sed -e 's!.*\(pm.start_servers =\).*$!\1 '"$_PFSS"'!' \
+        -e 's!.*\(pm.min_spare_servers =\).*$!\1 '"$_PFSN"'!' \
+        -e 's!.*\(pm.max_spare_servers =\).*$!\1 '"$_PFSM"'!' \
+        -e 's!.*\(pm.max_children =\).*$!\1 '"$_PFSM"'!' \
+        -i /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+fi
+
+if [ ! -z "$PHP_PROFILE" ] || [ ! -z "$PHP_DEBUG" ]; then
+    mkdir -p /var/log/xdebug
+    chmod 1777 /var/log/xdebug
+fi
+
+if [ ! -z "$PHP_DEBUG" ]; then
+    { \
+      echo 'xdebug.log="/var/log/xdebug/xdebug.log"' ; \
+      echo 'xdebug.mode=debug' ; \
+      echo 'xdebug.remote_handler=dbgp' ; \
+      #echo 'xdebug.discover_client_host=true' ; \
+      echo 'xdebug.client_host=127.0.0.1' ; \
+      echo 'xdebug.client_port=9000' ; \
+    } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
+fi
+
+for i in "${!CONF_PHP_@}"; do
+  k=$(echo ${i:9} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
+  v=$(eval "echo \"\$$i\"")
+  if [ -n "$v" ]; then
+			sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' -i /etc/php/${PHP_VERSION}/fpm/php.ini
+	fi
+done
+
+for i in "${!CONF_FPM_@}"; do
+  k=$(echo ${i:9} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
+  v=$(eval "echo \"\$$i\"")
+  if [ -n "$v" ]; then
+			sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' -i /etc/php/${PHP_VERSION}/fpm/php-fpm.ini
+	fi
+done
+
+for i in "${!CONF_POOL_@}"; do
+  k=$(echo ${i:10} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
+  v=$(eval "echo \"\$$i\"")
+  if [ -n "$v" ]; then
+			sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' -i /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+	fi
+done

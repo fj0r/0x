@@ -1,0 +1,124 @@
+{
+    "template": "goods",
+    "settings": {
+        "analysis": {
+            "filter": {
+                "my_ngram": {
+                    "type": "ngram",
+                    "min_gram": 3,
+                    "max_gram": 3
+                },
+                "cngram": {
+                    "type": "condition",
+                    "filter": [ "my_ngram"  ],
+                    "script": {
+                        "source": "token.getTerm().toString() ==~ /[0-9a-zA-Z]+./ "
+                    }
+                }
+            },
+            "analyzer": {
+                "ik_max" : {
+                    "tokenizer": "ik_max_word",
+                    "filter": ["cngram"]
+                },
+                "ik_smart": {
+                    "tokenizer": "ik_smart",
+                    "filter": ["cngram"]
+                },
+                "pinyin": {
+                    "tokenizer": "my_pinyin"
+                },
+                "trigram": {
+                    "tokenizer": "my_trigram"
+                }
+            },
+            "tokenizer": {
+                "my_pinyin": {
+                    "keep_joined_full_pinyin": "true",
+                    "keep_first_letter": "true",
+                    "keep_separate_first_letter": "true",
+                    "lowercase": "true",
+                    "type": "pinyin",
+                    "limit_first_letter_length": "16",
+                    "keep_original": "true",
+                    "keep_full_pinyin": "true"
+                },
+                "my_trigram": {
+                    "type": "ngram",
+                    "min_gram": 3,
+                    "max_gram": 3,
+                    "token_chars": [
+                        "letter",
+                        "digit"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "goods_name": {
+                "type": "text",
+                "boost": 10.0,
+                "analyzer": "ik_max",
+                "fields": {
+                    "pinyin": {
+                        "type": "text",
+                        "analyzer": "pinyin",
+                        "boost": 10
+                    }
+                }
+            },
+            "brands": {
+                "type": "keyword"
+            },
+            "attrs": {
+                "type": "nested",
+                "properties": {
+                    "key": {
+                        "type": "keyword"
+                    },
+                    "id": {
+                        "type": "keyword"
+                    },
+                    "val": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "brand_name": {
+                "type": "keyword"
+            },
+            "brand_id": {
+                "type": "keyword"
+            },
+            "brand_logo": {
+                "type": "keyword"
+            },
+            "brand_made_in_china": {
+                "type": "keyword"
+            },
+            "cats": {
+                "type": "keyword"
+            },
+            "cat_name": {
+                "type": "keyword"
+            },
+            "cat_id": {
+                "type": "keyword"
+            },
+            "goods_sn": {
+                "type": "text",
+                "fielddata": true,
+                "boost": 12,
+                "analyzer": "trigram"
+            },
+            "gallery": {
+                "type": "keyword"
+            },
+            "cover": {
+                "type": "keyword"
+            }
+        }
+    }
+}

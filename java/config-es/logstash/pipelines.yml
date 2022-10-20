@@ -1,0 +1,4 @@
+- pipeline.id: shop
+  path.config: "config/xmh-shop.cfg"
+# - pipeline.id: shop-attr
+#   path.config: "config/xmh-shop-attr.cfg"
