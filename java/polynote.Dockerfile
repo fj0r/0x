@@ -1,4 +1,4 @@
-FROM fj0rd/ng:java11
+FROM fj0rd/0x:java11
 #https://github.com/mbari-org/docker-polynote/blob/master/Dockerfile.jdk11
 
 WORKDIR /opt

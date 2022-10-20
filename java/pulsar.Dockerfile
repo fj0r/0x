@@ -1,4 +1,4 @@
-FROM fj0rd/ng:java17 as build
+FROM fj0rd/0x:java17 as build
 
 WORKDIR /pulsar
 RUN set -eux \
@@ -13,7 +13,7 @@ RUN set -eux \
   # ; pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 
-FROM fj0rd/ng:java17
+FROM fj0rd/0x:java17
 ENV PATH=/pulsar/bin:$PATH
 WORKDIR /pulsar
 COPY --from=build /opt/pulsar /pulsar

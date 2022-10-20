@@ -1,4 +1,4 @@
-FROM fj0rd/ng:pg
+FROM fj0rd/0x:pg
 
 RUN set -eux \
   ; build_dir=/root/build \

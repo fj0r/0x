@@ -1,4 +1,4 @@
-FROM fj0rd/ng
+FROM fj0rd/0x
 
 ARG php_version=8.1
 ENV PHP_VERSION=${php_version}

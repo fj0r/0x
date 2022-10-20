@@ -1,4 +1,4 @@
-FROM fj0rd/ng:pg
+FROM fj0rd/0x:pg
 
 # https://github.com/postgis/docker-postgis/blob/master/13-3.1/Dockerfile
 ENV POSTGIS_MAJOR 3
