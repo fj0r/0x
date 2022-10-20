@@ -52,6 +52,6 @@ jobs:
           context: ngx
           file: ngx/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:x
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ng
           labels: ${{ steps.meta.outputs.labels }}
 
