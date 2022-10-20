@@ -72,7 +72,7 @@ RUN set -eux \
         --with-stream_ssl_module \
         --with-stream_realip_module \
         --with-stream_ssl_preread_module \
-        --with-http_postgres_module \
+        #--with-http_postgres_module \
         --add-dynamic-module=../nginx-upload \
         --add-dynamic-module=../nchan \
         --http-log-path=/var/log/nginx/access.log \
