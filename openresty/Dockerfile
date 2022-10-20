@@ -80,7 +80,7 @@ RUN set -eux \
   ; make \
   ; make install \
   \
-  ; rm -rf $build_dir \
+  ; cd ../../ && rm -rf $build_dir \
   ; opm install ledgetech/lua-resty-http \
   ; opm install SkyLothar/lua-resty-jwt \
   #; opm install duhoobo/lua-resty-smtp \
