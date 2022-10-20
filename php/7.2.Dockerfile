@@ -51,7 +51,7 @@ RUN set -eux \
         -i /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
   ; mkdir -p /var/run/php
 
-COPY docker-nginx-conf /etc/nginx/nginx.conf
+COPY docker-nginx-conf /etc/openresty/nginx.conf
 COPY setup-php /setup-php
 COPY entrypoint.sh /entrypoint.sh
 

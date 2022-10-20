@@ -81,8 +81,8 @@ RUN set -eux \
         #--with-http_postgres_module \
         --add-dynamic-module=../nginx-upload \
         --add-dynamic-module=../nchan \
-        --http-log-path=/var/log/nginx/access.log \
-        --error-log-path=/var/log/nginx/error.log \
+        --http-log-path=/var/log/openresty/access.log \
+        --error-log-path=/var/log/openresty/error.log \
   ; make \
   ; make install \
   \
@@ -91,7 +91,6 @@ RUN set -eux \
   ; opm install SkyLothar/lua-resty-jwt \
   #; opm install duhoobo/lua-resty-smtp \
   ; ln -fs /opt/openresty/nginx/conf /etc/openresty \
-  ; mkdir -p /etc/nginx/conf.d \
   ; echo 'shopt -s cdable_vars' >> /root/.bashrc \
   \
   ; apt-get -y remove ${BUILD_DEPS} \
@@ -99,7 +98,6 @@ RUN set -eux \
 
 COPY entrypoint.sh /entrypoint.sh
 COPY config /etc/openresty
-#COPY reload-nginx /usr/local/bin
 WORKDIR /srv
 
 VOLUME [ "/srv" ]
