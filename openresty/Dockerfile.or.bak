@@ -65,9 +65,8 @@ RUN set -eux \
   ; mv $nvim_home/pack /opt/vim \
   ; ln -sf /opt/vim/pack $nvim_home \
   \
-  ; coc_lua_bin_repo=josa42/coc-lua-binaries \
-  ; lua_ls_ver=$(curl -sSL -H "'$github_header'" $github_api/${coc_lua_bin_repo}/releases | jq -r '.[0].tag_name') \
-  ; lua_ls_url=https://github.com/${coc_lua_bin_repo}/releases/download/${lua_ls_ver}/lua-language-server-linux.tar.gz \
+  ; lua_ls_url=$(curl -sSL https://api.github.com/repos/sumneko/lua-language-server/releases -H 'Accept: application/vnd.github.v3+json' \
+               | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux-x64') \
   ; mkdir -p /opt/language-server/sumneko_lua \
   ; curl -sSL ${lua_ls_url} | tar zxf - \
       -C /opt/language-server/sumneko_lua \
