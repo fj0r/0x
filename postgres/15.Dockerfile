@@ -59,14 +59,14 @@ RUN set -eux \
   ; mkdir -p $build_dir \
   \
   ; cd $build_dir \
-  ; git clone https://github.com/adjust/clickhouse_fdw.git \
+  ; git clone --depth=1 https://github.com/adjust/clickhouse_fdw.git \
   ; cd clickhouse_fdw \
   ; mkdir build && cd build \
   ; cmake .. \
   ; make && make install \
   \
   #; cd $build_dir \
-  #; git clone https://github.com/jaiminpan/pg_jieba \
+  #; git clone --depth=1 https://github.com/jaiminpan/pg_jieba \
   #; cd pg_jieba \
   #; git submodule update --init --recursive  \
   #; mkdir build \
