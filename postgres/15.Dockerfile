@@ -32,7 +32,7 @@ RUN set -eux \
       postgresql-${PG_MAJOR}-rum \
       postgresql-${PG_MAJOR}-similarity \
       postgresql-${PG_MAJOR}-rational \
-      #postgresql-${PG_MAJOR}-cron \
+      postgresql-${PG_MAJOR}-cron \
       postgresql-${PG_MAJOR}-extra-window-functions \
       postgresql-${PG_MAJOR}-first-last-agg \
       postgresql-${PG_MAJOR}-ip4r \
