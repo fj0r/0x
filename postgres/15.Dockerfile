@@ -28,6 +28,7 @@ RUN set -eux \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends \
       postgresql-plpython3-${PG_MAJOR} \
+      postgresql-${PG_MAJOR}-mysql-fdw \
       postgresql-${PG_MAJOR}-wal2json \
       postgresql-${PG_MAJOR}-rum \
       postgresql-${PG_MAJOR}-similarity \
