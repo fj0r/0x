@@ -1,5 +1,5 @@
 #!/bin/sh
 
-echo fetch ${HOST}/setup.sh
-echo host:${HOST}
+echo \# ${HOST}/setup.sh
+echo - replace all \"$\{HOST}\" to \"${HOST}\"
 
