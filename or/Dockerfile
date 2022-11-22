@@ -4,8 +4,6 @@ RUN apk update \
   ; apk add --no-cache --virtual .build-deps \
         build-base \
         coreutils \
-        curl \
-        jq \
         linux-headers \
         make \
         perl-dev \
@@ -17,6 +15,8 @@ RUN apk update \
         libgcc \
         pcre \
         zlib \
+        curl \
+        jq \
   \
   ; build_dir=/tmp/build \
   ; mkdir -p $build_dir \
