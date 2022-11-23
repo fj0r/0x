@@ -20,22 +20,6 @@ RUN set -eux \
     apt-get install -y --no-install-recommends \
     $DEV_DEPS $BUILD_DEPS s3fs \
   \
-  ; git config --global pull.rebase false \
-  ; git config --global init.defaultBranch main \
-  ; git config --global user.name "unnamed" \
-  ; git config --global user.email "unnamed@container" \
-  \
-  ; nvim_url=$(curl -sSL https://api.github.com/repos/neovim/neovim/releases -H 'Accept: application/vnd.github.v3+json' \
-             | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep -v sha256sum | grep linux64.tar.gz) \
-  ; mkdir -p /usr/local \
-  ; curl -sSL ${nvim_url} | tar zxf - -C /usr/local --strip-components=1 \
-  ; strip /usr/local/bin/nvim \
-  ; rm -rf $XDG_CONFIG_HOME/nvim \
-  ; git clone --depth=1 https://github.com/fj0r/nvim-lua.git $XDG_CONFIG_HOME/nvim \
-  ; git clone --depth=1 https://github.com/wbthomason/packer.nvim $XDG_CONFIG_HOME/nvim/pack/packer/start/packer.nvim \
-  ; nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync' \
-  ; rm -rf $XDG_CONFIG_HOME/nvim/pack/packer/*/*/.git \
-  \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
   \
