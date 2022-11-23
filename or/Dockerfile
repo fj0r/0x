@@ -17,6 +17,7 @@ RUN apk update \
         zlib \
         curl \
         jq \
+        zstd \
   \
   ; build_dir=/tmp/build \
   ; mkdir -p $build_dir \
