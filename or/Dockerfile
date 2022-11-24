@@ -14,6 +14,7 @@ RUN apk update \
         zlib-dev \
         openssl-dev \
         pcre-dev \
+        perl \
   ; apk add --no-cache \
         libgcc \
         pcre \
@@ -55,9 +56,10 @@ RUN apk update \
   ; ln -sf /dev/stderr /opt/openresty/nginx/logs/error.log \
   \
   ; cd ../../ && rm -rf $build_dir \
-  ; apk del .build-deps \
-  ; mkdir -p /var/run/openresty \
   ; opm install ledgetech/lua-resty-http \
+  ; apk del .build-deps \
+  #; mkdir -p /var/run/openresty \
+  ; adduser -SDH www-data -G www-data -h /srv \
   ; ln -fs /opt/openresty/nginx/conf /etc/openresty
 
 COPY config /etc/openresty
