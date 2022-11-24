@@ -7,7 +7,7 @@ name: build web
 
 on:
   push:
-    branches: [ main, or ]
+    branches: [ main, web ]
 
 env:
   REGISTRY: docker.io
