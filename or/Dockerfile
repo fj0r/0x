@@ -1,5 +1,8 @@
 FROM alpine
 
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
+ENV PATH=/opt/openresty/bin:$PATH
+
 RUN apk update \
   ; apk add --no-cache --virtual .build-deps \
         build-base \
@@ -53,8 +56,8 @@ RUN apk update \
   \
   ; cd ../../ && rm -rf $build_dir \
   ; apk del .build-deps \
-  #; mkdir -p /var/run/openresty \
-  #; opm install ledgetech/lua-resty-http \
+  ; mkdir -p /var/run/openresty \
+  ; opm install ledgetech/lua-resty-http \
   ; ln -fs /opt/openresty/nginx/conf /etc/openresty
 
 COPY config /etc/openresty
