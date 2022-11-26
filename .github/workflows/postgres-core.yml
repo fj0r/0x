@@ -40,12 +40,12 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build postgres
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: postgres
           file: postgres/core.Dockerfile
@@ -54,7 +54,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       #- name: Build pgis
-      #  uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      #  uses: docker/build-push-action@v3
       #  with:
       #    context: postgres
       #    file: postgres/gis.Dockerfile

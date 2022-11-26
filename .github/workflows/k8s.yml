@@ -40,12 +40,12 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v2
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build k8s
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: k8s
           file: k8s/Dockerfile
