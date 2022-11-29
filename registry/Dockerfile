@@ -1,4 +1,4 @@
-FROM fj0rd/io:base
+FROM fj0rd/io:base as reg
 
 RUN set -eux \
   ; reg_url=$(curl -sSL https://api.github.com/repos/distribution/distribution/releases -H 'Accept: application/vnd.github.v3+json' \
@@ -8,7 +8,13 @@ RUN set -eux \
   ; curl -sSL ${reg_url} | tar zxvf - -C /usr/local/bin registry
 
 
-COPY ./config.yml /etc/docker/registry/config.yml
+FROM fj0rd/0x:or
+COPY --from=reg /usr/local/bin/registry /usr/local/bin
+COPY config.yml /etc/docker/registry/config.yml
+COPY nginx.conf /etc/openresty/nginx.conf
+
+ENV REGISTRY_STORAGE_DELETE_ENABLED=true
+ENV PROXY_REMOTE_URL=https://docker.io
 
 VOLUME ["/var/lib/registry"]
 EXPOSE 80 5000
