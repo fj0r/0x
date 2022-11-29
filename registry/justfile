@@ -1,0 +1,13 @@
+test:
+    #!/bin/bash
+    podman run -it --rm --name=test-registry \
+        -v $PWD/admin.conf:/etc/openresty/admin.conf \
+        -v $PWD/nginx.conf:/etc/openresty/nginx.conf \
+        -p 5000:5000 \
+        fj0rd/0x:registry
+
+push:
+    #!/bin/bash
+    podman tag fj0rd/0x:registry localhost:5000/0x:registry
+    podman push localhost:5000/0x:registry
+    podman rmi localhost:5000/0x:registry
