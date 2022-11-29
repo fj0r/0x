@@ -12,6 +12,7 @@ FROM fj0rd/0x:or
 COPY --from=reg /usr/local/bin/registry /usr/local/bin
 COPY config.yml /etc/docker/registry/config.yml
 COPY nginx.conf /etc/openresty/nginx.conf
+COPY admin.conf /etc/openresty/admin.conf
 
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true
 ENV PROXY_REMOTE_URL=https://docker.io
