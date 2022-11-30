@@ -18,6 +18,7 @@ ENV PHP_PKGS \
         php${PHP_VERSION}-bcmath \
         php${PHP_VERSION}-intl \
         php${PHP_VERSION}-redis \
+        php${PHP_VERSION}-ast \
         php${PHP_VERSION}-xdebug
 
 RUN set -eux \
