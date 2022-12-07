@@ -16,6 +16,15 @@ ENV BUILD_DEPS \
     libkrb5-dev \
     postgresql-server-dev-${PG_MAJOR}
 
+#ENV BUILD_CITUS_DEPS \
+#    libicu-dev \
+#    liblz4-dev \
+#    libpam0g-dev \
+#    libreadline-dev \
+#    libselinux1-dev \
+#    libxslt-dev \
+#    libzstd-dev
+
 ENV XDG_CONFIG_HOME=/etc
 #ENV LANG zh_CN.utf8
 ENV TIMEZONE=Asia/Shanghai
@@ -114,6 +123,10 @@ RUN set -eux \
   #\
   \
   ; rm -rf $build_dir \
+  \
+  ; mkdir -p /opt/pg_flame \
+  ; curl -sSL https://github.com/fj0r/pg_flame/releases/latest/download/pg_flame.tar.zst \
+    | zstd -d | tar -xf - -C /opt/pg_flame \
   \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \

@@ -1,4 +1,4 @@
-name: build postgres
+name: build postgres 14
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -44,20 +44,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build pg
+      - name: Build pg 14
         uses: docker/build-push-action@v3
         with:
           context: postgres
+          file: postgres/14.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build pgis
-        uses: docker/build-push-action@v3
-        with:
-          context: postgres
-          file: postgres/gis.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pgis
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg14
           labels: ${{ steps.meta.outputs.labels }}
 
