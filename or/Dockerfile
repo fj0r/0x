@@ -3,7 +3,8 @@ FROM alpine
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV PATH=/opt/openresty/bin:$PATH
 
-RUN apk update \
+RUN set -eux \
+  ; apk update \
   ; apk add --no-cache --virtual .build-deps \
         build-base \
         coreutils \
@@ -57,7 +58,7 @@ RUN apk update \
   \
   ; cd ../../ && rm -rf $build_dir \
   ; opm install ledgetech/lua-resty-http \
-  ; opm install openresty/lua-resty-shell \
+  ; opm install jprjr/lua-resty-exec \
   ; apk del .build-deps \
   #; mkdir -p /var/run/openresty \
   ; adduser -SDH www-data -G www-data -h /srv \
