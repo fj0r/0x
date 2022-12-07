@@ -57,6 +57,7 @@ RUN apk update \
   \
   ; cd ../../ && rm -rf $build_dir \
   ; opm install ledgetech/lua-resty-http \
+  ; opm install openresty/lua-resty-shell \
   ; apk del .build-deps \
   #; mkdir -p /var/run/openresty \
   ; adduser -SDH www-data -G www-data -h /srv \

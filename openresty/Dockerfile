@@ -66,6 +66,7 @@ RUN set -eux \
   \
   ; cd ../../ && rm -rf $build_dir \
   ; opm install ledgetech/lua-resty-http \
+  ; opm install openresty/lua-resty-shell \
   ; opm install SkyLothar/lua-resty-jwt \
   #; opm install duhoobo/lua-resty-smtp \
   ; ln -fs /opt/openresty/nginx/conf /etc/openresty \
