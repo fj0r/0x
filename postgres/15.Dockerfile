@@ -8,6 +8,7 @@ ENV BUILD_DEPS \
     pkg-config \
     lsb-release \
     libcurl4-openssl-dev \
+    libicu-dev \
     uuid-dev \
     build-essential \
     libpq-dev \
@@ -84,7 +85,7 @@ RUN set -eux \
   ; cd $build_dir \
   ; git clone --depth=1 https://github.com/timescale/timescaledb.git \
   ; cd timescaledb \
-  ; git checkout master \
+  ; git checkout main \
   ; ./bootstrap \
   ; cd build && make \
   ; make install \
