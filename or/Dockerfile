@@ -58,7 +58,6 @@ RUN set -eux \
   \
   ; cd ../../ && rm -rf $build_dir \
   ; opm install ledgetech/lua-resty-http \
-  ; opm install jprjr/lua-resty-exec \
   ; apk del .build-deps \
   #; mkdir -p /var/run/openresty \
   ; adduser -SDH www-data -G www-data -h /srv \

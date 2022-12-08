@@ -11,11 +11,14 @@ if METHOD == 'GET' then
     end
     ngx.exit(200)
 elseif METHOD == 'GC' then
-    -- registry garbage-collect /etc/docker/registry/config.yml
-    local exec = require'resty.exec'
-    local prog = exec.new('/tmp/exec.sock')
-    local res, err = prog('pwd')
-    ngx.say(res.stdout)
+    local shell = require "resty.shell"
+    local stdin = "hello"
+    local timeout = 1000  -- ms
+    local max_size = 4096  -- byte
+    -- /usr/local/bin/registry garbage-collect /etc/docker/registry/config.yml
+    local ok, stdout, stderr, reason, status =
+        shell.run([[ps]], stdin, timeout, max_size)
+    ngx.say(stdout)
     ngx.exit(200)
 else
     local split = function (str, sep)
