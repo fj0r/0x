@@ -1,13 +1,42 @@
-test:
+srv:
     #!/bin/bash
-    podman run -it --rm --name=test-registry \
-        -v $PWD/config.yml:/etc/docker/registry/config.yml \
+    podman run -d --rm --name=test-registry \
+        -v $HOME/temp/registry:/var/lib/registry \
         -v $PWD/admin.conf:/etc/openresty/admin.conf \
+        -v $PWD/lua:/etc/openresty/lua \
         -p 5000:5000 \
         fj0rd/0x:registry
 
+restart:
+    podman rm -f test-registry
+    just srv
+
+clean:
+    podman rm -f test-registry
+    rm -rf $HOME/temp/registry
+
+test:
+    curl localhost:5000/v2/_catalog
+    curl localhost:5000/admin/list
+
 push:
     #!/bin/bash
-    podman tag fj0rd/0x:registry localhost:5000/0x:registry
+    podman tag 0x:registry localhost:5000/0x:registry
     podman push localhost:5000/0x:registry
     podman rmi localhost:5000/0x:registry
+
+    podman tag 0x:latest localhost:5000/0x:latest
+    podman push localhost:5000/0x:latest
+    podman rmi localhost:5000/0x:latest
+
+    podman tag io:latest localhost:5000/io:latest
+    podman push localhost:5000/io:latest
+    podman rmi localhost:5000/io:latest
+
+    podman tag io:latest localhost:5000/a/b/c/io:latest
+    podman push localhost:5000/a/b/c/io:latest
+    podman rmi localhost:5000/a/b/c/io:latest
+
+    podman tag io:latest localhost:5000/a/b/c/io:xyz
+    podman push localhost:5000/a/b/c/io:xyz
+    podman rmi localhost:5000/a/b/c/io:xyz
