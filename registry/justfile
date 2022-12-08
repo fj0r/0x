@@ -1,3 +1,11 @@
+test:
+    #!/bin/bash
+    #curl localhost:5000/v2/_catalog
+    curl localhost:5000/admin/deletion
+
+list:
+    curl localhost:5000/admin/list | jq -r
+
 srv:
     #!/bin/bash
     podman run -d --rm --name=test-registry \
@@ -15,9 +23,6 @@ clean:
     podman rm -f test-registry
     rm -rf $HOME/temp/registry
 
-test:
-    curl localhost:5000/v2/_catalog
-    curl localhost:5000/admin/list
 
 push:
     #!/bin/bash
@@ -40,3 +45,15 @@ push:
     podman tag io:latest localhost:5000/a/b/c/io:xyz
     podman push localhost:5000/a/b/c/io:xyz
     podman rmi localhost:5000/a/b/c/io:xyz
+
+    podman tag ubuntu:latest localhost:5000/docker.io/ubuntu:latest
+    podman push localhost:5000/docker.io/ubuntu:latest
+    podman rmi localhost:5000/docker.io/ubuntu:latest
+
+    podman tag 0x:latest localhost:5000/docker.io/ubuntu:test
+    podman push localhost:5000/docker.io/ubuntu:test
+    podman rmi localhost:5000/docker.io/ubuntu:test
+
+    podman tag 0x:registry localhost:5000/docker.io/ubuntu:test1
+    podman push localhost:5000/docker.io/ubuntu:test1
+    podman rmi localhost:5000/docker.io/ubuntu:test1
