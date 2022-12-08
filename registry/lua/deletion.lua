@@ -15,9 +15,8 @@ elseif METHOD == 'GC' then
     local stdin = "hello"
     local timeout = 1000  -- ms
     local max_size = 4096  -- byte
-    -- /usr/local/bin/registry garbage-collect /etc/docker/registry/config.yml
     local ok, stdout, stderr, reason, status =
-        shell.run([[ps]], stdin, timeout, max_size)
+        shell.run([[/usr/local/bin/registry garbage-collect /etc/docker/registry/config.yml]], stdin, timeout, max_size)
     ngx.say(stdout)
     ngx.exit(200)
 else
