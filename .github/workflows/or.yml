@@ -7,7 +7,7 @@ name: build openresty
 
 on:
   push:
-    branches: [ main, or ]
+    branches: [ main, or, web ]
 
 env:
   REGISTRY: docker.io
