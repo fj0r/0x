@@ -5,6 +5,7 @@ local tags = {}
 for _, r in pairs(repos) do
     local res, err = ngx.location.capture("/v2/"..r.."/tags/list")
     local ts = json.decode(res.body).tags
+    --ngx.say(json.encode(ts))
     tags[r] = {}
     for _, t in pairs(ts) do
         local m, err = ngx.location.capture("/v2/"..r.."/manifests/"..t)
