@@ -1,5 +1,6 @@
 local json = require('cjson')
-if ngx.req.get_method() == 'GET' then
+local METHOD = ngx.req.get_method()
+if METHOD == 'GET' then
     local res, err = ngx.location.capture("/admin/list", {method = ngx.HTTP_GET})
     local d = json.decode(res.body)
     local retain = ngx.req.get_uri_args().retain
@@ -8,6 +9,14 @@ if ngx.req.get_method() == 'GET' then
             ngx.say(item.created..'\t'..repo..':'..item.tag)
         end
     end
+    ngx.exit(200)
+elseif METHOD == 'GC' then
+    -- registry garbage-collect /etc/docker/registry/config.yml
+    local exec = require'resty.exec'
+    local prog = exec.new('/tmp/exec.sock')
+    local res, err = prog('pwd')
+    ngx.say(res.stdout)
+    ngx.exit(200)
 else
     local split = function (str, sep)
         local r = {}
@@ -25,5 +34,6 @@ else
         ngx.location.capture('/v2/'..t[1]..'/manifests/'..digest, {method = ngx.HTTP_DELETE})
         ngx.say('delete> '..t[1]..':'..t[2]..'['.. digest ..']')
     end
+    ngx.exit(200)
 end
 

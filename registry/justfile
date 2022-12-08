@@ -1,9 +1,12 @@
-test :
+del r="2":
     #!/bin/bash
-    just deletion 1 | curl -sSL -X POST localhost:5000/admin/deletion --data-binary @-
+    just deletion {{r}} | curl -sSL -X POST localhost:5000/admin/deletion --data-binary @-
 
 deletion r="1":
     @curl -sSL localhost:5000/admin/deletion?retain={{r}}
+
+gc:
+    @curl -sSL -X GC localhost:5000/admin/deletion
 
 list:
     curl localhost:5000/admin/list | jq -r
