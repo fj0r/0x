@@ -13,6 +13,7 @@ COPY --from=reg /usr/local/bin/registry /usr/local/bin
 COPY config.yml /etc/docker/registry/config.yml
 COPY nginx.conf /etc/openresty/nginx.conf
 COPY admin.conf /etc/openresty/admin.conf
+COPY daily-job  /daily-job
 COPY lua /etc/openresty/lua
 
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true
