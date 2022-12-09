@@ -25,6 +25,12 @@ clean:
     podman rm -f test-registry
     rm -rf $HOME/temp/registry
 
+sync:
+    #!/bin/bash
+    pod=$(kubectl get pod -l app.kubernetes.io/instance=registry -o jsonpath="{.items[0].metadata.name}")
+    kubectl cp lua/list.lua $pod:/etc/openresty/lua/list.lua
+    kubectl exec $pod -- /opt/openresty/bin/openresty -s reload
+
 
 push:
     #!/bin/bash
