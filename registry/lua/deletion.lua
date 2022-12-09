@@ -10,15 +10,6 @@ if METHOD == 'GET' then
         end
     end
     ngx.exit(200)
-elseif METHOD == 'GC' then
-    local shell = require "resty.shell"
-    local stdin = "hello"
-    local timeout = 1000  -- ms
-    local max_size = 4096  -- byte
-    local ok, stdout, stderr, reason, status =
-        shell.run([[/usr/local/bin/registry garbage-collect --delete-untagged /etc/docker/registry/config.yml]], stdin, timeout, max_size)
-    ngx.say(stdout)
-    ngx.exit(200)
 else
     local split = function (str, sep)
         local r = {}
@@ -33,9 +24,18 @@ else
         local t = split(split(s, '\t')[2], ':')
         ngx.req.set_header('Accept', 'application/vnd.docker.distribution.manifest.v2+json')
         local digest = ngx.location.capture('/v2/'..t[1]..'/manifests/'..t[2]).header['Docker-Content-Digest']
+        ngx.say('---------delete > '..t[1]..':'..t[2]..'['.. digest ..']')
         ngx.location.capture('/v2/'..t[1]..'/manifests/'..digest, {method = ngx.HTTP_DELETE})
-        ngx.say('delete> '..t[1]..':'..t[2]..'['.. digest ..']')
     end
+
+    ngx.say('---------garbage-collect---------')
+    local shell = require "resty.shell"
+    local stdin = "hello"
+    local timeout = 1000  -- ms
+    local max_size = 4096  -- byte
+    local ok, stdout, stderr, reason, status =
+        shell.run([[/usr/local/bin/registry garbage-collect --delete-untagged /etc/docker/registry/config.yml]], stdin, timeout, max_size)
+    ngx.say(stdout)
     ngx.exit(200)
 end
 

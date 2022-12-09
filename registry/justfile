@@ -5,9 +5,6 @@ del r="2":
 deletion r="1":
     @curl -sSL localhost:5000/admin/deletion?retain={{r}}
 
-gc:
-    @curl -sSL -X GC localhost:5000/admin/deletion
-
 list:
     curl localhost:5000/admin/list | jq -r
 
