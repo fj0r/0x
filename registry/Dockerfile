@@ -14,7 +14,7 @@ COPY config.yml /etc/docker/registry/config.yml
 COPY nginx.conf /etc/openresty/nginx.conf
 COPY admin.conf /etc/openresty/admin.conf
 COPY daily-job  /daily-job
-COPY daily-clean  /daily-clean
+COPY clean-registry.sh  /clean-registry.sh
 COPY lua /etc/openresty/lua
 
 ENV REGISTRY_STORAGE_DELETE_ENABLED=true
