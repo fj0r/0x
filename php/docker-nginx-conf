@@ -70,15 +70,36 @@ http {
             fastcgi_pass unix:/var/run/php/php-fpm.sock;
         }
 
-        location = /info.json {
+        set_by_lua_block $real_remote {
+            if ngx.var.http_x_forwarded_for then
+                for r in ngx.var.http_x_forwarded_for:gmatch('([^,]+)') do
+                    return r
+                end
+            end
+            return ngx.var.remote_addr
+        }
+
+        location = /about {
+            default_type application/json;
             content_by_lua_block {
-                local cjson = require "cjson"
-                local res = {
-                    hostname = os.getenv("HOSTNAME"),
-                    timezone = os.getenv("TIMEZONE"),
-                    version = 1
-                }
-                ngx.say(cjson.encode(res))
+                local json = require('cjson')
+                local file = io.open('/about.json', 'r')
+                local data
+                if file == nil then
+                    data = '{}'
+                else
+                    local txt = file:read('*all')
+                    data = json.decode(txt)
+                end
+                io.close(file)
+
+                data.host = ngx.var.http_host
+                data.user_addr = ngx.var.real_remote
+                data.timezone = os.getenv("TIMEZONE")
+                data.hostname = os.getenv("HOSTNAME")
+                data.user_agent = ngx.req.get_headers()['user-agent']
+
+                ngx.say(json.encode(data))
                 ngx.exit(200)
             }
         }
