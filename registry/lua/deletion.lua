@@ -35,6 +35,7 @@ else
         end
     end
 
+    ngx.say(os.date('%Y-%m-%d|%H:%M:%S')..'---------delete---------')
     for _, s in ipairs(split(data, '\r\n')) do
         local t = split(split(s, '\t')[2], ':')
         local DockerHeader = 'application/vnd.docker.distribution.manifest.v2+json'
@@ -46,7 +47,7 @@ else
         ngx.location.capture('/v2/'..t[1]..'/manifests/'..digest, {method = ngx.HTTP_DELETE})
     end
 
-    ngx.say('---------garbage-collect---------')
+    ngx.say(os.date('%Y-%m-%d|%H:%M:%S')..'---------garbage-collect---------')
     local shell = require "resty.shell"
     local stdin = "hello"
     local timeout = 600000  -- ms
@@ -56,6 +57,7 @@ else
     ngx.say(stdout)
     ngx.say('---------')
     ngx.say(stderr)
+    ngx.say(os.date('%Y-%m-%d|%H:%M:%S')..'---------finish---------')
     ngx.exit(200)
 end
 

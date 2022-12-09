@@ -1,12 +1,12 @@
 #!/bin/sh
 
 set -e
-# 
+#
 # case "$1" in
 #     *.yaml|*.yml) set -- registry serve "$@" ;;
 #     serve|garbage-collect|help|-*) set -- registry "$@" ;;
 # esac
-# 
+#
 # exec "$@"
 
 stop() {
@@ -23,6 +23,9 @@ stop() {
 }
 
 trap stop SIGINT SIGTERM #ERR EXIT
+
+crontab /daily-job
+crond
 
 echo 'starting docker registry'
 /usr/local/bin/registry serve /etc/docker/registry/config.yml 2>&1 &
