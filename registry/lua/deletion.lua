@@ -11,19 +11,37 @@ if METHOD == 'GET' then
     end
     ngx.exit(200)
 else
-    local split = function (str, sep)
+    function split (str, sep)
         local r = {}
         for i in str:gmatch("[^"..sep.."]+") do
             table.insert(r, i)
         end
         return r
     end
+
+    function getFile(file_name)
+        local f = assert(io.open(file_name, 'r'))
+        local string = f:read("*all")
+        f:close()
+        return string
+    end
+
     ngx.req.read_body()
     local data = ngx.req.get_body_data()
+    if nil == data then
+        local file_name = ngx.req.get_body_file()
+        if file_name then
+            data = getFile(file_name)
+        end
+    end
+
     for _, s in ipairs(split(data, '\r\n')) do
         local t = split(split(s, '\t')[2], ':')
-        ngx.req.set_header('Accept', 'application/vnd.docker.distribution.manifest.v2+json')
-        local digest = ngx.location.capture('/v2/'..t[1]..'/manifests/'..t[2]).header['Docker-Content-Digest']
+        local DockerHeader = 'application/vnd.docker.distribution.manifest.v2+json'
+        local OciHeader = 'application/vnd.oci.image.manifest.v1+json'
+        ngx.req.set_header('Accept', OciHeader)
+        local res = ngx.location.capture('/v2/'..t[1]..'/manifests/'..t[2])
+        local digest = res.header['Docker-Content-Digest']
         ngx.say('---------delete > '..t[1]..':'..t[2]..'['.. digest ..']')
         ngx.location.capture('/v2/'..t[1]..'/manifests/'..digest, {method = ngx.HTTP_DELETE})
     end

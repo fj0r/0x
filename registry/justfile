@@ -29,6 +29,7 @@ sync:
     #!/bin/bash
     pod=$(kubectl get pod -l app.kubernetes.io/instance=registry -o jsonpath="{.items[0].metadata.name}")
     kubectl cp lua/list.lua $pod:/etc/openresty/lua/list.lua
+    kubectl cp lua/deletion.lua $pod:/etc/openresty/lua/deletion.lua
     kubectl exec $pod -- /opt/openresty/bin/openresty -s reload
 
 
