@@ -5,6 +5,9 @@ daemon off;
 user www-data;
 worker_processes  1;
 
+env TIMEZONE;
+env HOSTNAME;
+
 events {
     worker_connections  1024;
 }
@@ -86,7 +89,7 @@ http {
                 local file = io.open('/about.json', 'r')
                 local data
                 if file == nil then
-                    data = '{}'
+                    data = {}
                 else
                     local txt = file:read('*all')
                     data = json.decode(txt)
@@ -94,10 +97,10 @@ http {
                 end
 
                 data.host = ngx.var.http_host
-                data.user_addr = ngx.var.real_remote
+                data.useraddr = ngx.var.real_remote
                 data.timezone = os.getenv("TIMEZONE")
                 data.hostname = os.getenv("HOSTNAME")
-                data.user_agent = ngx.req.get_headers()['user-agent']
+                data.useragent = ngx.req.get_headers()['user-agent']
 
                 ngx.say(json.encode(data))
                 ngx.exit(200)
