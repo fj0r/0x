@@ -4,7 +4,6 @@ FROM fj0rd/io:base
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV DEV_DEPS \
-        apache2-utils \
         libpcre3-dev libssl-dev \
         zlib1g-dev
 
@@ -18,7 +17,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-    $DEV_DEPS $BUILD_DEPS s3fs \
+    $DEV_DEPS $BUILD_DEPS openssl s3fs \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \

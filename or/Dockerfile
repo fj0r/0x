@@ -23,6 +23,7 @@ RUN set -eux \
         curl \
         jq \
         zstd \
+        openssl \
   \
   ; build_dir=/tmp/build \
   ; mkdir -p $build_dir \

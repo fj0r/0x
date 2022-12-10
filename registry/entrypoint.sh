@@ -27,6 +27,11 @@ trap stop SIGINT SIGTERM #ERR EXIT
 crontab /daily-job
 crond
 
+if [ ! -z "${HTPASSWD}" ]; then
+    IFS=':' read -ra HTP <<< "$HTPASSWD"
+    printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
+fi
+
 echo 'starting docker registry'
 /usr/local/bin/registry serve /etc/docker/registry/config.yml 2>&1 &
 echo -n "$! " >> /var/run/services

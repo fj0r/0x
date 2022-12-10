@@ -92,6 +92,11 @@ fi
 #    sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/openresty/nginx.conf
 #fi
 
+if [ ! -z "${HTPASSWD}" ]; then
+    IFS=':' read -ra HTP <<< "$HTPASSWD"
+    printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
+fi
+
 /opt/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
 

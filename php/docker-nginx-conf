@@ -58,6 +58,9 @@ http {
         #resolver 1.1.1.1;
         access_log  /var/log/openresty/access.log   apm;
 
+        set $htaccess_user_file /etc/openresty/htpasswd;
+        set $auth_enable off;
+
         location / {
             index index.php index.html index.htm;
             if (!-e $request_filename) {
