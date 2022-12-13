@@ -11,11 +11,12 @@ list:
 srv:
     #!/bin/bash
         #-v $PWD/admin.conf:/etc/openresty/admin.conf \
-        #-v $PWD/nginx.conf:/etc/openresty/nginx.conf \
         #-v $PWD/lua:/etc/openresty/lua \
     podman run --rm --name=test-registry \
         -v $HOME/temp/registry:/var/lib/registry \
         -v $PWD/entrypoint.sh:/entrypoint.sh \
+        -v $PWD/nginx.conf:/etc/openresty/nginx.conf \
+        -e HTPASSWD=adm:123 \
         -p 5000:5000 \
         fj0rd/0x:registry
 
