@@ -1,0 +1,9 @@
+test file="justfile" path="justfile":
+    curl -X POST localhost:8080/upload/{{path}} --data-binary @{{file}}
+
+srv:
+    podman run --rm --name=test -p 8080:80 \
+        -v $PWD/config/lua:/etc/openresty/lua \
+        -v $PWD/config/nginx.conf:/etc/openresty/nginx.conf \
+        0x:or
+
