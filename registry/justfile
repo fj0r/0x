@@ -14,7 +14,6 @@ srv:
         #-v $PWD/nginx.conf:/etc/openresty/nginx.conf \
         #-v $PWD/lua:/etc/openresty/lua \
     podman run --rm --name=test-registry \
-        -e HTPASSWD=123:fdsf \
         -v $HOME/temp/registry:/var/lib/registry \
         -v $PWD/entrypoint.sh:/entrypoint.sh \
         -p 5000:5000 \

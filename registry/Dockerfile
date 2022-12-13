@@ -26,4 +26,3 @@ EXPOSE 80 5000
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["/etc/docker/registry/config.yml"]
