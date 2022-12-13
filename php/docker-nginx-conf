@@ -85,7 +85,7 @@ http {
             return ngx.var.remote_addr
         }
 
-        #location ~ /upload/(.*) {
+        #location ~ /up/(.*) {
         #    if (-f $htaccess_user_file) {
         #        set $auth_enable "Please enter your username and password";
         #    }
