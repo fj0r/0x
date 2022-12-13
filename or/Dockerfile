@@ -72,6 +72,8 @@ WORKDIR /srv
 VOLUME [ "/srv" ]
 EXPOSE 80 443
 
-CMD ["/opt/openresty/bin/openresty", "-g", "daemon off;"]
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 STOPSIGNAL SIGQUIT
+
