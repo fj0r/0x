@@ -20,6 +20,7 @@ RUN set -eux \
         libgcc \
         pcre \
         zlib \
+        bash \
         curl \
         jq \
         zstd \
