@@ -7,7 +7,7 @@ name: build ngx
 
 on:
   push:
-    branches: [ main, ngx ]
+    branches: [ ngx ]
 
 env:
   REGISTRY: docker.io
