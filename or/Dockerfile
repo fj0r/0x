@@ -1,8 +1,11 @@
+FROM fj0rd/scratch:dropbear-alpine as dropbear
+
 FROM alpine
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV PATH=/opt/openresty/bin:$PATH
 
+COPY --from=dropbear / /
 RUN set -eux \
   ; apk update \
   ; apk add --no-cache --virtual .build-deps \
