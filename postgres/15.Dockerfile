@@ -59,8 +59,8 @@ RUN set -eux \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
   \
-  #; curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
-  #; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
+  ; curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
+  ; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
   \
   ; curl -sSL https://install.citusdata.com/community/deb.sh | bash \
   ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus | awk -F'/' 'NR==3 {print $1}') \
@@ -91,14 +91,14 @@ RUN set -eux \
   ; cd pg_bigm \
   ; make USE_PGXS=1 && make USE_PGXS=1 install \
   \
-  ; cd $build_dir \
-  ; git clone --depth=1 https://github.com/timescale/timescaledb.git \
-  ; cd timescaledb \
-  ; git checkout main \
-  ; ./bootstrap \
-  ; cd build && make \
-  ; make install \
-  \
+  #; cd $build_dir \
+  #; git clone --depth=1 https://github.com/timescale/timescaledb.git \
+  #; cd timescaledb \
+  #; git checkout main \
+  #; ./bootstrap \
+  #; cd build && make \
+  #; make install \
+  #\
   #; cd $build_dir \
   #; citus_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
   #; curl -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
