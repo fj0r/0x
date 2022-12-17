@@ -2,6 +2,10 @@
 
 set -e
 
+if [ ! -z "$PREBOOT" ]; then
+  bash $PREBOOT
+fi
+
 init_ssh () {
     if [ -n "$user" ]; then
         for u in $(echo $user | tr "," "\n"); do
@@ -51,6 +55,10 @@ fi
 echo 'starting openresty'
 /opt/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
+
+if [ ! -z "$POSTBOOT" ]; then
+  bash $POSTBOOT
+fi
 
 wait -n $(cat /var/run/services) && exit $?
 

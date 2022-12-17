@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 set -e
+
+if [ ! -z "$PREBOOT" ]; then
+  bash $PREBOOT
+fi
+
 #
 # case "$1" in
 #     *.yaml|*.yml) set -- registry serve "$@" ;;
@@ -39,5 +44,9 @@ echo -n "$! " >> /var/run/services
 echo 'starting openresty'
 /opt/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
+
+if [ ! -z "$POSTBOOT" ]; then
+  bash $POSTBOOT
+fi
 
 wait -n $(cat /var/run/services) && exit $?

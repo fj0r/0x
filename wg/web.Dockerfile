@@ -20,8 +20,6 @@ WORKDIR /app
 COPY --from=dropbear / /
 COPY --from=build /target /app
 RUN set -eux \
-  ; mkdir -p /etc/dropbear \
-  \
   ; coredns_url=$(curl -sSL https://api.github.com/repos/coredns/coredns/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tgz$') \
   ; curl -sSL ${coredns_url} | tar zxf - -C /usr/local/bin \

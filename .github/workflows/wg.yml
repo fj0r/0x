@@ -55,11 +55,11 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build wg web
-        uses: docker/build-push-action@v3
-        with:
-          context: wg
-          file: wg/web.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg-web
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build wg web
+      #  uses: docker/build-push-action@v3
+      #  with:
+      #    context: wg
+      #    file: wg/web.Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg-web
+      #    labels: ${{ steps.meta.outputs.labels }}
