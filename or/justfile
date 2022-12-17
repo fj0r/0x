@@ -4,8 +4,9 @@ test file="justfile" path="justfile":
 srv:
     #!/bin/bash
         #-v $PWD/entrypoint.sh:/entrypoint.sh
+        #-e ed25519_root=123 \
     podman run --rm --name=test -p 8080:80 \
-        -e ed25519_root=123 \
+        -v $PWD/location:/etc/openresty/location \
         -v $PWD/config/lua:/etc/openresty/lua \
         -v $PWD/config/nginx.conf:/etc/openresty/nginx.conf \
         0x:or
