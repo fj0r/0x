@@ -49,7 +49,7 @@ else
 
     ngx.say(os.date('%Y-%m-%d|%H:%M:%S')..'---------garbage-collect---------')
     local shell = require "resty.shell"
-    local stdin = "hello"
+    local stdin = nil
     local timeout = 600000  -- ms
     local max_size = 1024000  -- byte
     local ok, stdout, stderr, reason, status =
