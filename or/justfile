@@ -1,4 +1,7 @@
 test file="justfile" path="justfile":
+    curl localhost:8080/upload/{{path}} -T {{file}}
+
+test1 file="justfile" path="justfile":
     curl -X POST localhost:8080/upload/{{path}} --data-binary @{{file}}
 
 srv:
