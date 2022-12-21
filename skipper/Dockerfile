@@ -2,8 +2,8 @@ FROM alpine as builder
 RUN set -eux \
   ; apk --update add --no-cache \
     jq curl binutils \
-  ; skipper_url=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/zalando/skipper/releases \
-        | jq -r '.[0].assets[].browser_download_url' | grep linux-amd64) \
+  ; skipper_ver=$(curl -sSL https://api.github.com/repos/zalando/skipper/releases/latest | jq -r '.tag_name') \
+  ; skipper_url="https://github.com/zalando/skipper/releases/download/${skipper_ver}/skipper-${skipper_ver}-linux-amd64.tar.gz" \
   ; curl -sSL ${skipper_url} | tar zxf - -C /usr/local/bin --strip-components 1
   #; strip /usr/local/bin/skipper \
 
