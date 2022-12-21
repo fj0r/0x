@@ -98,7 +98,12 @@ RUN set -eux \
   #; ./bootstrap \
   #; cd build && make \
   #; make install \
-  #\
+  \
+  ; cd $build_dir \
+  ; git clone --depth=1 https://github.com/sraoss/pg_ivm.git \
+  ; cd pg_ivm \
+  ; make install \
+  \
   #; cd $build_dir \
   #; citus_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
   #; curl -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
