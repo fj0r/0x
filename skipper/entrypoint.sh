@@ -76,6 +76,7 @@ trap stop SIGINT SIGTERM
 __ssh=$(for i in "${!ed25519_@}"; do echo $i; done)
 if [ ! -z "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
     init_ssh
+    mkdir -p /etc/dropbear
     /usr/bin/dropbear -REFems -p 22 -K 300 -I 600 2>&1 &
     echo -n "$! " >> /var/run/services
 fi
