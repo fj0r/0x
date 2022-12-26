@@ -27,6 +27,7 @@ RUN set -eux \
         curl \
         jq \
         zstd \
+        shadow \
         openssl \
   \
   ; build_dir=/tmp/build \
