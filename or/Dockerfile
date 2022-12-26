@@ -28,6 +28,7 @@ RUN set -eux \
         jq \
         zstd \
         shadow \
+        sudo \
         openssl \
   \
   ; build_dir=/tmp/build \
