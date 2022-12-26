@@ -14,7 +14,7 @@ set_user () {
     _GID=${UA[2]:-1000}
 
     getent group ${_NAME} >/dev/null 2>&1 || groupadd -g ${_GID} ${_NAME}
-    getent passwd ${_NAME} >/dev/null 2>&1 || useradd -m -u ${_UID} -g ${_GID} -G sudo -s /bin/bash -c "$2" ${_NAME}
+    getent passwd ${_NAME} >/dev/null 2>&1 || useradd -m -u ${_UID} -g ${_GID} -G wheel -s /bin/bash -c "$2" ${_NAME}
 }
 
 init_ssh () {
