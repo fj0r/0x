@@ -6,7 +6,7 @@ if [[ "$DEBUG" == 'true' ]]; then
     set -x
 fi
 
-if [ ! -z "${PREBOOT}" ]; then
+if [ ! -z "$PREBOOT" ]; then
   bash $PREBOOT
 fi
 
@@ -93,6 +93,11 @@ if grep -q '$ngx_resolver' /etc/openresty/nginx.conf; then
     sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/openresty/nginx.conf
 fi
 
+if [ ! -z "${HTPASSWD}" ]; then
+    IFS=':' read -ra HTP <<< "$HTPASSWD"
+    printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
+fi
+
 /opt/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
 
@@ -149,7 +154,8 @@ fi
 
 ################################################################################
 
-if [ ! -z "${POSTBOOT}" ]; then
+if [ ! -z "$POSTBOOT" ]; then
   bash $POSTBOOT
 fi
+
 wait -n $(cat /var/run/services) && exit $?

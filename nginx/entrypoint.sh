@@ -64,7 +64,7 @@ stop() {
     echo "Done."
 }
 
-env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
+env | grep -E '_|HOME|ROOT|PATH|TIMEZONE|HOSTNAME|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
     | grep -Ev '^(_|HOME|USER|LS_COLORS)=' \
    >> /etc/environment
 
@@ -89,9 +89,14 @@ if [ ! -z "$WEB_ROOT" ]; then
     sed -i 's!\(set $root\).*$!\1 '"\'$WEB_ROOT\'"';!' /etc/nginx/nginx.conf
 fi
 
-#if grep -q '$ngx_resolver' /etc/nginx/nginx.conf; then
-#    sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/nginx/nginx.conf
-#fi
+if grep -q '$ngx_resolver' /etc/nginx/nginx.conf; then
+    sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/nginx/nginx.conf
+fi
+
+if [ ! -z "${HTPASSWD}" ]; then
+    IFS=':' read -ra HTP <<< "$HTPASSWD"
+    printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
+fi
 
 /opt/nginx/sbin/nginx 2>&1 &
 echo -n "$! " >> /var/run/services
