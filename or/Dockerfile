@@ -27,6 +27,7 @@ RUN set -eux \
         curl \
         jq \
         zstd \
+        patch \
         shadow \
         sudo \
         openssl \
