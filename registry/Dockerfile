@@ -1,8 +1,8 @@
 FROM fj0rd/io:base as reg
 
 RUN set -eux \
-  ; reg_url=$(curl -sSL https://api.github.com/repos/distribution/distribution/releases -H 'Accept: application/vnd.github.v3+json' \
-              | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' \
+  ; reg_url=$(curl -sSL https://api.github.com/repos/distribution/distribution/releases/latest \
+              | jq -r '.assets[].browser_download_url' \
               | grep -v sha256 \
               | grep linux_amd64) \
   ; curl -sSL ${reg_url} | tar zxvf - -C /usr/local/bin registry
