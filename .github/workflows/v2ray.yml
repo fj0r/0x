@@ -54,11 +54,11 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build v2
-        uses: docker/build-push-action@v3
-        with:
-          context: v2ray
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v2
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build v2
+      #  uses: docker/build-push-action@v3
+      #  with:
+      #    context: v2ray
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v2
+      #    labels: ${{ steps.meta.outputs.labels }}
 
