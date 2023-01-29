@@ -1,4 +1,6 @@
+FROM fj0rd/scratch:arrow as arrow
 FROM postgres:15
+COPY --from=arrow /usr/local /usr/lib/x86_64-linux-gnu
 
 ENV BUILD_DEPS \
     git \
@@ -8,9 +10,11 @@ ENV BUILD_DEPS \
     pkg-config \
     lsb-release \
     libcurl4-openssl-dev \
+    libssl-dev \
     libicu-dev \
     uuid-dev \
     build-essential \
+    clang \
     libpq-dev \
     python3-dev \
     libkrb5-dev \
@@ -54,18 +58,18 @@ RUN set -eux \
       libcurl4 curl jq ca-certificates uuid \
       ${BUILD_DEPS:-} \
   \
-  ; pip3 --no-cache-dir install \
-      numpy httpx pyyaml deepmerge cachetools \
-      pydantic more-itertools fn.py PyParsing \
-  \
-  ; curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
-  ; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
-  \
-  ; curl -sSL https://install.citusdata.com/community/deb.sh | bash \
-  ; apt-get install -y --no-install-recommends postgresql-${PG_MAJOR}-citus \
-  \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
+  \
+  ; cd $build_dir \
+  ; mkdir parquet \
+  ; paq_version=$(curl https://api.github.com/repos/pgspider/parquet_s3_fdw/releases/latest | jq -r '.tag_name') \
+  ; curl -sSL https://github.com/pgspider/parquet_s3_fdw/archive/refs/tags/${paq_version}.tar.gz | tar zxf - --strip-components=1 -C parquet \
+  ; cd parquet \
+  ; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
+  ; sh ./install_arrow.sh \
+  ; make install USE_PGXS=1 \
+  ; apt autoremove libarrow-dev libparquet-dev \
   \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
