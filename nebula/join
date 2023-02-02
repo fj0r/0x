@@ -1,0 +1,31 @@
+#!/bin/bash
+name=$1
+ip=$2
+group=${3:-default}
+
+vcidr=${VCIDR:-16}
+port=${HOST_PORT:-51821}
+
+echo network=${NETWORK} groups="$group" cidr=$VHOST/$vcidr endpoint=$HOST:$port
+
+mkdir -p /nebula/node
+cd /nebula
+nebula-cert sign -name $name -ip $ip/${vcidr} -groups "${group}"
+
+
+cat /nebula/config.yaml.tmpl | yq e "
+.listen.port = 0
+| .lighthouse.am_lighthouse = false
+| .lighthouse.hosts = [\"${VHOST}\"]
+| .static_host_map = {\"${VHOST}\": [\"${HOST}:${port}\"]}
+| .pki.ca = \"$(cat /nebula/ca.crt)\"
+| .pki.cert = \"$(cat /nebula/$name.crt)\"
+| .pki.key = \"$(cat /nebula/$name.key)\"
+| .relay.am_relay = false
+| .relay.use_relays = true
+| .relay.relays = [\"${VHOST}\"]
+| .tun.dev = null
+| .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"host\": \"any\"}]
+" - > /nebula/node/$ip-$name.yaml
+
+rm -f $name.{key,crt}
