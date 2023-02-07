@@ -62,7 +62,8 @@ RUN set -eux \
   ; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
   \
   ; curl -sSL https://install.citusdata.com/community/deb.sh | bash \
-  ; apt-get install -y --no-install-recommends postgresql-${PG_MAJOR}-citus \
+  ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus | awk -F'/' 'NR==3 {print $1}') \
+  ; apt-get install -y --no-install-recommends ${citus_pkg} \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
