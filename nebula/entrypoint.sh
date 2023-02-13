@@ -21,7 +21,7 @@ forward-ports() {
     ################################################################################
     addr=$VHOST
     #addr=$(ip addr show nebula1 | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
-    
+
     for i in "${!_@}"; do
         port=${i:1}
         if [ ! -z "$port" ]; then
@@ -78,12 +78,12 @@ if [ ! -z "$NETWORK" ]; then
     if [ ! -f /nebula/ca.crt ]; then
         nebula-cert ca -name "${NETWORK}" -duration 876000h0m0s
     fi
-    
+
     if [ ! -f /nebula/lighthouse.crt ]; then
         echo nebula-cert sign -name lighthouse -ip "${VHOST}/${vcidr}" -groups "${vgroup}"
         nebula-cert sign -name lighthouse -ip "${VHOST}/${vcidr}" -groups "${vgroup}"
     fi
-    
+
     gen-host-key /nebula/ssh_host_ed25519_key
 
     if [ ! -f $config ]; then
@@ -107,7 +107,7 @@ if [ ! -z "$NETWORK" ]; then
 
     /usr/local/bin/nebula -config $config 2>&1 &
     echo -n "$! " >> /var/run/services
-   
+
     forward-ports
 else
     /usr/local/bin/nebula -config $config 2>&1 &
