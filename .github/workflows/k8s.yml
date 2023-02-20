@@ -7,7 +7,7 @@ name: build k8s
 
 on:
   push:
-    branches: [ main, k8s ]
+    branches: [ k8s ]
 
 env:
   REGISTRY: docker.io
