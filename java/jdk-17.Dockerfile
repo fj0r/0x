@@ -1,6 +1,7 @@
 FROM fj0rd/io
 
 ENV PATH=/opt/mvn/bin:/opt/language-server/jdtls/bin:$PATH
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 RUN set -eux \
   ; apt-get update \
@@ -15,8 +16,12 @@ RUN set -eux \
       | tar zxf - -C /opt/mvn --strip-components=1 \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+RUN set -eux \
+  ; cd /world \
+  ; mvn archetype:generate -DgroupId=com.java.hello -DartifactId=hello-java \
+        -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 
+# requires at least Java 17
 RUN set -eux \
   ; mkdir -p /opt/language-server/jdtls \
   ; jdtls_latest=$(curl -sSL https://download.eclipse.org/jdtls/snapshots/latest.txt) \
