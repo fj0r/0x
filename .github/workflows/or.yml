@@ -55,3 +55,10 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:or
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Build registry
+        uses: docker/build-push-action@v3
+        with:
+          context: registry
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:registry
+          labels: ${{ steps.meta.outputs.labels }}

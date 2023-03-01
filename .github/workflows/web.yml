@@ -52,7 +52,7 @@ jobs:
           context: openresty
           file: openresty/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build php8
