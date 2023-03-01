@@ -1,5 +1,5 @@
 # https://github.com/apache/flink-docker
-FROM fj0rd/ng:py39
+FROM fj0rd/0x:py39
 
 ARG flink_version=1.16.1
 ENV FLINK_VERSION=${flink_version}

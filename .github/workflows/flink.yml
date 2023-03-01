@@ -1,4 +1,4 @@
-name: build pyflink
+name: pyflink
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: fj0rd/ng
+  IMAGE_NAME: fj0rd/0x
 
 
 jobs:
@@ -44,14 +44,14 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      #- name: Build py39
-      #  uses: docker/build-push-action@v3
-      #  with:
-      #    context: flink
-      #    file: flink/py39.Dockerfile
-      #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:py39
-      #    labels: ${{ steps.meta.outputs.labels }}
+      - name: Build py39
+        uses: docker/build-push-action@v3
+        with:
+          context: flink
+          file: flink/py39.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:py39
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build pyflink
         uses: docker/build-push-action@v3
