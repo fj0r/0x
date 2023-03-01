@@ -1,4 +1,6 @@
+FROM fj0rd/scratch:dropbear as dropbear
 FROM python:3.9-slim
+COPY --from=dropbear / /
 
 ENV XDG_CONFIG_HOME=/etc \
     LANG=C.UTF-8 \
@@ -10,7 +12,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-      git gnupg build-essential \
+      git s3fs gnupg build-essential \
       sudo procps htop cron tzdata openssl \
       curl ca-certificates rsync tcpdump socat \
       jq patch tree logrotate \
