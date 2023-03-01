@@ -1,4 +1,4 @@
-name: build web
+name: gateway
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: build web
 
 on:
   push:
-    branches: [ main, web ]
+    branches: [ main, or, web ]
 
 env:
   REGISTRY: docker.io
@@ -49,36 +49,25 @@ jobs:
       - name: Build openresty
         uses: docker/build-push-action@v3
         with:
-          context: openresty
-          file: openresty/Dockerfile
+          context: or
+          file: or/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:or
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build php8
+      - name: Build registry
         uses: docker/build-push-action@v3
         with:
-          context: php
-          file: php/8.Dockerfile
+          context: registry
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php8
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:registry
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build php7
+      - name: Build skipper
         uses: docker/build-push-action@v3
         with:
-          context: php
-          file: php/7.Dockerfile
+          context: skipper
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php7
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build php7.2
-        uses: docker/build-push-action@v3
-        with:
-          context: php
-          file: php/7.2.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php72
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:skipper
           labels: ${{ steps.meta.outputs.labels }}
 

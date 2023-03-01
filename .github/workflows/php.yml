@@ -1,4 +1,4 @@
-name: build php
+name: php
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: build php
 
 on:
   push:
-    branches: [ php ]
+    branches: [ main, php ]
 
 env:
   REGISTRY: docker.io
@@ -46,6 +46,14 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
+      - name: Build openresty
+        uses: docker/build-push-action@v3
+        with:
+          context: openresty
+          file: openresty/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build php8
         uses: docker/build-push-action@v3

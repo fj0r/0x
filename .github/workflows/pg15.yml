@@ -1,4 +1,4 @@
-name: build postgres 15
+name: postgres 15
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
