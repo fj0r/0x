@@ -26,7 +26,7 @@ RUN set -eux \
   ; echo "$TIMEZONE" > /etc/timezone \
   ; mkdir /etc/dropbear
 
-COPY entrypoint.sh /
+COPY startup /startup
 
 WORKDIR /srv
-ENTRYPOINT /entrypoint.sh
+ENTRYPOINT /startup/entrypoint.sh

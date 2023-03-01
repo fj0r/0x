@@ -68,14 +68,13 @@ RUN set -eux \
   ; apt-get remove -y ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /startup/entrypoint.sh
 COPY config /etc/openresty
 WORKDIR /srv
 
 VOLUME [ "/srv" ]
 EXPOSE 80 443
 
-ENTRYPOINT [ "/entrypoint.sh" ]
 
 ENV WEB_ROOT=
 ENV INSPECT_REQUEST=0

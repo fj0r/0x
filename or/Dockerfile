@@ -78,8 +78,8 @@ WORKDIR /srv
 VOLUME [ "/srv" ]
 EXPOSE 80 443
 
-COPY entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+COPY startup /startup
+ENTRYPOINT ["/startup/entrypoint.sh"]
 
 STOPSIGNAL SIGQUIT
 
