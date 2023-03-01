@@ -1,4 +1,12 @@
 # Add users if $1=user:uid:gid set
+if [ -e /bin/zsh ]; then
+    __shell=/bin/zsh
+elif [ -e /bin/bash ]; then
+    __shell=/bin/bash
+else
+    __shell=/bin/sh
+fi
+
 set_user () {
     IFS=':' read -ra UA <<< "$1"
     _NAME=${UA[0]}

@@ -4,16 +4,6 @@ if [ ! -z "${PREBOOT}" ]; then
 fi
 
 
-if [ -e /bin/zsh ]; then
-    __shell=/bin/zsh
-elif [ -e /bin/bash ]; then
-    __shell=/bin/bash
-else
-    __shell=/bin/sh
-fi
-
-
-
 stop() {
     # Get PID
     pid=$(cat /var/run/services)
