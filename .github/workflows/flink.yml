@@ -1,4 +1,4 @@
-name: vpn
+name: build pyflink
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,11 +7,11 @@ name: vpn
 
 on:
   push:
-    branches: [ main ]
+    branches: [ flink ]
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: fj0rd/0x
+  IMAGE_NAME: fj0rd/ng
 
 
 jobs:
@@ -44,31 +44,21 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
+      #- name: Build py39
+      #  uses: docker/build-push-action@v3
+      #  with:
+      #    context: flink
+      #    file: flink/py39.Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:py39
+      #    labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build nebula
+      - name: Build pyflink
         uses: docker/build-push-action@v3
         with:
-          context: nebula
-          file: nebula/Dockerfile
+          context: flink
+          file: flink/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nebula
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pyflink
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build wireguard
-        uses: docker/build-push-action@v3
-        with:
-          context: wg
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build wg-gen-web
-        uses: docker/build-push-action@v3
-        with:
-          context: wg
-          file: wg/web.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg-web
-          labels: ${{ steps.meta.outputs.labels }}
