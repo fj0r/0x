@@ -53,6 +53,7 @@ RUN set -eux \
 
 WORKDIR $FLINK_HOME
 # Configure container
+COPY startup /startup
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 EXPOSE 6123 8081
