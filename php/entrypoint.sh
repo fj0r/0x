@@ -24,7 +24,6 @@ stop() {
     echo "Done."
 }
 
-
 trap stop SIGINT SIGTERM #ERR EXIT
 
 

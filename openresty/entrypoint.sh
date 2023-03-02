@@ -10,6 +10,7 @@ if [ ! -z "$PREBOOT" ]; then
   bash $PREBOOT
 fi
 
+
 stop() {
     # Get PID
     pid=$(cat /var/run/services)

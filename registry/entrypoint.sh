@@ -29,7 +29,7 @@ stop() {
 
 trap stop SIGINT SIGTERM #ERR EXIT
 
-crontab /daily-job
+crontab /app/daily-job
 crond
 
 if [ ! -z "${HTPASSWD}" ]; then
