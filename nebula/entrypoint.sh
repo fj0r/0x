@@ -15,34 +15,6 @@ stop() {
     echo "Done."
 }
 
-forward-ports() {
-    ################################################################################
-    echo "[$(date -Is)] starting socat"
-    ################################################################################
-    addr=$VHOST
-    #addr=$(ip addr show nebula1 | awk 'NR==3 {print $2}' | cut -d'/' -f 1)
-
-    for i in "${!_@}"; do
-        port=${i:1}
-        if [ ! -z "$port" ]; then
-            url=$(eval "echo \"\$$i\"")
-            cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
-            eval "$cmd &"
-            echo -n "$! " >> /var/run/services
-            echo "tcp:$addr:$port --> $url"
-        fi
-    done
-    for i in "${!udp@}"; do
-        port=${i:3}
-        if [ ! -z "$port" ]; then
-            url=$(eval "echo \"\$$i\"")
-            cmd="socat udp-listen:$port,reuseaddr,fork udp:$url"
-            eval "$cmd &"
-            echo -n "$! " >> /var/run/services
-            echo "udp:$addr:$port --> $url"
-        fi
-    done
-}
 
 gen-host-key() {
     if [ ! -f "$1" ]; then
@@ -55,11 +27,11 @@ gen-host-key() {
 
 }
 
-env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
-    | grep -Ev '^(_|HOME|USER|LS_COLORS)=' \
-   >> /etc/environment
-
 trap stop SIGINT SIGTERM
+
+
+BASEDIR=$(dirname "$0")
+source $BASEDIR/env.sh
 
 
 ################################################################################
@@ -108,7 +80,7 @@ if [ ! -z "$NETWORK" ]; then
     /usr/local/bin/nebula -config $config 2>&1 &
     echo -n "$! " >> /var/run/services
 
-    forward-ports
+    source $BASEDIR/socat.sh
 else
     /usr/local/bin/nebula -config $config 2>&1 &
     echo -n "$! " >> /var/run/services

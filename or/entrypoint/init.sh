@@ -23,6 +23,7 @@ trap stop SIGINT SIGTERM #ERR EXIT
 
 BASEDIR=$(dirname "$0")
 source $BASEDIR/ssh.sh
+source $BASEDIR/socat.sh
 
 if [ ! -z "${HTPASSWD}" ]; then
     IFS=':' read -ra HTP <<< "$HTPASSWD"
