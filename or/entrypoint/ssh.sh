@@ -44,9 +44,14 @@ init_ssh () {
 
 __ssh=$(for i in "${!ed25519_@}"; do echo $i; done)
 if [ ! -z "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
-    echo "[$(date -Is)] starting ssh"
     init_ssh
     mkdir -p /etc/dropbear
-    /usr/bin/dropbear -REFems -p 22 2>&1 &
+    if [ -z "$SSH_TIMEOUT" ]; then
+        echo "[$(date -Is)] starting ssh"
+        /usr/bin/dropbear -REFems -p 22 2>&1 &
+    else
+        echo "[$(date -Is)] starting ssh with a timeout of ${SSH_TIMEOUT} seconds"
+        /usr/bin/dropbear -REFems -p 22 -K ${SSH_TIMEOUT} -I ${SSH_TIMEOUT} 2>&1 &
+    fi
     echo -n "$! " >> /var/run/services
 fi
