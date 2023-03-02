@@ -15,9 +15,8 @@ stop() {
     echo "Done."
 }
 
-env | grep -E '_|HOME|ROOT|PATH|DIR|VERSION|LANG|TIME|MODULE|BUFFERED' \
-    | grep -Ev '^(_|HOME|USER|LS_COLORS)=' \
-   >> /etc/environment
+BASEDIR=$(dirname "$0")
+source $BASEDIR/env.sh
 
 trap stop SIGINT SIGTERM
 
