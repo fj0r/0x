@@ -25,6 +25,7 @@ BASEDIR=$(dirname "$0")
 source $BASEDIR/env.sh
 source $BASEDIR/git.sh
 source $BASEDIR/ssh.sh
+source $BASEDIR/socat.sh
 
 routes=""
 for i in "${!R_@}"; do
