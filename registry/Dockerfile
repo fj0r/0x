@@ -23,6 +23,6 @@ ENV PROXY_REMOTE_URL=https://docker.io
 VOLUME ["/var/lib/registry"]
 EXPOSE 80 5000
 
-COPY entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+COPY entrypoint.sh /entrypoint/init.sh
+ENTRYPOINT ["/entrypoint/init.sh"]
 

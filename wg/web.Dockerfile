@@ -25,10 +25,9 @@ RUN set -eux \
   ; curl -sSL ${coredns_url} | tar zxf - -C /usr/local/bin \
   ; chmod +x /usr/local/bin/coredns
 
-COPY web.entrypoint.sh /entrypoint.sh
+COPY web.entrypoint.sh /entrypoint/init.sh
 COPY syncwg.sh /app/syncwg.sh
 
 EXPOSE 8080
 EXPOSE 53/udp
 
-CMD ["/entrypoint.sh"]

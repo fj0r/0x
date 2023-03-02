@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source /startup/ssh.sh
-source /startup/s3.sh
+source /entrypoint/ssh.sh
+source /entrypoint/s3.sh
 ###############################################################################
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
