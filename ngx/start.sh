@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if [ ! -z "${PREBOOT}" ]; then
+if [ -n "${PREBOOT}" ]; then
   bash $PREBOOT
 fi
 
@@ -62,7 +62,7 @@ init_ssh () {
 }
 
 __ssh=$(for i in "${!ed25519_@}"; do echo $i; done)
-if [ ! -z "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
+if [ -n "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
     echo "[$(date -Is)] starting ssh"
     init_ssh
     mkdir -p /etc/dropbear
@@ -73,7 +73,7 @@ fi
 
 
 #############################################
-if [ ! -z "${POSTBOOT}" ]; then
+if [ -n "${POSTBOOT}" ]; then
   bash $POSTBOOT
 fi
 wait -n $ngx $sshd && exit $?

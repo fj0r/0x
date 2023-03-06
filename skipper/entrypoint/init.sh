@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -z "${PREBOOT}" ]; then
+if [ -n "${PREBOOT}" ]; then
   bash $PREBOOT
 fi
 
@@ -34,12 +34,12 @@ for i in "${!R_@}"; do
     routes="${routes}${n}: ${r};"
 done
 
-if [ ! -z "$routes" ]; then
+if [ -n "$routes" ]; then
     routes="-inline-routes '${routes}'"
 fi
 
 routefile=""
-if [ ! -z "$ROUTEFILE" ]; then
+if [ -n "$ROUTEFILE" ]; then
     routefile="-routes-file ${ROUTEFILE}"
 fi
 
@@ -48,7 +48,7 @@ cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 ${rout
 eval "$cmd &"
 echo -n "$! " >> /var/run/services
 
-if [ ! -z "${POSTBOOT}" ]; then
+if [ -n "${POSTBOOT}" ]; then
   bash $POSTBOOT
 fi
 wait -n $(cat /var/run/services) && exit $?

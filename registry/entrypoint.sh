@@ -2,7 +2,7 @@
 
 set -e
 
-if [ ! -z "$PREBOOT" ]; then
+if [ -n "$PREBOOT" ]; then
   bash $PREBOOT
 fi
 
@@ -32,7 +32,7 @@ trap stop SIGINT SIGTERM #ERR EXIT
 crontab /app/daily-job
 crond
 
-if [ ! -z "${HTPASSWD}" ]; then
+if [ -n "${HTPASSWD}" ]; then
     IFS=':' read -ra HTP <<< "$HTPASSWD"
     printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
 fi
@@ -45,7 +45,7 @@ echo 'starting openresty'
 /opt/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
 
-if [ ! -z "$POSTBOOT" ]; then
+if [ -n "$POSTBOOT" ]; then
   bash $POSTBOOT
 fi
 

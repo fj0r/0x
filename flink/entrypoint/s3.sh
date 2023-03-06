@@ -1,4 +1,4 @@
-if [ ! -z "$S3SECRET_KEY" ]; then
+if [ -n "$S3SECRET_KEY" ]; then
     echo "[$(date -Is)] starting s3fs"
 
     s3opt=""
@@ -19,7 +19,7 @@ if [ ! -z "$S3SECRET_KEY" ]; then
     mkdir -p $S3MOUNTPOINT
     chown $s3user $S3MOUNTPOINT
 
-    if [ ! -z "${S3REGION}" ]; then
+    if [ -n "${S3REGION}" ]; then
         _region="-o endpoint=$S3REGION"
     else
         _region="-o use_path_request_style"
