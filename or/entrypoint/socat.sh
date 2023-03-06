@@ -1,13 +1,11 @@
-echo "[$(date -Is)] starting socat"
-
 for i in "${!tcp_@}"; do
     port=${i:4}
     if [ -n "$port" ]; then
         url=$(eval "echo \"\$$i\"")
         cmd="socat tcp-listen:$port,reuseaddr,fork tcp:$url"
-        eval "$cmd &"
+        eval "$cmd 2>&1 &"
         echo -n "$! " >> /var/run/services
-        echo "tcp:$port --> $url"
+        echo "[$(date -Is)] tcp:$port --> $url"
     fi
 done
 
@@ -16,8 +14,8 @@ for i in "${!udp_@}"; do
     if [ -n "$port" ]; then
         url=$(eval "echo \"\$$i\"")
         cmd="socat udp-listen:$port,reuseaddr,fork udp:$url"
-        eval "$cmd &"
+        eval "$cmd 2>&1 &"
         echo -n "$! " >> /var/run/services
-        echo "udp:$port --> $url"
+        echo "[$(date -Is)] udp:$port --> $url"
     fi
 done
