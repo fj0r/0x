@@ -6,7 +6,7 @@ if [[ "$DEBUG" == 'true' ]]; then
     set -x
 fi
 
-if [ ! -z "$PREBOOT" ]; then
+if [ -n "$PREBOOT" ]; then
   bash $PREBOOT
 fi
 
@@ -38,7 +38,7 @@ source $BASEDIR/cron.sh
 ################################################################################
 echo "[$(date -Is)] starting nginx"
 ################################################################################
-if [ ! -z "$WEB_ROOT" ]; then
+if [ -n "$WEB_ROOT" ]; then
     sed -i 's!\(set $root\).*$!\1 '"\'$WEB_ROOT\'"';!' /etc/nginx/nginx.conf
 fi
 
@@ -46,7 +46,7 @@ if grep -q '$ngx_resolver' /etc/nginx/nginx.conf; then
     sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/nginx/nginx.conf
 fi
 
-if [ ! -z "${HTPASSWD}" ]; then
+if [ -n "${HTPASSWD}" ]; then
     IFS=':' read -ra HTP <<< "$HTPASSWD"
     printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
 fi
@@ -57,7 +57,7 @@ echo -n "$! " >> /var/run/services
 
 ################################################################################
 
-if [ ! -z "$POSTBOOT" ]; then
+if [ -n "$POSTBOOT" ]; then
   bash $POSTBOOT
 fi
 

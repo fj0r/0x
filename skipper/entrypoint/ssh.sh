@@ -43,7 +43,7 @@ init_ssh () {
 
 
 __ssh=$(for i in "${!ed25519_@}"; do echo $i; done)
-if [ ! -z "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
+if [ -n "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
     init_ssh
     mkdir -p /etc/dropbear
     if [ -z "$SSH_TIMEOUT" ]; then
