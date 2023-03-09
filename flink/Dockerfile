@@ -39,6 +39,10 @@ RUN set -eux \
         -i ${FLINK_HOME}/conf/flink-conf.yaml \
   ; pip3 --no-cache-dir install apache-flink apache-flink-libraries \
         # numpy pandas \
+        debugpy pydantic pytest \
+        httpx hydra-core typer pyyaml deepmerge \
+        PyParsing structlog python-json-logger \
+        decorator more-itertools cachetools \
   ; apt-get remove -y ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   ;
