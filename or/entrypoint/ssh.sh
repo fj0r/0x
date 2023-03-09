@@ -48,10 +48,10 @@ if [ -n "$__ssh" ] || [ -f /root/.ssh/authorized_keys ]; then
     mkdir -p /etc/dropbear
     if [ -z "$SSH_TIMEOUT" ]; then
         echo "[$(date -Is)] starting ssh"
-        /usr/bin/dropbear -REFems -p 22 2>&1 &
+        /usr/bin/dropbear -REFems -p 22 &> /var/log/sshd &
     else
         echo "[$(date -Is)] starting ssh with a timeout of ${SSH_TIMEOUT} seconds"
-        /usr/bin/dropbear -REFems -p 22 -K ${SSH_TIMEOUT} -I ${SSH_TIMEOUT} 2>&1 &
+        /usr/bin/dropbear -REFems -p 22 -K ${SSH_TIMEOUT} -I ${SSH_TIMEOUT} &> /var/log/sshd &
     fi
     echo -n "$! " >> /var/run/services
 fi

@@ -26,6 +26,6 @@ if [ -n "$S3SECRET_KEY" ]; then
     fi
     cmd="sudo -u $s3user s3fs -f $s3opt -o bucket=$S3BUCKET -o passwd_file=/.passwd-s3fs -o url=$S3ENDPOINT $_region $S3MOUNTPOINT"
     echo $cmd
-    eval $cmd 2>&1 &
+    eval $cmd &> /var/log/s3fs &
     echo -n "$! " >> /var/run/services
 fi

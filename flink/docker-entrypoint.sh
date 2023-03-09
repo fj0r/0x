@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source /entrypoint/ssh.sh
-source /entrypoint/s3.sh
+source /entrypoint/s3fs.sh
 
 ###############################################################################
 #  Licensed to the Apache Software Foundation (ASF) under one
