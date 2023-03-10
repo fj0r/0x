@@ -1,22 +1,14 @@
-build version="7.2":
-    docker build . -t nnurphy/phpf:{{version}} \
-        -f Dockerfile-{{version}} \
-        --build-arg php_version={{version}}
-
 t profile="1":
-    docker run --rm \
-        --name=test \
+    podman run --rm \
+        --name=test-php \
         -p 8090:80 \
         -e WEB_ROOT=/app \
-        -e PHP_DEBUG={{profile}} \
-        -e WS_FIXED=1 \
+        -e PHP_PROFILE={{profile}} \
         -e PHP_FPM_SERVERS=5,25 \
-        -e XDEBUG_SESSION=xdebug_suck \
-        -v $(pwd)/setup-php:/setup-php \
-        -v $(pwd)/id_ed25519.pub:/etc/authorized_keys/root \
-        -v $(pwd)/index.php:/app/index.php \
-        -v $PWD/index.php:/srv/index.php \
-        nnurphy/phpf:7.2
+        -v $PWD/setup-php:/setup-php \
+        -v $PWD/index.php:/app/index.php \
+        -v $PWD/entrypoint.sh:/entrypoint/init.sh \
+        0x:php72
 
 build-gcc:
     docker build . -t nnurphy/phpf:7.2 -f Dockerfile-gcc \

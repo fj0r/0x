@@ -23,16 +23,27 @@ fi
 if [ -n "$PHP_PROFILE" ] || [ -n "$PHP_DEBUG" ]; then
     mkdir -p /var/log/xdebug
     chmod 1777 /var/log/xdebug
+    mkdir -p /var/xdebug
+    chmod 1777 /var/xdebug
+    { \
+      echo 'xdebug.log="/var/log/xdebug/xdebug.log"' ; \
+      echo 'xdebug.output_dir=/var/xdebug' ; \
+    } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 fi
 
 if [ -n "$PHP_DEBUG" ]; then
     { \
-      echo 'xdebug.log="/var/log/xdebug/xdebug.log"' ; \
       echo 'xdebug.mode=debug' ; \
       echo 'xdebug.remote_handler=dbgp' ; \
       #echo 'xdebug.discover_client_host=true' ; \
       echo 'xdebug.client_host=127.0.0.1' ; \
       echo 'xdebug.client_port=9000' ; \
+    } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
+fi
+
+if [ -n "$PHP_PROFILE" ]; then
+    { \
+      echo 'xdebug.mode=profile' ; \
     } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 fi
 

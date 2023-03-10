@@ -59,7 +59,7 @@ echo "[$(date -Is)] starting php-fpm"
 ################################################################################
 if [ -f /setup-php ]; then
   bash /setup-php
-  mv /setup-php /setup-php.$(date -Is)
+  touch /setup-php.$(date -Is)
 fi
 
 /usr/sbin/php-fpm 2>&1 &
