@@ -52,6 +52,13 @@ RUN set -eux \
         -i /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
   ; mkdir -p /var/run/php
 
+RUN set -eux \
+  ; mkdir /webgrind \
+  ; webgrind_ver=$(curl -sSL https://api.github.com/repos/jokkedk/webgrind/releases/latest | jq -r '.tag_name') \
+  ; webgrind_url="https://github.com/jokkedk/webgrind/archive/refs/tags/${webgrind_ver}.tar.gz" \
+  ; curl -sSL ${webgrind_url} | tar -zxf - -C /webgrind --strip-components=1 \
+  ;
+
 COPY docker-nginx-conf /etc/openresty/nginx.conf
 COPY setup-php /setup-php
 COPY entrypoint.sh /entrypoint/init.sh

@@ -2,6 +2,7 @@ t profile="1":
     podman run --rm \
         --name=test-php \
         -p 8090:80 \
+        -p 8888:8080 \
         -e WEB_ROOT=/app \
         -e PHP_PROFILE={{profile}} \
         -e PHP_FPM_SERVERS=5,25 \

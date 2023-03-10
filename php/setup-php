@@ -23,11 +23,8 @@ fi
 if [ -n "$PHP_PROFILE" ] || [ -n "$PHP_DEBUG" ]; then
     mkdir -p /var/log/xdebug
     chmod 1777 /var/log/xdebug
-    mkdir -p /var/xdebug
-    chmod 1777 /var/xdebug
     { \
       echo 'xdebug.log="/var/log/xdebug/xdebug.log"' ; \
-      echo 'xdebug.output_dir=/var/xdebug' ; \
     } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 fi
 
