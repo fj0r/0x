@@ -45,7 +45,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build py39
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: flink
           file: flink/py39.Dockerfile
@@ -54,7 +54,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build pyflink
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: flink
           file: flink/Dockerfile
@@ -63,7 +63,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build pyflink
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: flink
           file: flink/dev.Dockerfile

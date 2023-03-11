@@ -45,7 +45,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build pg 14
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: postgres
           file: postgres/14.Dockerfile

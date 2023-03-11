@@ -1,5 +1,6 @@
+ARG BASEIMAGE=fj0rd/io:base
 #FROM fj0rd/scratch:goofys as goofys
-FROM fj0rd/io:base
+FROM ${BASEIMAGE}
 #COPY --from=goofys / /
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai

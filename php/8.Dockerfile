@@ -1,4 +1,5 @@
-FROM fj0rd/0x:openresty
+ARG BASEIMAGE=fj0rd/0x:openresty
+FROM ${BASEIMAGE}
 
 ARG php_version=8.2
 ENV PHP_VERSION=${php_version}

@@ -1,4 +1,4 @@
-name: php
+name: php7
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: php
 
 on:
   push:
-    branches: [ ubuntu ]
+    branches: [ main, php7 ]
 
 env:
   REGISTRY: docker.io
@@ -47,38 +47,32 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build openresty
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: openresty
           file: openresty/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-ubuntu
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build php8
-        uses: docker/build-push-action@v3
-        with:
-          context: php
-          file: php/8.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php8
-          labels: ${{ steps.meta.outputs.labels }}
+          build-args: BASEIMAGE=fj0rd/io:base-ubuntu
 
       - name: Build php7
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: php
           file: php/7.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php7
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-ubuntu
 
       - name: Build php7.2
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: php
           file: php/7.2.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php72
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-ubuntu
 
