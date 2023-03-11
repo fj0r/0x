@@ -18,5 +18,5 @@ RUN set -eux \
         neovim \
   ; npm cache clean -f \
   \
-  ; pip3 --no-cache-dir install neovim \
+  ; pip3 install --no-cache-dir --prefix=/usr neovim \
   ;

@@ -25,11 +25,12 @@ ENV PHP_PKGS \
 
 RUN set -eux \
   ; apt-get update \
-  ; apt-get install -y --no-install-recommends gnupg software-properties-common \
-  ; add-apt-repository ppa:ondrej/php --yes \
+  ; sudo apt install -y lsb-release apt-transport-https \
+  ; curl -sSL https://packages.sury.org/php/apt.gpg | apt-key add - \
+  ; echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php7.list \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends $PHP_PKGS \
-  ; apt-get remove -y gnupg software-properties-common \
+  ; apt-get remove -y lsb-release apt-transport-https \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 #RUN set -eux \
 #  ; apt-get update \

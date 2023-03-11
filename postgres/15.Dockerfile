@@ -54,7 +54,7 @@ RUN set -eux \
       libcurl4 curl jq ca-certificates uuid \
       ${BUILD_DEPS:-} \
   \
-  ; pip3 --no-cache-dir install \
+  ; pip3 install --no-cache-dir --prefix=/usr \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
   \

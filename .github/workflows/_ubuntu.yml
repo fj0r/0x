@@ -7,7 +7,7 @@ name: php
 
 on:
   push:
-    branches: [ main, php ]
+    branches: [ ubuntu ]
 
 env:
   REGISTRY: docker.io
@@ -62,5 +62,23 @@ jobs:
           file: php/8.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php8
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build php7
+        uses: docker/build-push-action@v3
+        with:
+          context: php
+          file: php/7.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php7
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build php7.2
+        uses: docker/build-push-action@v3
+        with:
+          context: php
+          file: php/7.2.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php72
           labels: ${{ steps.meta.outputs.labels }}
 

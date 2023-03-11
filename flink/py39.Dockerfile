@@ -27,7 +27,7 @@ RUN set -eux \
   ; git config --global user.name "unnamed" \
   ; git config --global user.email "unnamed@container" \
   \
-  ; pip3 --no-cache-dir install \
+  ; pip3 install --no-cache-dir --prefix=/usr \
         # aiofile fastapi uvicorn \
         debugpy pydantic pytest \
         httpx hydra-core typer pyyaml deepmerge \

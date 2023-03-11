@@ -56,10 +56,9 @@ RUN set -eux \
       ${BUILD_DEPS:-} \
       #${BUILD_CITUS_DEPS:-} \
   \
-  ; pip3 --no-cache-dir install \
+  ; pip3 install --no-cache-dir --prefix=/usr \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
-  ; pip3 --no-cache-dir install \
       pgcli pygments \
   \
   ; curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
