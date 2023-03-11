@@ -1,6 +1,6 @@
 FROM fj0rd/0x:openresty
 
-ARG php_version=8.1
+ARG php_version=8.2
 ENV PHP_VERSION=${php_version}
 ENV PHP_PKGS \
         php${PHP_VERSION} \
