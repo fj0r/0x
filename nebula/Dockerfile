@@ -36,7 +36,7 @@ COPY config.yaml /nebula/config.yaml.tmpl
 COPY join /usr/local/bin
 EXPOSE 51821/udp
 ENV NETWORK NEBULA_CONFIG
-ENV VHOST VCIDR
+ENV VHOST VCIDR VGROUPS VSSHKEY
 ENV HOST HOST_PORT
 
 ENTRYPOINT [ "/entrypoint/init.sh"]
