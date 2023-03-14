@@ -25,7 +25,7 @@ cat /nebula/config.yaml.tmpl | yq e "
 | .relay.use_relays = true
 | .relay.relays = [\"${VHOST}\"]
 | .tun.dev = null
-| .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"host\": \"any\"}]
+| .firewall.inbound = [{\"port\": \"any\", \"proto\": \"any\", \"groups\": [\"${group}\"]}]
 " - > /nebula/node/$ip-$name.yaml
 
 rm -f $name.{key,crt}
