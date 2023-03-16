@@ -27,12 +27,13 @@ RUN set -eux \
   ; git config --global user.name "unnamed" \
   ; git config --global user.email "unnamed@container" \
   \
-  ; pip3 install --no-cache-dir --prefix=/usr \
+  ; pip3 install --no-cache-dir \
         # aiofile fastapi uvicorn \
         debugpy pydantic pytest \
         httpx hydra-core typer pyyaml deepmerge \
         PyParsing structlog python-json-logger \
         decorator more-itertools cachetools \
+        neovim \
   \
   ; nvim_url=https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz \
   ; curl -sSL ${nvim_url} | tar zxf - -C /usr/local --strip-components=1 \

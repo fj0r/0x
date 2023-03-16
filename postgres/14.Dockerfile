@@ -56,7 +56,7 @@ RUN set -eux \
       ${BUILD_DEPS:-} \
       #${BUILD_CITUS_DEPS:-} \
   \
-  ; pip3 install --no-cache-dir --prefix=/usr \
+  ; pip3 install --no-cache-dir \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
       pgcli pygments \

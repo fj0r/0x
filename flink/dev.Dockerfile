@@ -17,6 +17,4 @@ RUN set -eux \
         yaml-language-server \
         neovim \
   ; npm cache clean -f \
-  \
-  ; pip3 install --no-cache-dir --prefix=/usr neovim \
   ;
