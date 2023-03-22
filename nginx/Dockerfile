@@ -18,7 +18,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-    $DEV_DEPS $BUILD_DEPS s3fs \
+    $DEV_DEPS $BUILD_DEPS \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
