@@ -52,9 +52,9 @@ jobs:
           context: openresty
           file: openresty/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-ubuntu
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BASEIMAGE=fj0rd/io:base-ubuntu
+          build-args: BASEIMAGE=fj0rd/io:base-stable
 
       - name: Build php7
         uses: docker/build-push-action@v4
@@ -64,7 +64,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php7
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-ubuntu
+          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
 
       - name: Build php7.2
         uses: docker/build-push-action@v4
@@ -74,5 +74,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php72
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-ubuntu
+          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
 
