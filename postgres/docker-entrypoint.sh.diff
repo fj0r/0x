@@ -1,6 +1,6 @@
---- a	2022-01-04 09:36:11.457245457 +0800
-+++ docker-entrypoint.sh	2022-01-04 09:27:07.857251932 +0800
-@@ -295,6 +295,30 @@
+--- docker-entrypoint.sh.origin	2023-03-24 08:59:13.927122370 +0800
++++ docker-entrypoint.sh	2023-03-24 08:58:14.365487538 +0800
+@@ -293,6 +293,30 @@
  	return 1
  }
  
@@ -11,36 +11,35 @@
 +	for i in "${!PGCONF_@}"; do
 +		local k=$(echo ${i:7} | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
 +		local v=$(eval "echo \"\$$i\"")
-+        if [ -n "$v" ]; then
-+			echo "$k = $v" >> $PGDATA/usr.conf
-+		fi
++	if [ -n "$v" ]; then
++		echo "$k = $v" >> $PGDATA/usr.conf
++	fi
 +	done
 +	echo "pg_stat_statements.max = 10000" >> $PGDATA/usr.conf
 +	echo "pg_stat_statements.track = all" >> $PGDATA/usr.conf
 +}
 +
 +initialize_password() {
-+    if [ -z "$POSTGRES_PASSWORD" ]; then
-+        export POSTGRES_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 19)
-+        echo
-+        echo "export \$POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
-+        echo
-+    fi
++	if [ -z "$POSTGRES_PASSWORD" ]; then
++		export POSTGRES_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 19)
++		echo
++		echo "export \$POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
++		echo
++	fi
 +}
 +
  _main() {
  	# if first arg looks like a flag, assume we want to run postgres server
  	if [ "${1:0:1}" = '-' ]; then
-@@ -312,6 +336,8 @@
+@@ -310,6 +334,7 @@
  
  		# only run initialization on an empty data directory
  		if [ -z "$DATABASE_ALREADY_EXISTS" ]; then
-+		    initialize_password
-+
++			initialize_password
  			docker_verify_minimum_env
  
  			# check dir permissions to reduce likelihood of half-initialized database
-@@ -319,6 +345,7 @@
+@@ -317,6 +342,7 @@
  
  			docker_init_database_dir
  			pg_setup_hba_conf "$@"
@@ -48,7 +47,7 @@
  
  			# PGPASSWORD is required for psql when authentication is required for 'local' connections via pg_hba.conf and is otherwise harmless
  			# e.g. when '--auth=md5' or '--auth-local=md5' is used in POSTGRES_INITDB_ARGS
-@@ -341,6 +368,7 @@
+@@ -343,6 +369,7 @@
  		fi
  	fi
  
