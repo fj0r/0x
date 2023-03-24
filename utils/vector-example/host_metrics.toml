@@ -1,0 +1,10 @@
+[sources.in]
+  type = "host_metrics" # required
+  collectors = ["cpu", "disk", "filesystem", "load", "host", "memory", "network"] # optional, default
+  scrape_interval_secs = 15 # optional, default, seconds
+
+
+[sinks.out]
+  inputs = ["in"]
+  type = "console"
+  encoding.codec = "json"

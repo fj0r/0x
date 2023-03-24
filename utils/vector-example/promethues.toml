@@ -1,0 +1,9 @@
+[sources.in]
+  type = "prometheus_scrape"
+  endpoints = ["http://localhost:9090/metrics"]
+  scrape_interval_secs = 5
+
+[sinks.out]
+  inputs = ["in"]
+  type = "console"
+  encoding.codec = "json"

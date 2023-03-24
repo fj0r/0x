@@ -1,0 +1,10 @@
+[sinks.out]
+  inputs = ["in"]
+  type = "console"
+  encoding.codec = "json"
+
+[sources.in]
+  type = "exec"
+  command = ["echo", "Hello world"]
+  mode = "scheduled"
+  scheduled.exec_interval_secs = 2

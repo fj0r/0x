@@ -1,0 +1,11 @@
+[sources.in]
+  type = "http"
+  acknowledgements = false
+  address = '0.0.0.0:3456'
+  encoding = 'text'
+  #encoding = 'json'
+
+[sinks.out]
+  inputs = ["in"]
+  type = "console"
+  encoding.codec = "json"

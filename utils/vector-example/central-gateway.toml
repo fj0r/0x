@@ -1,0 +1,14 @@
+[sources.in]
+    type = "vector"
+    acknowledgements = false # optional, default
+    address = "0.0.0.0:9000" # required
+
+#[sinks.out]
+#  inputs = ["in"]
+#  type = "console"
+#  encoding.codec = "json"
+
+[sinks.out]
+  inputs = ["in"]
+  type = "elasticsearch"
+  endpoint = "http://localhost:9200"

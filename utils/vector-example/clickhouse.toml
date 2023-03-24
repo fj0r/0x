@@ -1,0 +1,17 @@
+[sources.in]
+    type = "vector"
+    address = "0.0.0.0:9000" # required
+    version = "1"
+
+#[sinks.console]
+#  inputs = ["in"]
+#  type = "console"
+#  encoding.codec = "json"
+
+[sinks.out]
+  inputs = ["in"]
+  type = "clickhouse"
+  database = "default"
+  endpoint = "http://clickhouse.s:80"
+  table = "xmh"
+  compression = "gzip"

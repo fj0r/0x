@@ -1,0 +1,80 @@
+[sources.in]
+  data_dir = "logs/checkpoint"
+  include = ["logs/*.json"]
+  oldest_first = true
+  type = "file"
+
+[transforms.trans]
+  type = "remap"
+  inputs = ["in"]
+  source = '''
+  . = parse_json!(string!(.message))
+  .timestamp = parse_timestamp(.timestamp, "%Y/%m/%d %H:%M:%S %z") ?? now()
+  .host = get_env_var("HOSTNAME") ?? ""
+  '''
+
+[transforms.env]
+  type = "remap"
+  inputs = [ "trans" ]
+  source = '''
+  .app = get_env_var("APP") ?? "click"
+  .stage = get_env_var("STAGE") ?? ""
+  .version = get_env_var("VERSION") ?? ""
+  .tier = get_env_var("TIER") ?? ""
+  '''
+[sinks.ek]
+  type = "elasticsearch"
+  inputs = [ "env" ]
+  endpoint = "http://localhost:9200"
+  index = "vector-%F"
+  mode = "normal"
+  compression = "none"
+
+[sinks.loki]
+  type = "loki"
+  inputs = ["trans"]
+  endpoint = "http://${LOKI_ENDPOINT}"
+  encoding.codec = "json"
+
+[sinks.loki.labels]
+  app = "click"
+  offer = "{{offer}}"
+  stage = "${STAGE}"
+  version = "${VERSION}"
+  tier = "${TIER}"
+  #session = "{{session}}"
+
+#[sinks.out]
+#  type = "console"
+#  inputs = ["trans"]
+#  encoding.codec = "json"
+
+
+#[sinks.out_http]
+#  type = "http"
+#  inputs = ["trans"]
+#  uri = "http://10.6.6.3:8529/_api/document/logs"
+#  #uri = "http://localhost:8081/bin/headers"
+#
+#  [sinks.out_http.request.headers]
+#  Authorization = "Bearer ${HTTP_TOKEN}"
+#
+#  [sinks.out_http.encoding]
+#    codec = "json"
+#    timestamp_format = 'rfc3339'
+#
+#  [sinks.out_http.healthcheck]
+#    uri = "http://10.6.6.3:8529"
+#    enabled = false
+
+
+#[sources.vec_in]
+#    type = "vector"
+#    acknowledgements = false # optional, default
+#    address = "0.0.0.0:9000" # required
+#[sinks.vec_out]
+#  type = "vector"
+#  inputs = ["trans"]
+#  address = "localhost:9000"
+#  healthcheck.enabled = true
+

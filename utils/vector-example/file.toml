@@ -1,0 +1,35 @@
+[sources.in]
+  data_dir = "./checkpoint"
+  include = ["./logs/php1.log"]
+  oldest_first = true
+  type = "file"
+
+[sources.in.multiline]
+  start_pattern = '^\d+\-\d+\-\d+ \d+:\d+:\d+ \[.*\]\[.*\]\[.*\]\[.*\]\[.*\] '
+  mode = "halt_before"
+  condition_pattern = '^\d+\-\d+\-\d+ \d+:\d+:\d+ \[.*\]\[.*\]\[.*\]\[.*\]\[.*\] '
+  timeout_ms = 1000
+
+[transforms.trans]
+  type = "remap"
+  inputs = ["in"]
+  source = '''
+  . |= parse_regex!(.message, r'^(?P<timestamp>\d+\-\d+\-\d+ \d+:\d+:\d+) \[(?P<ipaddr>.*)\]\[(?P<unknow>.*)\]\[(?P<host>.*)\]\[(?P<level>.*)\]\[(?P<location>.*)\] (?s)(?P<message>.*)')
+  .timestamp = parse_timestamp(.timestamp, "%Y/%m/%d %H:%M:%S %z") ?? now()
+  .ip = .ipaddr
+  .host = .host
+  .level = .level
+  .location = .location
+  .tier = get_env_var("TIER") ?? ""
+  .charge = get_env_var("CHARGE") ?? ""
+  .stage = get_env_var("STAGE") ?? ""
+  .version = get_env_var("VERSION") ?? ""
+  .tenant = get_env_var("TENANT") ?? ""
+  .keeper = get_env_var("KEEPER") ?? ""
+  '''
+
+[sinks.out]
+  inputs = ["trans"]
+  type = "console"
+  encoding.codec = "json"
+

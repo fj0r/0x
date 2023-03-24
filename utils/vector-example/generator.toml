@@ -1,0 +1,10 @@
+[sinks.out]
+  inputs = ["in"]
+  type = "console"
+  encoding.codec = "json"
+
+[sources.in]
+  type = "generator"
+  format = "shuffle"
+  interval = 1.0
+  lines = ["Line 1", "Line 2"]

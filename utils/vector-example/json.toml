@@ -1,0 +1,28 @@
+[sources.in]
+  data_dir = "./checkpoint"
+  include = ["./logs/app.log.json"]
+  oldest_first = true
+  type = "file"
+
+[transforms.trans]
+  type = "remap"
+  inputs = ["in"]
+  source = '''
+  . |= parse_json!(.message)
+  .timestamp = parse_timestamp(.timestamp, "%Y/%m/%d %H:%M:%S %z") ?? now()
+  .new_field = "new value"
+  .status = to_int!(.status)
+  .duration = parse_duration!(.duration, "s")
+  .new_name = del(.old_name)
+  .tier = get_env_var("TIER") ?? ""
+  .charge = get_env_var("CHARGE") ?? ""
+  .stage = get_env_var("STAGE") ?? ""
+  .version = get_env_var("VERSION") ?? ""
+  .app = get_env_var("APP") ?? ""
+  '''
+
+[sinks.out]
+  type = "console"
+  inputs = ["trans"]
+  encoding.codec = "json"
+
