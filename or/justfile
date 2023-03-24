@@ -1,16 +1,17 @@
 test file="justfile" path="justfile":
-    curl localhost:8080/upload/{{path}} -T {{file}}
+    curl -u admin:123 -X POST localhost:8020/upload/a/b/c/{{path}} --data-binary @{{file}}
 
 test1 file="justfile" path="justfile":
-    curl -X POST localhost:8080/upload/{{path}} --data-binary @{{file}}
+    curl localhost:8020/upload/b/{{path}} -T {{file}}
 
 srv:
     #!/bin/bash
         #-v $PWD/entrypoint.sh:/entrypoint.sh
         #-e ed25519_root=123 \
-    podman run --rm --name=test -p 8080:80 \
-        -v $PWD/location:/etc/openresty/location \
+    podman run --rm --name=test -p 8020:80 \
         -v $PWD/config/lua:/etc/openresty/lua \
         -v $PWD/config/nginx.conf:/etc/openresty/nginx.conf \
-        0x:or
+        -e UPLOAD_ROOT=upload \
+        -e HTPASSWD=admin:123 \
+        0x:openresty
 

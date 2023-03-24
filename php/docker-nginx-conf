@@ -7,6 +7,7 @@ worker_processes  1;
 
 env TIMEZONE;
 env HOSTNAME;
+env UPLOAD_ROOT;
 
 events {
     worker_connections  1024;
@@ -58,9 +59,6 @@ http {
         #resolver 1.1.1.1;
         access_log  /var/log/openresty/access.log   apm;
 
-        set $htaccess_user_file /etc/openresty/htpasswd;
-        set $auth_enable off;
-
         location / {
             index index.php index.html index.htm;
             if (!-e $request_filename) {
@@ -85,15 +83,22 @@ http {
             return ngx.var.remote_addr
         }
 
-        #location ~ /up/(.*) {
-        #    if (-f $htaccess_user_file) {
-        #        set $auth_enable "Please enter your username and password";
-        #    }
-        #    auth_basic $auth_enable;
-        #    auth_basic_user_file $htaccess_user_file;
-        #    set $path $1;
-        #    content_by_lua_file conf/lua/upload.lua;
-        #}
+        set $htaccess_user_file /etc/openresty/htpasswd;
+        if (-f $htaccess_user_file) {
+            rewrite ^/upload/(.*) /up/$1;
+        }
+
+        location ~ /upload/(.*) {
+            return 200 "setenv `HTPASSWD` to enable.";
+        }
+
+        location ~ /up/(.*) {
+            internal;
+            auth_basic "Please enter your username and password";
+            auth_basic_user_file $htaccess_user_file;
+            set $path $1;
+            content_by_lua_file conf/lua/upload.lua;
+        }
 
         location = /about {
             default_type application/json;
