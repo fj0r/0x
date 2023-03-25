@@ -7,7 +7,7 @@ name: php7
 
 on:
   push:
-    branches: [ main, php7 ]
+    branches: [ main, php, php7 ]
 
 env:
   REGISTRY: docker.io

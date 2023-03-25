@@ -52,6 +52,12 @@ if [ -n "${HTPASSWD}" ]; then
     printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
 fi
 
+if [ -n "${UPLOAD_ROOT}" ]; then
+    UPLOADDIR=${WEB_ROOT:-/srv}/${UPLOAD_ROOT}
+    mkdir -p $UPLOADDIR
+    chown www-data:www-data $UPLOADDIR
+fi
+
 /opt/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
 

@@ -12,8 +12,7 @@ function dirname (path)
     return r
 end
 
-local env_root = os.getenv('UPLOAD_ROOT')
-local root_path = ngx.var.document_root .. '/' .. (env_root and env_root .. '/' or '' )
+local root_path = ngx.var.document_root .. '/' .. os.getenv('UPLOAD_ROOT')
 local target = root_path .. ngx.var.path
 local target_dir = dirname(target)
 
