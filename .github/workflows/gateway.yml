@@ -7,8 +7,9 @@ name: gateway
 
 on:
   push:
-    branches: [ main, or, web ]
+    branches: [ main, or, web, tg ]
   workflow_dispatch:
+    inputs: {}
 
 env:
   REGISTRY: docker.io
@@ -45,13 +46,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: trigger layer
-        run: |
-          curl -X POST https://api.github.com/repos/fj0r/layer/dispatches \
-          -H 'Accept: application/vnd.github.everest-preview+json' \
-          -u ${{ secrets.ACTIONS_KEY }} \
-          --data '{"event_type": "Trigger Workflow", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
-
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build openresty
@@ -62,6 +56,13 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:or
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: trigger layer
+        run: |
+          curl -L -X POST https://api.github.com/repos/fj0r/layer/actions/workflows/layer.yml/dispatches \
+            -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Authorization: Bearer ${{ secrets.ACTIONS_KEY }}" \
+            -d '{"ref":"main","inputs":{}}'
 
       - name: Build registry
         uses: docker/build-push-action@v4

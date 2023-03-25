@@ -1,4 +1,4 @@
-name: pyflink
+name: java11
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: pyflink
 
 on:
   push:
-    branches: [ flink ]
+    branches: [ main, java ]
   workflow_dispatch:
     inputs: {}
 
@@ -46,30 +46,30 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build py39
+      - name: Build java11
         uses: docker/build-push-action@v4
         with:
-          context: flink
-          file: flink/py39.Dockerfile
+          context: java
+          file: java/jdk-11.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:py39
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:java11
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build pyflink
-        uses: docker/build-push-action@v4
-        with:
-          context: flink
-          file: flink/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pyflink
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build es
+      #  uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      #  with:
+      #    context: java
+      #    file: java/es.Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:es
+      #    labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build pyflink
-        uses: docker/build-push-action@v4
-        with:
-          context: flink
-          file: flink/dev.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pyflink-dev
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build polynote
+      #  uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      #  with:
+      #    context: java
+      #    file: java/polynote.Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:polynote
+      #    labels: ${{ steps.meta.outputs.labels }}
 

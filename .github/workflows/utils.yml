@@ -9,6 +9,7 @@ on:
   push:
     branches: [ main, utils ]
   workflow_dispatch:
+    inputs: {}
 
 env:
   REGISTRY: docker.io
