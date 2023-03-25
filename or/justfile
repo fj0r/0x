@@ -7,11 +7,12 @@ test1 file="justfile" path="justfile":
 srv:
     #!/bin/bash
         #-v $PWD/entrypoint.sh:/entrypoint.sh
-        #-e ed25519_root=123 \
     podman run --rm --name=test -p 8020:80 \
         -v $PWD/config/lua:/etc/openresty/lua \
         -v $PWD/config/nginx.conf:/etc/openresty/nginx.conf \
-        -e UPLOAD_ROOT=upload \
+        -v $PWD/entrypoint/init.sh:/entrypoint/init.sh \
+        -e ed25519_root=123 \
+        -e UPLOAD_ROOT=upload/ \
         -e HTPASSWD=admin:123 \
-        0x:openresty
+        fj0rd/0x:or
 

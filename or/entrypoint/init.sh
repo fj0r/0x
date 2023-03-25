@@ -26,7 +26,7 @@ BASEDIR=$(dirname "$0")
 source $BASEDIR/ssh.sh
 source $BASEDIR/socat.sh
 
-echo 'starting openresty'
+echo "[$(date -Is)] starting openresty"
 
 if [ -n "${HTPASSWD}" ]; then
     IFS=':' read -ra HTP <<< "$HTPASSWD"
