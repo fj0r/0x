@@ -8,6 +8,7 @@ name: java
 on:
   push:
     branches: [ main, java ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

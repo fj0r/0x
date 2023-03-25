@@ -8,6 +8,7 @@ name: vpn
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

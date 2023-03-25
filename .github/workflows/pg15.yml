@@ -8,6 +8,7 @@ name: postgres 15
 on:
   push:
     branches: [ main, pg15 ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

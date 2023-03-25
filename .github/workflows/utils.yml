@@ -8,6 +8,7 @@ name: utils
 on:
   push:
     branches: [ main, utils ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

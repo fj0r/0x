@@ -8,6 +8,7 @@ name: postgres 14
 on:
   push:
     branches: [ pg ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

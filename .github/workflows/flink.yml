@@ -8,6 +8,7 @@ name: pyflink
 on:
   push:
     branches: [ flink ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

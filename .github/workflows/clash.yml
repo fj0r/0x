@@ -8,6 +8,7 @@ name: clash
 on:
   push:
     branches: [ main, clash ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

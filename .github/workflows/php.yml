@@ -8,6 +8,7 @@ name: php
 on:
   push:
     branches: [ main, php ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io

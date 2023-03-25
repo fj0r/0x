@@ -8,6 +8,7 @@ name: gateway
 on:
   push:
     branches: [ main, or, web ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io
