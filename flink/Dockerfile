@@ -1,7 +1,7 @@
 # https://github.com/apache/flink-docker
 FROM fj0rd/0x:py39
 
-ARG FLINK_VERSION=1.16.1
+ARG FLINK_VERSION=1.17.0
 ENV FLINK_HOME=/opt/flink MVN_HOME=/opt/mvn
 ENV PATH=${FLINK_HOME}/bin:${MVN_HOME}/bin:$PATH
 ENV BUILD_DEPS gpg build-essential
