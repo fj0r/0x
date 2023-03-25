@@ -1,5 +1,5 @@
 # https://github.com/apache/flink-docker
-FROM fj0rd/0x:py39
+FROM fj0rd/0x:py
 
 ARG FLINK_VERSION=1.17.0
 ENV FLINK_HOME=/opt/flink MVN_HOME=/opt/mvn
