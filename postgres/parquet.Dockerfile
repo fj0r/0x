@@ -1,7 +1,6 @@
 FROM fj0rd/scratch:arrow as arrow
 FROM postgres:15
 COPY --from=arrow /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
-COPY --from=arrow /usr/include/arrow /usr/include/arrow
 
 ENV BUILD_DEPS \
     git \
@@ -33,6 +32,16 @@ RUN set -eux \
   ; apt-get install -y --no-install-recommends \
       curl jq ca-certificates \
       ${BUILD_DEPS:-} \
+  \
+  ; mkdir -p /usr/include/arrow \
+  ; mkdir arrow \
+  ; version=$(curl -sSL https://arrow.apache.org/install/ | rg 'Current Version: ([.0-9]+)' -or '$1') \
+  ; curl -sSL https://dlcdn.apache.org/arrow/arrow-${version}/apache-arrow-${version}.tar.gz \
+    | tar zxf - -C arrow --strip-components=1 \
+  ; cd arrow \
+  ; tar -cf libarrow-dev.tar -C cpp/src/arrow $(find cpp/src/arrow -name '*.h' | cut -c 15-) \
+    | tar -xf -C /usr/include/arrow \
+  ; cd .. && rm -rf arrow \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
