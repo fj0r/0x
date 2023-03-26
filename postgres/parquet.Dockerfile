@@ -30,18 +30,12 @@ RUN set -eux \
   ; locale-gen \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends \
-      curl jq ca-certificates \
+      curl jq ripgrep ca-certificates \
       ${BUILD_DEPS:-} \
   \
-  ; mkdir -p /usr/include/arrow \
-  ; mkdir arrow \
-  ; version=$(curl -sSL https://arrow.apache.org/install/ | rg 'Current Version: ([.0-9]+)' -or '$1') \
-  ; curl -sSL https://dlcdn.apache.org/arrow/arrow-${version}/apache-arrow-${version}.tar.gz \
-    | tar zxf - -C arrow --strip-components=1 \
-  ; cd arrow \
-  ; tar -cf libarrow-dev.tar -C cpp/src/arrow $(find cpp/src/arrow -name '*.h' | cut -c 15-) \
-    | tar -xf -C /usr/include/arrow \
-  ; cd .. && rm -rf arrow \
+  ; mkdir -p /usr/include \
+  ; curl -sSL https://github.com/fj0r/scratch/releases/latest/download/libarrow-dev.tar.gz \
+    | tar -zxf - -C /usr/include \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
@@ -54,6 +48,7 @@ RUN set -eux \
   ; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
   ; make install USE_PGXS=1 \
   \
+  ; rm -rf /usr/include/arrow \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
   ; apt-get clean -y && rm -rf /var/lib/apt/lists/*
