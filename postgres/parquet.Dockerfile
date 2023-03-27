@@ -1,9 +1,7 @@
-FROM fj0rd/scratch:arrow as arrow
 FROM postgres:15
 
 ENV BUILD_DEPS \
     git \
-    cmake \
     binutils \
     m4 \
     pkg-config \
@@ -37,11 +35,16 @@ RUN set -eux \
   \
   ; cd $build_dir \
   \
-  ; mkdir arrow \
+  ; mkdir $build_dir/cmake \
+  ; curl -sSL https://github.com/Kitware/CMake/releases/download/v3.26.1/cmake-3.26.1-linux-x86_64.tar.gz \
+    | tar -zxf - -C $build_dir/cmake --strip-components=1 \
+  ; ln -sf $build_dir/cmake/bin/cmake /usr/local/bin \
+  \
+  ; mkdir $build_dir/arrow \
   ; arrow_ver=$(curl -sSL https://arrow.apache.org/install/ | rg 'Current Version: ([.0-9]+)' -or '$1') \
   ; curl -sSL https://dlcdn.apache.org/arrow/arrow-${arrow_ver}/apache-arrow-${arrow_ver}.tar.gz \
-    | tar zxf - -C arrow --strip-components=1 \
-  ; cd arrow \
+    | tar zxf - -C $build_dir/arrow --strip-components=1 \
+  ; cd $build_dir/arrow/cpp \
   ; mkdir build \
   ; cd build \
   ; cmake .. --preset ninja-release \
@@ -67,25 +70,25 @@ RUN set -eux \
   ; mkdir -p /usr/local/include/arrow \
   ; cd $build_dir/arrow/cpp/src/arrow \
   ; tar -cf - $(find . -name '*.h') | tar -xf - -C /usr/local/include/arrow \
-  ; cp $SRC/cpp/build/src/arrow/util/config.h /usr/local/include/arrow/util/config.h \
+  ; cp $build_dir/arrow/cpp/build/src/arrow/util/config.h /usr/local/include/arrow/util/config.h \
   \
   ; mkdir -p /usr/local/include/parquet \
   ; cd $build_dir/arrow/cpp/src/parquet \
   ; tar -cf - $(find . -name '*.h') | tar -xf - -C /usr/local/include/parquet \
-  ; cp $SRC/cpp/build/src/parquet/parquet_version.h /usr/local/include/parquet/parquet_version.h \
+  ; cp $build_dir/arrow/cpp/build/src/parquet/parquet_version.h /usr/local/include/parquet/parquet_version.h \
   \
   ; mkdir $build_dir/parquet \
   ; paq_version=$(curl https://api.github.com/repos/pgspider/parquet_s3_fdw/releases/latest | jq -r '.tag_name') \
   ; curl -sSL https://github.com/pgspider/parquet_s3_fdw/archive/refs/tags/${paq_version}.tar.gz | tar zxf - --strip-components=1 -C $build_dir/parquet \
   ; cd $build_dir/parquet \
   #; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
-  ; make install USE_PGXS=1 CCFLAGS=-std=c++14 \
+  ; make install USE_PGXS=1 CCFLAGS=-std=c++17 \
   \
   ; rm -rf /usr/local/include/arrow /usr/local/include/parquet /usr/local/include/aws \
   ; rm -f /usr/lib/x86_64-linux-gnu/libaws-cpp-sdk-core.a /usr/lib/x86_64-linux-gnu/libaws-cpp-sdk-s3.a \
   ; rm -rf $build_dir \
+  ; rm -f /usr/local/bin/cmake \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
-  #    ${BUILD_CITUS_DEPS:-} \
   ; apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 
