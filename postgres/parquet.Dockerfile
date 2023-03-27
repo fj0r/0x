@@ -35,7 +35,7 @@ RUN set -eux \
   \
   ; mkdir -p /usr/include \
   ; curl -sSL https://github.com/fj0r/scratch/releases/latest/download/libarrow-dev.tar.gz \
-    | tar -zxf - -C /usr/include \
+    | tar -zxf - -C /usr/local/include \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
@@ -48,7 +48,7 @@ RUN set -eux \
   ; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
   ; make install USE_PGXS=1 \
   \
-  ; rm -rf /usr/include/arrow \
+  ; rm -rf /usr/local/include/arrow /usr/local/include/parquet /usr/local/include/aws \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
   ; apt-get clean -y && rm -rf /var/lib/apt/lists/*
