@@ -7,7 +7,8 @@ name: postgres parquet
 
 on:
   push:
-    branches: [ pg-paq ]
+    branches: [ main, pg-paq ]
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io
