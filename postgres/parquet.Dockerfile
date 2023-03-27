@@ -14,7 +14,6 @@ ENV BUILD_DEPS \
     libicu-dev \
     uuid-dev \
     build-essential \
-    clang \
     libpq-dev \
     libkrb5-dev \
     postgresql-server-dev-${PG_MAJOR}
@@ -36,6 +35,8 @@ RUN set -eux \
   ; mkdir -p /usr/include \
   ; curl -sSL https://github.com/fj0r/scratch/releases/latest/download/libarrow-dev.tar.gz \
     | tar -zxf - -C /usr/local/include \
+  ; mv /usr/local/include/libaws-cpp-sdk-core.a /usr/lib/x86_64-linux-gnu \
+  ; mv /usr/local/include/libaws-cpp-sdk-s3.a /usr/lib/x86_64-linux-gnu \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
@@ -45,10 +46,12 @@ RUN set -eux \
   ; paq_version=$(curl https://api.github.com/repos/pgspider/parquet_s3_fdw/releases/latest | jq -r '.tag_name') \
   ; curl -sSL https://github.com/pgspider/parquet_s3_fdw/archive/refs/tags/${paq_version}.tar.gz | tar zxf - --strip-components=1 -C parquet \
   ; cd parquet \
-  ; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
-  ; make install USE_PGXS=1 \
+  #; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
+  ; make install USE_PGXS=1 CCFLAGS=-std=c++17 \
   \
   ; rm -rf /usr/local/include/arrow /usr/local/include/parquet /usr/local/include/aws \
+  ; rm -f /usr/local/include/libaws-cpp-sdk-core.a /usr/local/include/libaws-cpp-sdk-s3.a \
+  ; rm -rf $build_dir \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
   ; apt-get clean -y && rm -rf /var/lib/apt/lists/*
