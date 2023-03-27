@@ -47,7 +47,7 @@ RUN set -eux \
   ; curl -sSL https://github.com/pgspider/parquet_s3_fdw/archive/refs/tags/${paq_version}.tar.gz | tar zxf - --strip-components=1 -C parquet \
   ; cd parquet \
   #; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
-  ; make install USE_PGXS=1 CCFLAGS=-std=c++17 \
+  ; make install USE_PGXS=1 CCFLAGS=-std=c++14 \
   \
   ; rm -rf /usr/local/include/arrow /usr/local/include/parquet /usr/local/include/aws \
   ; rm -f /usr/local/include/libaws-cpp-sdk-core.a /usr/local/include/libaws-cpp-sdk-s3.a \
