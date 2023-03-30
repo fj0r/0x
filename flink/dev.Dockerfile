@@ -14,7 +14,6 @@ RUN set -eux \
         pyright \
         vscode-langservers-extracted \
         yaml-language-server \
-        neovim \
   ; chown -R root:root ${NODE_ROOT}/lib \
   ; npm cache clean -f \
   ;

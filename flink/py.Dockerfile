@@ -29,6 +29,7 @@ RUN set -eux \
   \
   ; pip3 install --no-cache-dir \
         # aiofile fastapi uvicorn \
+        'polars[all]' Numpy Pandas numba Scikit-learn \
         debugpy pydantic pytest \
         httpx hydra-core typer pyyaml deepmerge \
         PyParsing structlog python-json-logger \
