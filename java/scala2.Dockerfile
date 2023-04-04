@@ -5,7 +5,7 @@ ENV PATH=${SCALA_HOME}/bin:$PATH
 
 RUN set -eux \
   ; pup_ver=$(xh https://api.github.com/repos/ericchiang/pup/releases Accept:application/vnd.github.v3+json | jq -r '.[0].tag_name') \
-  ; pup_url=https://github.com/ericchiang/pup/releases/download/${pup_ver}/pup_${pup_ver}_linux_amd64.zip \
+  ; pup_url="https://github.com/ericchiang/pup/releases/download/${pup_ver}/pup_${pup_ver}_linux_amd64.zip" \
   ; xh -Fo pup.zip ${pup_url} && unzip pup.zip && rm -f pup.zip && chmod +x pup && mv pup /opt/assets/ \
   \
   ; mkdir -p /usr/share/man/man1 \
