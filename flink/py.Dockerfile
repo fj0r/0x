@@ -73,8 +73,8 @@ RUN set -eux \
   ; curl -sSL ${xh_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/xh' \
   ; ln -sr /usr/local/bin/xh /usr/local/bin/xhs \
   \
-  ; dasel_url="https://github.com/TomWright/dasel/releases/latest/download/dasel_linux_amd64.gz" \
-  ; curl ${dasel_url} | gzip -d > /usr/local/bin/dasel && chmod +x /usr/local/bin/dasel \
+  ; yq_url="https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64.tar.gz" \
+  ; curl -sSL ${yq_url} | tar zxf - ./yq_linux_amd64 && mv yq_linux_amd64 /usr/local/bin/yq \
   \
   ; apt-get remove -y build-essential \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \

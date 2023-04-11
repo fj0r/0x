@@ -10,7 +10,7 @@ RUN set -eux \
   ; mkdir /root/assets \
   ; yq_url=$(curl -sSL https://api.github.com/repos/mikefarah/yq/releases/latest \
           | jq -r '.assets[].browser_download_url' | grep 'linux_amd64.tar') \
-  ; curl -sSL ${yq_url} | tar zxf - && mv yq_linux_amd64 /root/assets/yq && chmod +x /root/assets/yq \
+  ; curl -sSL ${yq_url} | tar zxf - ./yq_linux_amd64 && mv yq_linux_amd64 /root/assets/yq && chmod +x /root/assets/yq \
   \
   ; cd /root/assets \
   #\
