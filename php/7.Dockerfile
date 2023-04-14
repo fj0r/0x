@@ -1,7 +1,7 @@
 ARG BASEIMAGE=fj0rd/0x:openresty
 FROM ${BASEIMAGE}
 
-ARG PHP_VERSION=7.4
+ENV PHP_VERSION=7.4
 ENV PHP_PKGS \
         php${PHP_VERSION} \
         php${PHP_VERSION}-opcache \
