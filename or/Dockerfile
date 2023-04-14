@@ -1,6 +1,7 @@
 FROM fj0rd/scratch:dropbear-alpine as dropbear
 
 FROM alpine
+ARG OPENRESTY_ADDR=47.91.165.147
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV PATH=/opt/openresty/bin:$PATH
@@ -36,8 +37,8 @@ RUN set -eux \
   ; mkdir -p $build_dir \
   \
   ; cd $build_dir \
-  ; OPENRESTY_VER=$(curl -sSL https://api.github.com/repos/openresty/openresty/tags -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].name' | cut -c 2-) \
-  ; curl -sSL https://openresty.org/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
+  ; OPENRESTY_VER=$(curl -sSL https://api.github.com/repos/openresty/openresty/tags | jq -r '.[0].name' | cut -c 2-) \
+  ; curl -sSL -H 'Host: openresty.org' http://${OPENRESTY_ADDR}/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
   ; cd openresty-${OPENRESTY_VER} \
   ; ./configure --prefix=/opt/openresty \
         --with-luajit \
