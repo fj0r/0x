@@ -8,6 +8,8 @@ ENV PATH=/opt/openresty/bin:$PATH
 
 COPY --from=dropbear / /
 RUN set -eux \
+  ; echo "${OPENRESTY_ADDR} openresty.org" >> /etc/hosts \
+  ; echo "${OPENRESTY_ADDR} opm.openresty.org" >> /etc/hosts \
   ; apk update \
   ; apk add --no-cache --virtual .build-deps \
         build-base \
@@ -38,7 +40,7 @@ RUN set -eux \
   \
   ; cd $build_dir \
   ; OPENRESTY_VER=$(curl -sSL https://api.github.com/repos/openresty/openresty/tags | jq -r '.[0].name' | cut -c 2-) \
-  ; curl -sSL -H 'Host: openresty.org' http://${OPENRESTY_ADDR}/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
+  ; curl -sSL https://openresty.org/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
   ; cd openresty-${OPENRESTY_VER} \
   ; ./configure --prefix=/opt/openresty \
         --with-luajit \
