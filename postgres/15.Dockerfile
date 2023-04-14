@@ -128,6 +128,11 @@ RUN set -eux \
   \
   ; rm -rf $build_dir \
   \
+  ; ferret_ver=$(curl -sSL https://api.github.com/repos/FerretDB/FerretDB/releases/latest | jq -r '.tag_name') \
+  ; ferret_url="https://github.com/FerretDB/FerretDB/releases/download/${ferret_ver}/ferretdb" \
+  ; curl -sSL ${ferret_url} -o /usr/local/bin/ferretdb \
+  ; chmod +x /usr/local/bin/ferretdb \
+  \
   ; mkdir -p /opt/pg_flame \
   ; curl -sSL https://github.com/fj0r/pg_flame/releases/latest/download/pg_flame.tar.zst \
     | zstd -d | tar -xf - -C /opt/pg_flame \

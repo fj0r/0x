@@ -10,6 +10,7 @@ srv:
     podman run --rm --name=test -p 8020:80 \
         -v $PWD/config/lua:/etc/openresty/lua \
         -v $PWD/config/nginx.conf:/etc/openresty/nginx.conf \
+        -v $PWD/short-url.json:/srv/short-url.json \
         -e ed25519_root=123 \
         -e UPLOAD_ROOT=upload/ \
         -e HTPASSWD=admin:123 \

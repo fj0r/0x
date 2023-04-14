@@ -11,4 +11,4 @@ RUN set -ex \
   ; chown postgres:postgres /var/lib/ferretdb \
   ;
 
-# ferretdb --state-dir="/var/lib/ferretdb" --postgresql-url=postgres://${POSTGRES_USER:-postgres}@localhost:5432/${POSTGRES_DB:-postgres} --listen-addr=0.0.0.0:27017
+# ferretdb --state-dir="/var/lib/postgresql/ferretdb" --postgresql-url=postgres://${POSTGRES_USER:-postgres}@localhost:5432/${POSTGRES_DB:-postgres} --listen-addr=0.0.0.0:27017
