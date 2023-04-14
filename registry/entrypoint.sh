@@ -50,7 +50,7 @@ if [ -n "${UPLOAD_ROOT}" ]; then
     chown www-data:www-data $UPLOADDIR
 fi
 
-/opt/openresty/bin/openresty 2>&1 &
+/usr/local/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
 
 if [ -n "$POSTBOOT" ]; then

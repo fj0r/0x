@@ -9,12 +9,15 @@ COPY --from=dropbear / /
 
 RUN set -eux \
   ; apk add --no-cache \
+        bash \
         curl \
+        xh \
         jq \
         zstd \
         patch \
         shadow \
         sudo \
+        openssl \
   ; ln -fs /usr/local/openresty/nginx/conf /etc/openresty
 COPY config /etc/openresty
 COPY setup.sh /srv
