@@ -7,7 +7,15 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 
 COPY --from=dropbear / /
 
-RUN ln -fs /usr/local/openresty/nginx/conf /etc/openresty
+RUN set -eux \
+  ; apk add --no-cache \
+        curl \
+        jq \
+        zstd \
+        patch \
+        shadow \
+        sudo \
+  ; ln -fs /usr/local/openresty/nginx/conf /etc/openresty
 COPY config /etc/openresty
 COPY setup.sh /srv
 WORKDIR /srv
