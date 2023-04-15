@@ -9,6 +9,8 @@ COPY --from=dropbear / /
 
 RUN set -eux \
   ; apk add --no-cache \
+        pcre \
+        zlib \
         bash \
         curl \
         xh \
@@ -18,7 +20,9 @@ RUN set -eux \
         shadow \
         sudo \
         openssl \
+  ; adduser -SDH www-data -G www-data -h /srv \
   ; ln -fs /usr/local/openresty/nginx/conf /etc/openresty
+
 COPY config /etc/openresty
 COPY setup.sh /srv
 WORKDIR /srv
