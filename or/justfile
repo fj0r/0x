@@ -14,5 +14,5 @@ srv:
         -e ed25519_root=123 \
         -e UPLOAD_ROOT=upload/ \
         -e HTPASSWD=admin:123 \
-        fj0rd/0x:or
+        0x:or
 
