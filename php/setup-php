@@ -4,7 +4,7 @@ if [ -n "$UPLOAD_MAX_FILESIZE" ]; then
     echo "-- \$UPLOAD_MAX_FILESIZE been set to $UPLOAD_MAX_FILESIZE(MB)"
     sed -i 's!\(upload_max_filesize =\).*!\1 '"$UPLOAD_MAX_FILESIZE"'M!g' /etc/php/${PHP_VERSION}/fpm/php.ini
     sed -i 's!\(post_max_size =\).*!\1 '"$(($UPLOAD_MAX_FILESIZE * 4))"'M!g' /etc/php/${PHP_VERSION}/fpm/php.ini
-    sed -i 's!\(client_max_body_size \).*!\1 '"$UPLOAD_MAX_FILESIZE"'m;!g' /etc/nginx/nginx.conf
+    sed -i 's!\(client_max_body_size \).*!\1 '"$UPLOAD_MAX_FILESIZE"'m;!g' /etc/openresty/nginx.conf
 fi
 
 if [ -n "$PHP_FPM_SERVERS" ]; then
