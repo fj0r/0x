@@ -1,6 +1,6 @@
 FROM fj0rd/io
 
-ENV PATH=/opt/mvn/bin:/opt/language-server/jdtls/bin:$PATH
+ENV PATH=/opt/mvn/bin:${LS_ROOT}/jdtls/bin:$PATH
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 RUN set -eux \
@@ -23,10 +23,10 @@ RUN set -eux \
 
 # requires at least Java 17
 RUN set -eux \
-  ; mkdir -p /opt/language-server/jdtls \
+  ; mkdir -p ${LS_ROOT}/jdtls \
   ; jdtls_latest=$(curl -sSL https://download.eclipse.org/jdtls/snapshots/latest.txt) \
   ; curl -sSL https://download.eclipse.org/jdtls/snapshots/${jdtls_latest} \
-    | tar --no-same-owner -zxf - -C /opt/language-server/jdtls \
+    | tar --no-same-owner -zxf - -C ${LS_ROOT}/jdtls \
   \
   ; echo 'done'
 
