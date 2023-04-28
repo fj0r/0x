@@ -69,6 +69,13 @@ RUN set -eux \
   ; mkdir -p $build_dir \
   \
   ; cd $build_dir \
+  ; mkdir pgvector && cd pgvector \
+  ; pgvector_ver=$(curl -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
+  ; curl -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${pgvector_ver}.tar.gz \
+    | tar zxf - -C . --strip-components=1 \
+  ; make && make install \
+  \
+  ; cd $build_dir \
   ; git clone --depth=1 https://github.com/adjust/clickhouse_fdw.git \
   ; cd clickhouse_fdw \
   ; mkdir build && cd build \
