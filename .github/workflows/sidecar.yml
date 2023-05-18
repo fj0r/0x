@@ -1,4 +1,4 @@
-name: utils
+name: sidecar
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: utils
 
 on:
   push:
-    branches: [ main, utils ]
+    branches: [ main, sidecar ]
   workflow_dispatch:
     inputs: {}
 
@@ -47,12 +47,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build utils
+      - name: Build sidecar
         uses: docker/build-push-action@v4
         with:
-          context: utils
+          context: sidecar
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:utils
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sidecar
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: trigger ci

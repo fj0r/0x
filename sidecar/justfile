@@ -5,4 +5,4 @@ test-entrypoint:
         -e ed25519_root=AAAAC3NzaC1lZDI1NTE5AAAAIK2Q46WeaBZ9aBkS3TF2n9laj1spUkpux/zObmliHUOI \
         -e vector_xf=/etc/vector/xx \
         -v $PWD/entrypoint/vector.sh:/entrypoint/vector.sh \
-        0x:utils
+        0x:sidecar
