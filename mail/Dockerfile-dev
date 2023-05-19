@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-FROM nnurphy/mail:latest
-=======
 FROM fj0rd/mail:latest
->>>>>>> d0a63b96278d7fd87b5e0c8cfae55c05c2e8a775
 
 COPY entrypoint.sh /entrypoint.sh
 
