@@ -20,4 +20,5 @@ RUN apt-get update \
       curl socat \
  && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-COPY entrypoint.sh /entrypoint/init.sh
+COPY entrypoint/wireguard.sh /entrypoint/
+CMD [ "srv" ]

@@ -61,7 +61,8 @@ RUN set -eux \
 
 COPY docker-nginx-conf /etc/openresty/nginx.conf
 COPY setup-php /setup-php
-COPY entrypoint.sh /entrypoint/init.sh
+COPY entrypoint/php.sh /entrypoint/
+CMD ["srv"]
 
 RUN set -ex \
   ; curl -sSL https://getcomposer.org/installer \

@@ -25,7 +25,8 @@ RUN set -eux \
   ; curl -sSL ${coredns_url} | tar zxf - -C /usr/local/bin \
   ; chmod +x /usr/local/bin/coredns
 
-COPY web.entrypoint.sh /entrypoint/init.sh
+COPY entrypoint/coredns.sh /entrypoint/
+COPY entrypoint/wg-gen-web.sh /entrypoint/
 COPY syncwg.sh /app/syncwg.sh
 
 EXPOSE 8080

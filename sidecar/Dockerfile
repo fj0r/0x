@@ -30,5 +30,6 @@ RUN set -eux \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   ;
 
-COPY entrypoint /entrypoint
+COPY entrypoint/vector.sh /entrypoint/
+CMD ["srv"]
 WORKDIR /app

@@ -1,13 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+
+if [[ "$DEBUG" == 'true' ]]; then
+    set -x
+fi
+
 if [ -n "${PREBOOT}" ]; then
   bash $PREBOOT
 fi
 
 
 stop() {
+    echo "Received SIGINT or SIGTERM. Shutting down"
     # Get PID
     pid=$(cat /var/run/services)
-    echo "Received SIGINT or SIGTERM. Shutting down"
     # Set TERM
     kill -SIGTERM ${pid}
     # Wait for exit
@@ -22,33 +29,24 @@ trap stop SIGINT SIGTERM
 
 BASEDIR=$(dirname "$0")
 
-source $BASEDIR/env.sh
-source $BASEDIR/git.sh
-source $BASEDIR/ssh.sh
-source $BASEDIR/socat.sh
-
-routes=""
-for i in "${!R_@}"; do
-    n=${i:2}
-    r=$(eval "echo \"\$$i\"")
-    routes="${routes}${n}: ${r};"
+for x in $(find $BASEDIR -name '*.sh' -not -path '*/init.sh'); do
+    source $x
 done
-
-if [ -n "$routes" ]; then
-    routes="-inline-routes '${routes}'"
-fi
-
-routefile=""
-if [ -n "$ROUTEFILE" ]; then
-    routefile="-routes-file ${ROUTEFILE}"
-fi
-
-cmd="/usr/local/bin/skipper -address :80 -wait-for-healthcheck-interval 0 ${routefile} ${routes}"
-
-eval "$cmd &"
-echo -n "$! " >> /var/run/services
 
 if [ -n "${POSTBOOT}" ]; then
   bash $POSTBOOT
 fi
-wait -n $(cat /var/run/services) && exit $?
+
+
+if [ -z $1 ]; then
+    if [ -e /usr/local/bin/nu ]; then
+        __shell=/usr/local/bin/nu
+    fi
+    exec ${__shell}
+elif [[ $1 == "srv" ]]; then
+    sleep infinity &
+    echo -n "$! " >> /var/run/services
+    wait -n $(cat /var/run/services) && exit $?
+else
+    exec $@
+fi

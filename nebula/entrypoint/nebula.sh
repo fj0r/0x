@@ -1,21 +1,3 @@
-#!/usr/bin/env bash
-
-set -e
-
-stop() {
-    echo "Received SIGINT or SIGTERM. Shutting down"
-    # Get PID
-    pid=$(cat /var/run/services)
-    # Set TERM
-    kill -SIGTERM ${pid}
-    # Wait for exit
-    wait ${pid}
-    # All done.
-    echo -n '' > /var/run/services
-    echo "Done."
-}
-
-
 gen-host-key() {
     if [ ! -f "$1" ]; then
         #ssh-keygen -t ed25519 -f /nebula/ssh_host_ed25519_key -N "" < /dev/null
@@ -26,13 +8,6 @@ gen-host-key() {
     fi
 
 }
-
-trap stop SIGINT SIGTERM
-
-
-BASEDIR=$(dirname "$0")
-source $BASEDIR/env.sh
-
 
 ################################################################################
 echo "[$(date -Is)] starting nebula"
@@ -76,18 +51,7 @@ if [ -n "$NETWORK" ]; then
             | .sshd = {\"enabled\": true, \"listen\": \"127.0.0.1:2222\", \"host_key\": \"/nebula/ssh_host_ed25519_key\", \"authorized_users\": [{\"user\": \"root\", \"keys\": [\"ssh-ed25519 ${VSSHKEY}\"]}]}
         " - > $config
     fi
-
-    /usr/local/bin/nebula -config $config 2>&1 &
-    echo -n "$! " >> /var/run/services
-
-    source $BASEDIR/socat.sh
-else
-    /usr/local/bin/nebula -config $config 2>&1 &
-    echo -n "$! " >> /var/run/services
 fi
 
-
-
-
-################################################################################
-wait -n $(cat /var/run/services) && exit $?
+/usr/local/bin/nebula -config $config 2>&1 &
+echo -n "$! " >> /var/run/services

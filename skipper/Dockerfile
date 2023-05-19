@@ -30,3 +30,4 @@ COPY entrypoint /entrypoint
 
 WORKDIR /srv
 ENTRYPOINT /entrypoint/init.sh
+CMD ["srv"]

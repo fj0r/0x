@@ -38,9 +38,8 @@ RUN set -eux \
   ; chown -R vmail:dovecot /etc/dovecot \
   ; chmod -R o-rwx /etc/dovecot
 
-#COPY services.d /etc/services.d
-COPY entrypoint.sh /
-ENTRYPOINT [ "/entrypoint.sh" ]
+COPY entrypoint/mail.sh /entrypoint/
+CMD ["srv"]
 
 ENV HOST=
 ENV EXTERNAL_IP=

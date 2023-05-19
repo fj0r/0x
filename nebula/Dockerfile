@@ -31,7 +31,6 @@ FROM fj0rd/io:base
 WORKDIR /nebula
 
 COPY --from=build /root/assets /usr/local/bin
-COPY entrypoint.sh /entrypoint/init.sh
 COPY config.yaml /nebula/config.yaml.tmpl
 COPY join /usr/local/bin
 EXPOSE 51821/udp
@@ -39,5 +38,5 @@ ENV NETWORK NEBULA_CONFIG
 ENV VHOST VCIDR VGROUPS VSSHKEY
 ENV HOST HOST_PORT
 
-ENTRYPOINT [ "/entrypoint/init.sh"]
-
+COPY entrypoint/nebula.sh /entrypoint/
+CMD ["srv"]

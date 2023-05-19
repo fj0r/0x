@@ -36,6 +36,7 @@ ENV UPLOAD_ROOT=
 
 COPY entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint/init.sh"]
+CMD ["srv"]
 
 STOPSIGNAL SIGQUIT
 
