@@ -21,7 +21,7 @@ if [ ! -d /etc/opendkim/keys/$MYHOST ]; then
     curr=$PWD
     mkdir -p /etc/opendkim/keys/$MYHOST
     cd /etc/opendkim/keys/$MYHOST
-    opendkim-genkey -d $MYHOST -s default
+    opendkim-genkey -d $MYHOST -s default --bits=1024
     chown -R opendkim:opendkim /etc/opendkim/keys/$MYHOST
     echo "default._domainkey.$MYHOST $MYHOST:default:/etc/opendkim/keys/$MYHOST/default.private" >> /etc/opendkim/KeyTable
     echo "*@$MYHOST default._domainkey.$MYHOST" >> /etc/opendkim/SigningTable
@@ -30,6 +30,7 @@ fi
 cat /etc/opendkim/keys/$MYHOST/default.txt
 
 if [ ! -f /etc/vmail/vmail.sqlite ]; then
+    mkdir -p /etc/vmail
     sqlite3 -batch /etc/vmail/vmail.sqlite << EOF
     CREATE TABLE alias (
         address varchar(255) NOT NULL,
