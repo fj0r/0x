@@ -1,7 +1,7 @@
 ARG BASEIMAGE=fj0rd/0x:openresty
 FROM ${BASEIMAGE}
 
-ENV PHP_VERSION=7.4
+ENV PHP_VERSION=7.2
 ENV PHP_PKGS \
         php${PHP_VERSION} \
         php${PHP_VERSION}-opcache \
@@ -61,6 +61,7 @@ RUN set -eux \
 
 COPY docker-nginx-conf /etc/openresty/nginx.conf
 COPY setup-php /setup-php
+
 COPY entrypoint/php.sh /entrypoint/
 CMD ["srv"]
 

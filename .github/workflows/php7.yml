@@ -7,7 +7,7 @@ name: php7
 
 on:
   push:
-    branches: [ main, php, php7 ]
+    branches: [ php, php7 ]
   workflow_dispatch:
     inputs: {}
 
@@ -47,18 +47,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build openresty
-        uses: docker/build-push-action@v4
-        with:
-          context: openresty
-          file: openresty/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: BASEIMAGE=fj0rd/io:base-stable
-
       - name: Build php7
         uses: docker/build-push-action@v4
         with:
@@ -67,15 +55,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php7
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
-
-      - name: Build php7.2
-        uses: docker/build-push-action@v4
-        with:
-          context: php
-          file: php/7.2.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php72
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
+          #build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
 
