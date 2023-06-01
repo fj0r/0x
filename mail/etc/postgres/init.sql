@@ -1,0 +1,3 @@
+CREATE USER postfix_user WITH PASSWORD '${DBPASS}';
+CREATE DATABASE postfix_db;
+GRANT ALL PRIVILEGES ON DATABASE postfix_db TO postfix_user;

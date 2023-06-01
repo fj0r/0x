@@ -7,10 +7,10 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-        locales sqlite3 \
-        postfix swaks \
+        locales swaks \
+        postfix \
         dovecot-core dovecot-imapd dovecot-lmtpd \
-        dovecot-sqlite postfix-sqlite \
+        dovecot-pgsql postfix-pgsql \
         opendkim opendkim-tools \
         python3 python3-pip \
   \
@@ -25,20 +25,22 @@ RUN set -eux \
   \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-COPY etc/sqlite/postfix /etc/postfix
-COPY etc/sqlite/dovecot /etc/dovecot
-COPY etc/sqlite/opendkim.conf /etc/opendkim.conf
+COPY etc/postgres/postfix /etc/postfix
+COPY etc/postgres/dovecot /etc/dovecot
+COPY etc/postgres/opendkim.conf /etc/opendkim.conf
 
 RUN set -eux \
   ; groupadd -g 5000 vmail \
   ; mkdir /var/mail/vmail \
-  ; useradd -M -d /var/mail/vmail --shell=/usr/bin/nologin -u 5000 -g vmail vmail \
+  ; useradd -u 5000 -g vmail -s /usr/bin/nologin -d /home/vmail -m vmail \
   ; chown vmail:vmail /var/mail/vmail \
   ; chmod 700 /var/mail/vmail \
+  \
   ; chown -R vmail:dovecot /etc/dovecot \
   ; chmod -R o-rwx /etc/dovecot
 
-COPY entrypoint/sqlite.mail.sh /entrypoint/
+
+COPY entrypoint/mail.sh /entrypoint/
 CMD ["srv"]
 
 ENV HOST=

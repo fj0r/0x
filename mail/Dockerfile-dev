@@ -1,4 +1,0 @@
-FROM fj0rd/mail:latest
-
-COPY entrypoint.sh /entrypoint.sh
-
