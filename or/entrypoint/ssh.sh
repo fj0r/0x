@@ -34,6 +34,10 @@ set_user () {
 }
 
 init_ssh () {
+    if [ -n "$SSH_HOSTKEY_ED25519"]; then
+        echo "$SSH_HOSTKEY_ED25519" | base64 -d > /etc/dropbear/dropbear_ed25519_host_key
+    fi
+
     for i in "${!ed25519_@}"; do
         _USER=${i:8}
         _KEY=$(eval "echo \$$i")
