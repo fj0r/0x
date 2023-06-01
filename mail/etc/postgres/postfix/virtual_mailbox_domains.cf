@@ -1,0 +1,6 @@
+user = postfix_user
+password = ${DBPASS}
+hosts = localhost
+dbname = postfix_db
+query = SELECT domain FROM domain WHERE domain='%s' AND backupmx = false AND active = true
+

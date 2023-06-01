@@ -1,0 +1,6 @@
+user = postfix_user
+password = ${DBPASS}
+hosts = localhost
+dbname = postfix_db
+query = SELECT maildir FROM mailbox WHERE username='%s' AND active = true
+

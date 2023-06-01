@@ -49,6 +49,10 @@ run_ssh () {
         logfile=/var/log/sshd
     fi
 
+    if [ -n "$SSH_HOSTKEY_ED25519"]; then
+        echo "$SSH_HOSTKEY_ED25519" | base64 -d > /etc/dropbear/dropbear_ed25519_host_key
+    fi
+
     if [ -z "$SSH_TIMEOUT" ]; then
         echo "[$(date -Is)] starting ssh"
         /usr/bin/dropbear -REFems -p 22 &> $logfile &
