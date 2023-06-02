@@ -1,5 +1,3 @@
-echo "[$(date -Is)] starting openresty"
-
 if [ -n "${HTPASSWD}" ]; then
     IFS=':' read -ra HTP <<< "$HTPASSWD"
     printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd

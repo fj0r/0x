@@ -56,7 +56,7 @@ __s3=$(for i in "${!s3_@}"; do echo $i; done)
 if [ -n "$__s3" ]; then
     for i in "${!s3_@}"; do
         _ID=${i:3}
-        echo "[$(date -Is)] starting s3fs $_ID"
+        echo "starting s3fs $_ID"
         _ARGS=$(eval "echo \$$i")
         run_s3 ${_ID} ${_ARGS}
     done

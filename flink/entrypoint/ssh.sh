@@ -54,10 +54,10 @@ run_ssh () {
     fi
 
     if [ -z "$SSH_TIMEOUT" ]; then
-        echo "[$(date -Is)] starting ssh"
+        echo "starting dropbear"
         /usr/bin/dropbear -REFems -p 22 &> $logfile &
     else
-        echo "[$(date -Is)] starting ssh with a timeout of ${SSH_TIMEOUT} seconds"
+        echo "starting dropbear with a timeout of ${SSH_TIMEOUT} seconds"
         /usr/bin/dropbear -REFems -p 22 -K ${SSH_TIMEOUT} -I ${SSH_TIMEOUT} &> $logfile &
     fi
     echo -n "$! " >> /var/run/services
