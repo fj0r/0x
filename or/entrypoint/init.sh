@@ -41,7 +41,7 @@ if [ -n "${POSTBOOT}" ]; then
 fi
 
 
-echo "[$(date -Is)] boot completed."
+echo "[$(date -Is)] boot completed"
 
 if [ -z $1 ]; then
     echo "[$(date -Is)] enter interactive mode"
