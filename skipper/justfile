@@ -1,0 +1,7 @@
+test arg="":
+    #!/usr/bin/env nu
+    podman run -e R_static='PathSubtree("/") -> static("", "/srv") -> <shunt>' --rm fj0rd/0x:skipper {{arg}}
+
+io arg="":
+    #!/usr/bin/env nu
+    podman run -v $'($env.PWD)/entrypoint/init.sh:/entrypoint/init.sh' --rm fj0rd/io:latest {{arg}}
