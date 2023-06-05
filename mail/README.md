@@ -13,6 +13,7 @@ SPF的设置选项可以参考：http://www.openspf.org/SPFRecordSyntax
 添加的方法是在域名DNS解析设置一个txt记录，主机记录为空或者@，记录值为
 `v=spf1 a mx -all`，其他可以忽略。
 
+`v=spf1 include:spf.mail.qq.com include:yx.mail.qq.com ~all`
 ### DKIM
 DomainKeys Identified Mail的缩写，域名密钥识别邮件标准。
 
