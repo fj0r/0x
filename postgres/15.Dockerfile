@@ -1,4 +1,5 @@
 FROM postgres:15
+ARG PIP_FLAGS="--break-system-packages"
 
 ENV BUILD_DEPS \
     git \
@@ -54,7 +55,7 @@ RUN set -eux \
       libcurl4 curl jq ca-certificates uuid \
       ${BUILD_DEPS:-} \
   \
-  ; pip3 install --no-cache-dir \
+  ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
   \
