@@ -1,5 +1,5 @@
 FROM fj0rd/scratch:dropbear as dropbear
-FROM python:3.10-slim
+FROM python:3.10-slim-bullseye
 COPY --from=dropbear / /
 
 ENV XDG_CONFIG_HOME=/etc \
