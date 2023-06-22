@@ -1,4 +1,4 @@
-name: postgres 14
+name: postgres 16
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: postgres 14
 
 on:
   push:
-    branches: [ pg14 ]
+    branches: [ pg16 ]
   workflow_dispatch:
     inputs: {}
 
@@ -47,12 +47,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build pg 14
+      - name: Build pg 16
         uses: docker/build-push-action@v4
         with:
           context: postgres
-          file: postgres/14.Dockerfile
+          file: postgres/16.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg14
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg16
           labels: ${{ steps.meta.outputs.labels }}
 
