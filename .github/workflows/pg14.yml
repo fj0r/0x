@@ -7,7 +7,7 @@ name: postgres 14
 
 on:
   push:
-    branches: [ pg ]
+    branches: [ pg14 ]
   workflow_dispatch:
     inputs: {}
 
