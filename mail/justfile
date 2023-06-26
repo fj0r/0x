@@ -1,19 +1,20 @@
 test:
     docker run --name mail --rm \
-        -e HOST='' \
+        -e HOST='asdf.asdf' \
         -e EXTERNAL_IP=127.0.0.1 \
         -e MASTER=root \
         -v $PWD/entrypoint/mail.sh:/entrypoint/mail.sh \
+        -v $PWD/tmpl:/tmpl \
         -v $PWD/data/mail:/var/spool/mail \
         -v $PWD/data/opendkim:/etc/opendkim \
-        -p 25:25 \
-        -p 465:465 \
-        -p 587:587 \
-        -p 110:110 \
-        -p 995:995 \
-        -p 143:143 \
-        -p 993:993 \
-        fj0rd/0x:mail
+        -p 2525:25 \
+        -p 2465:465 \
+        -p 2587:587 \
+        -p 2110:110 \
+        -p 2995:995 \
+        -p 2143:143 \
+        -p 2993:993 \
+        fj0rd/0x:mx
 
 run:
     docker run -d --restart=always \
@@ -29,4 +30,4 @@ run:
         -p 995:995 \
         -p 143:143 \
         -p 993:993 \
-        fj0rd/0x:mail
+        fj0rd/0x:mx

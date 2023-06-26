@@ -1,0 +1,19 @@
+HOST: localhost
+MASTER: root
+EXTERNAL_IP: 127.0.0.1
+DOMAIN: localhost
+
+restrictions:
+    smtp:
+      - example.com
+      - bl.spamcop.net
+      - zen.spamhaus.org
+      - blackholes.easynet.nl
+
+datasource:
+    type: sqlite # sqlite # pgsql
+
+tls:
+    enable: false
+    cert: /PATH/TO/SSL_CERTIFICATE
+    key: /PATH/TO/SSL_CERTIFICATE_KEY
