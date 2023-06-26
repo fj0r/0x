@@ -1,53 +1,11 @@
 test:
     docker run --name mail --rm \
-        -e HOST=mail.iffy.me \
+        -e HOST='' \
         -e EXTERNAL_IP=127.0.0.1 \
         -e MASTER=root \
+        -v $PWD/entrypoint/mail.sh:/entrypoint/mail.sh \
         -v $PWD/data/mail:/var/spool/mail \
-        -v $PWD/entrypoint.sh:/entrypoint.sh \
-        -v $PWD/data/vmail:/etc/vmail \
         -v $PWD/data/opendkim:/etc/opendkim \
-        --network=host \
-<<<<<<< HEAD
-        nnurphy/mail
-=======
-        fj0rd/0x:mail
->>>>>>> d0a63b96278d7fd87b5e0c8cfae55c05c2e8a775
-
-start:
-    docker run --name mail -d --restart=always \
-        -e HOST=lizzie.fun \
-        -e EXTERNAL_IP=67.218.158.11 \
-        -e MASTER=root \
-        -v $PWD/data/mail:/var/spool/mail \
-        -v $PWD/data/vmail:/etc/vmail \
-        -v $PWD/data/opendkim:/etc/opendkim \
-        --network=host \
-<<<<<<< HEAD
-        nnurphy/mail
-
-build:
-    docker build . -t nnurphy/mail:pg -f Dockerfile-pg
-
-bdev:
-    docker build . -t nnurphy/mail-dev -f Dockerfile-dev
-=======
-        fj0rd/0x:mail
-
-build:
-    docker build . -t fj0rd/0x:mail-pg -f Dockerfile-pg
-
-bdev:
-    docker build . -t fj0rd/0x:mail-dev -f Dockerfile-dev
->>>>>>> d0a63b96278d7fd87b5e0c8cfae55c05c2e8a775
-
-local : bdev
-    docker run --rm -it \
-        --name mail \
-        -e DOMAIN=localhost \
-        -e EXTERNAL_IP=127.0.0.1 \
-        -e MASTER=root \
-        -v $PWD/mail:/var/spool/mail \
         -p 25:25 \
         -p 465:465 \
         -p 587:587 \
@@ -55,7 +13,7 @@ local : bdev
         -p 995:995 \
         -p 143:143 \
         -p 993:993 \
-        nnurphy/mail-dev
+        fj0rd/0x:mail
 
 run:
     docker run -d --restart=always \
@@ -71,8 +29,4 @@ run:
         -p 995:995 \
         -p 143:143 \
         -p 993:993 \
-<<<<<<< HEAD
-        nnurphy/mail
-=======
         fj0rd/0x:mail
->>>>>>> d0a63b96278d7fd87b5e0c8cfae55c05c2e8a775

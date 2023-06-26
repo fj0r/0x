@@ -47,12 +47,21 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build mail base
+      - name: Build mail
         uses: docker/build-push-action@v4
         with:
           context: mail
           file: mail/base.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mail
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build mx
+        uses: docker/build-push-action@v4
+        with:
+          context: mail
+          file: mail/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mx
           labels: ${{ steps.meta.outputs.labels }}
 
