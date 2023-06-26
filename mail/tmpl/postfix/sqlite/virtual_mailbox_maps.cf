@@ -1,0 +1,2 @@
+dbpath = {{ datasource.path }}
+query = SELECT maildir FROM mailbox WHERE username='%s' AND active = '1'

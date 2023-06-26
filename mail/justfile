@@ -5,7 +5,7 @@ test:
         -e MASTER=root \
         -v $PWD/entrypoint/mail.sh:/entrypoint/mail.sh \
         -v $PWD/tmpl:/tmpl \
-        -v $PWD/data/mail:/var/spool/mail \
+        -v $PWD/data/mail:/var/mail \
         -v $PWD/data/opendkim:/etc/opendkim \
         -p 2525:25 \
         -p 2465:465 \
@@ -22,7 +22,7 @@ run:
         -e DOMAIN=lizzie.fun \
         -e EXTERNAL_IP=67.218.158.11 \
         -e MASTER=root \
-        -v $PWD/mail:/var/spool/mail \
+        -v $PWD/mail:/var/mail \
         -p 25:25 \
         -p 465:465 \
         -p 587:587 \

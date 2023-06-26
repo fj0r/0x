@@ -1,17 +1,24 @@
 HOST: localhost
-MASTER: root
+MASTER: postmaster
 EXTERNAL_IP: 127.0.0.1
 DOMAIN: localhost
 
 restrictions:
-    smtp:
-      - example.com
-      - bl.spamcop.net
-      - zen.spamhaus.org
-      - blackholes.easynet.nl
+    smtp: []
+      #- example.com
+      #- bl.spamcop.net
+      #- zen.spamhaus.org
+      #- blackholes.easynet.nl
 
 datasource:
-    type: sqlite # sqlite # pgsql
+    type: sqlite
+    # sqlite
+    path: /var/mail/vmail/vmail.sqlite
+    # pgsql
+    user: postfix
+    password: asdfasdf
+    host: localhost
+    dbname: mail
 
 tls:
     enable: false

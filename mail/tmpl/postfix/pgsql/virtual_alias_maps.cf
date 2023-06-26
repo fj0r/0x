@@ -1,0 +1,6 @@
+user = {{ datasource.user }}
+password = {{ datasource.password }}
+hosts = {{ datasource.host }}
+dbname = {{ datasource.dbname }}
+query = SELECT goto FROM alias WHERE address='%s' AND active = true
+

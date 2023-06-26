@@ -1,0 +1,4 @@
+user = {{ datasource.user }}
+password = {{ datasource.password }}
+hosts = {{ datasource.host }}
+dbname = {{ datasource.dbname }}

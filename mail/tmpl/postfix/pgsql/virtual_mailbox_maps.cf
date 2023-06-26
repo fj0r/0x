@@ -1,0 +1,6 @@
+user = {{ datasource.user }}
+password = {{ datasource.password }}
+hosts = {{ datasource.host }}
+dbname = {{ datasource.dbname }}
+query = SELECT maildir FROM mailbox WHERE username='%s' AND active = true
+
