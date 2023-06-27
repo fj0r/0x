@@ -1,0 +1,29 @@
+{
+  "ABOUT": 1,
+  "ABOUT_ENV": [
+    "CI_COMMIT_TITLE",
+    "CI_COMMIT_SHA",
+    "CI_PIPELINE_BEGIN",
+    "CI_PIPELINE_ID"
+  ],
+  "REAL_REMOTE": 1,
+  "NCHAN": 0,
+  "HTTP_BIN": null,
+  "PATH_TO_IP": 0,
+  "FASTCGI": null,
+  "FASTCGI_PASS": "unix:/var/run/php/php-fpm.sock",
+  "UPLOAD_ROOT": null,
+  "HTPASSWORD": null,
+  "HTACCESS_USER_FILE": "/etc/openresty/htpasswd",
+  "WORKER_PROCESSES": null,
+  "WORKER_CONNECTIONS": 1024,
+  "WEB_ROOT": "/srv",
+  "LISTEN_PORT": 80,
+  "DEFAULT_TYPE": "json",
+  "TIMEOUT": "1800s",
+  "MAXBODY": "0",
+  "RESOLVER": null,
+  "REPLACE_HOST": [],
+  "MAP_VARS": [],
+  "location": []
+}

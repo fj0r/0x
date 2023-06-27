@@ -1,4 +1,5 @@
 FROM fj0rd/scratch:dropbear-alpine as dropbear
+FROM fj0rd/scratch:tera-cli as tera
 
 FROM openresty/openresty:alpine-amd64
 
@@ -6,6 +7,7 @@ FROM openresty/openresty:alpine-amd64
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 
 COPY --from=dropbear / /
+COPY --from=tera / /
 
 RUN set -eux \
   ; apk add --no-cache \
@@ -31,8 +33,6 @@ VOLUME [ "/srv" ]
 EXPOSE 80 443
 ENV PREBOOT=
 ENV POSTBOOT=
-ENV HTPASSWD=
-ENV UPLOAD_ROOT=
 
 COPY entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint/init.sh"]

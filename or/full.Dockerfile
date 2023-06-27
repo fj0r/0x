@@ -82,8 +82,6 @@ VOLUME [ "/srv" ]
 EXPOSE 80 443
 ENV PREBOOT=
 ENV POSTBOOT=
-ENV HTPASSWD=
-ENV UPLOAD_ROOT=
 
 COPY entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint/init.sh"]

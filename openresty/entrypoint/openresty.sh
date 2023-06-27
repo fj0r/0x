@@ -1,13 +1,5 @@
-if [ -n "$WEB_ROOT" ]; then
-    sed -i 's!\(set $root\).*$!\1 '"\'$WEB_ROOT\'"';!' /etc/openresty/nginx.conf
-fi
-
-if grep -q '$ngx_resolver' /etc/openresty/nginx.conf; then
-    sed -i 's/$ngx_resolver/'"${NGX_RESOLVER:-1.1.1.1}"'/' /etc/openresty/nginx.conf
-fi
-
-if [ -n "${HTPASSWD}" ]; then
-    IFS=':' read -ra HTP <<< "$HTPASSWD"
+if [ -n "${HTPASSWORD}" ]; then
+    IFS=':' read -ra HTP <<< "$HTPASSWORD"
     printf "${HTP[0]}:$(openssl passwd -apr1 ${HTP[1]})\n" >> /etc/openresty/htpasswd
 fi
 
@@ -16,6 +8,21 @@ if [ -n "${UPLOAD_ROOT}" ]; then
     mkdir -p $UPLOADDIR
     chown www-data:www-data $UPLOADDIR
 fi
+
+
+config=/etc/openresty
+
+if [ -n "${ROUTEFILE}" ]; then
+    jq -s '.[0].location = .[1] |.[0]' $config/default.json $ROUTEFILE \
+    | tera -t $config/nginx.conf.tmpl -e -s -o $config/nginx.conf
+else
+    cat $config/default.json \
+    | tera -t $config/nginx.conf.tmpl -e -s -o $config/nginx.conf
+fi
+
+for t in $(find $config/ext -name '*.tmpl'); do
+    cat $config/default.json | tera -t $t -e -s -o ${t%.tmpl}
+done
 
 /opt/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services

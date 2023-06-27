@@ -53,7 +53,6 @@ RUN set -eux \
   ; curl -sSL ${webgrind_url} | tar -zxf - -C /webgrind --strip-components=1 \
   ;
 
-COPY docker-nginx-conf /etc/openresty/nginx.conf
 COPY setup-php /setup-php
 COPY entrypoint/php.sh /entrypoint/
 CMD ["srv"]
@@ -62,6 +61,8 @@ RUN set -ex \
   ; curl -sSL https://getcomposer.org/installer \
     | php -- --install-dir=/usr/local/bin --filename=composer
 
+ENV FASTCGI=php
+ENV FASTCGI_PASS=unix:/var/run/php/php-fpm.sock
 ENV PHP_DEBUG=
 ENV PHP_PROFILE=
 ENV PHP_FPM_SERVERS=

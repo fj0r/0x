@@ -13,7 +13,7 @@ function dirname (path)
 end
 
 local root_path = ngx.var.document_root .. '/' .. os.getenv('UPLOAD_ROOT')
-local target = root_path .. ngx.var.path
+local target = root_path .. '/' .. ngx.var.path
 local target_dir = dirname(target)
 
 if file_exists(target_dir) ~= true then
