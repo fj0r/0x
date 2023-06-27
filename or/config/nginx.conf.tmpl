@@ -35,6 +35,7 @@ http {
 
     gzip               on;
 
+    {%- if LOG_FORMAT == "apm" %}
     log_format apm     'time=$time_iso8601 client=$remote_addr '
                        'method=$request_method uri=$request_uri proto=$server_protocol '
                        'req_len=$request_length '
@@ -48,6 +49,7 @@ http {
                        'ust_res=$upstream_response_time '
                        'ust_conn=$upstream_connect_time '
                        'ust_header=$upstream_header_time';
+    {%- endif %}
 
     {%- if MAP_VARS %}
     {%- for m in MAP_VARS %}
@@ -98,7 +100,10 @@ http {
         {% if RESOLVER %}
         resolver {{ RESOLVER }};
         {% endif %}
-        #access_log  /var/log/openresty/access.log   apm;
+
+        {%- if LOG_FORMAT == "apm" %}
+        access_log  /var/log/openresty/access.log   apm;
+        {%- endif %}
 
         {% if FASTCGI == "php" %}
         location / {

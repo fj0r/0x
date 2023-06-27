@@ -20,6 +20,7 @@
   "WEB_ROOT": "/srv",
   "LISTEN_PORT": 80,
   "DEFAULT_TYPE": "json",
+  "LOG_FORMAT": null,
   "TIMEOUT": "1800s",
   "MAXBODY": "0",
   "RESOLVER": null,
