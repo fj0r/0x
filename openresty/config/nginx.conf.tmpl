@@ -59,6 +59,20 @@ http {
     {%- endfor %}
     {%- endif %}
 
+    {% if SHORT_URL_JSONFILE %}
+    lua_shared_dict short_url 10m;
+    init_by_lua_block {
+        local cjson = require('cjson')
+        -- /srv/short-url.json
+        local f = io.open('{{ SHORT_URL_JSONFILE }}', 'r')
+        local data = f:read("*a")
+        f:close()
+        local url = ngx.shared.short_url
+        for k, v in pairs(cjson.decode(data)) do
+           url:set(k, v)
+        end
+    }
+    {%- endif %}
 
     server {
         set $root             '{{ WEB_ROOT }}';
@@ -275,6 +289,15 @@ http {
                 ngx.say(stderr)
                 ngx.exit(200)
             }
+        }
+        {%- endif %}
+
+        {% if SHORT_URL_JSONFILE %}
+        # short url
+        location ~ ^/{{ SHORT_URL_PREFIX }}(.+) {
+             content_by_lua_block {
+                 ngx.redirect(ngx.shared.short_url:get(ngx.var[1]))
+             }
         }
         {%- endif %}
     }

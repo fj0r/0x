@@ -25,5 +25,7 @@
   "RESOLVER": null,
   "REPLACE_HOST": [],
   "MAP_VARS": [],
+  "SHORT_URL_JSONFILE": null,
+  "SHORT_URL_PREFIX": "-",
   "location": []
 }
