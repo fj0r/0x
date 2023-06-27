@@ -7,10 +7,10 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-        locales sqlite3 \
-        postfix swaks \
-        dovecot-core dovecot-imapd dovecot-lmtpd \
+        locales swaks telnet sqlite3 postgresql-client \
+        postfix dovecot-core dovecot-imapd dovecot-lmtpd \
         dovecot-sqlite postfix-sqlite \
+        dovecot-pgsql postfix-pgsql \
         opendkim opendkim-tools \
         python3 python3-pip \
   \

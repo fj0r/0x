@@ -34,6 +34,7 @@ smtpd_delay_reject = yes
 disable_vrfy_command = yes
 strict_rfc821_envelopes = yes
 
+{%- if restrictions.smtp %}
 smtpd_client_restrictions =
  permit_mynetworks
  permit_sasl_authenticated
@@ -61,6 +62,7 @@ smtpd_recipient_restrictions =
  reject_unauth_destination
 smtpd_data_restrictions =
  reject_unauth_pipelining
+{%- endif %}
 
 # Virtual domains setup
 {%- if datasource.type == "sqlite" %}
@@ -81,10 +83,14 @@ virtual_gid_maps = static:5000
 # SASL parameters
 smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
-smtpd_sasl_auth_enable = yes
-broken_sasl_auth_clients = no
-smtpd_sasl_security_options = noanonymous
 smtpd_sasl_local_domain = $myhostname
+smtpd_sasl_security_options = noanonymous
+{%- if tls.enable == true %}
+smtpd_sasl_tls_security_options = noanonymous
+{%- endif %}
+broken_sasl_auth_clients = yes
+smtpd_sasl_auth_enable = yes
+smtpd_recipient_restrictions = permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination
 
 {%- if tls.enable == true %}
 # TLS parameters
@@ -106,7 +112,7 @@ smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 tls_random_source = dev:/dev/urandom
 smtp_tls_note_starttls_offer = yes
 smtpd_tls_auth_only = yes
-smtpd_tls_loglevel = 0
+smtpd_tls_loglevel = 1
 smtpd_tls_received_header = yes
 {%- endif %}
 
@@ -114,8 +120,10 @@ smtpd_tls_received_header = yes
 virtual_transport = lmtp:unix:private/dovecot-lmtp
 dovecot_destination_recipient_limit = 1
 
+{%- if OPENDKIM %}
 #opendkim
 smtpd_milters = local:/run/opendkim/opendkim.sock
 non_smtpd_milters = local:/run/opendkim/opendkim.sock
 milter_default_action = accept
+{%- endif %}
 

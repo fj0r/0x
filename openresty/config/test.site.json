@@ -1,0 +1,12 @@
+[
+    {
+        "root": "/ab/c",
+        "port": 8080,
+        "fastcgi": "php"
+    },
+    {
+        "root": "/ab/e",
+        "port": 8081,
+        "fastcgi": "php"
+    }
+]

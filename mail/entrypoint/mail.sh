@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eu
+set -e
 
 ds=$(cat /tmpl/default.yaml | yq '.datasource.type')
 
@@ -23,21 +23,24 @@ for f in /tmpl/dovecot/conf.d/*; do
 done
 
 # opendkim
-tera -t /tmpl/opendkim.conf -e /tmpl/default.yaml -o /etc/opendkim.conf
+if [ -n "${OPENDKIM}" ]; then
+    tera -t /tmpl/opendkim.conf -e /tmpl/default.yaml -o /etc/opendkim.conf
 
-MYHOST=$(tera -t /tmpl/_HOST -e /tmpl/default.yaml)
-if [ ! -d /etc/opendkim/keys/$MYHOST ]; then
-    echo "--- generate opendkim keys"
-    curr=$PWD
-    mkdir -p /etc/opendkim/keys/$MYHOST
-    cd /etc/opendkim/keys/$MYHOST
-    opendkim-genkey -d $MYHOST -s default --bits=1024
-    chown -R opendkim:opendkim /etc/opendkim/keys/$MYHOST
-    echo "default._domainkey.$MYHOST $MYHOST:default:/etc/opendkim/keys/$MYHOST/default.private" >> /etc/opendkim/KeyTable
-    echo "*@$MYHOST default._domainkey.$MYHOST" >> /etc/opendkim/SigningTable
-    cd $curr
+    MYHOST=$(tera -t /tmpl/_HOST -e /tmpl/default.yaml)
+    if [ ! -d /etc/opendkim/keys/$MYHOST ]; then
+        echo "--- generate opendkim keys"
+        curr=$PWD
+        mkdir -p /etc/opendkim/keys/$MYHOST
+        cd /etc/opendkim/keys/$MYHOST
+        opendkim-genkey -d $MYHOST -s default --bits=1024
+        chown -R opendkim:opendkim /etc/opendkim/keys/$MYHOST
+        echo "default._domainkey.$MYHOST $MYHOST:default:/etc/opendkim/keys/$MYHOST/default.private" >> /etc/opendkim/KeyTable
+        echo "*@$MYHOST default._domainkey.$MYHOST" >> /etc/opendkim/SigningTable
+        cd $curr
+    fi
+    export DKIM_KEY=$(cat /etc/opendkim/keys/$MYHOST/default.txt)
+    service opendkim start
 fi
-cat /etc/opendkim/keys/$MYHOST/default.txt
 
 # sql
 if [ $ds == "sqlite" ]; then
@@ -55,4 +58,5 @@ fi
 
 service postfix start
 service dovecot start
-service opendkim start
+
+tera -t /tmpl/README.md -e /tmpl/default.yaml

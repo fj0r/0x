@@ -12,7 +12,10 @@ fi
 
 config=/etc/openresty
 
-if [ -n "${ROUTEFILE}" ]; then
+if [ -n "${SITEFILE}" ]; then
+    jq -s '.[0].site = .[1] |.[0]' $config/default.json $SITEFILE \
+    | tera -t $config/nginx.conf.tmpl -e -s -o $config/nginx.conf
+elif [ -n "${ROUTEFILE}" ]; then
     jq -s '.[0].location = .[1] |.[0]' $config/default.json $ROUTEFILE \
     | tera -t $config/nginx.conf.tmpl -e -s -o $config/nginx.conf
 else

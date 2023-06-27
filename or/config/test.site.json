@@ -1,0 +1,26 @@
+[
+    {
+        "root": "/ab/c",
+        "port": 8080,
+        "fastcgi": "php"
+    },
+    {
+        "root": "/ab/e",
+        "port": 8081,
+        "fastcgi": "php",
+        "location": [
+            {
+                "path": "/ab/c",
+                "backend": "http://ab.c"
+            },
+            {
+                "path": "/ab/c",
+                "backend": "http://ab.c",
+                "rewrite": {
+                    "from": "^/app/(.*)$",
+                    "to": "/$1"
+                }
+            }
+        ]
+    }
+]
