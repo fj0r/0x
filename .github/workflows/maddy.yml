@@ -7,7 +7,7 @@ name: mail
 
 on:
   push:
-    branches: [ mail ]
+    branches: [ main, maddy ]
   workflow_dispatch:
     inputs: {}
 
@@ -47,21 +47,21 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build mail
+      - name: Build maddy
         uses: docker/build-push-action@v4
         with:
-          context: mail
-          file: mail/base.Dockerfile
+          context: maddy
+          file: maddy/base.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mail
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:maddy
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build m0x
+      - name: Build mx
         uses: docker/build-push-action@v4
         with:
-          context: mail
-          file: mail/Dockerfile
+          context: maddy
+          file: maddy/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:m0x
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mx
           labels: ${{ steps.meta.outputs.labels }}
 

@@ -1,19 +1,16 @@
 test:
-    rm -rf data/mail
-    mkdir -p data/mail
     docker run --name mail --rm \
-        -e HOST='localhost' \
-        -e EXTERNAL_IP=127.0.0.1 \
-        -e MASTER=root \
-        -e OPENDKIM='1' \
+        -e MADDY_HOSTNAME='mx1.localhost' \
+        -e MADDY_DOMAIN='localhost' \
         -v $PWD/entrypoint/mail.sh:/entrypoint/mail.sh \
         -v $PWD/tmpl:/tmpl \
-        -v $PWD/data/mail:/var/mail \
-        -v $PWD/data/opendkim:/etc/opendkim \
+        -v $PWD/tls:/var/lib/maddy/tls \
         -p 2525:25 \
+        -p 2587:587 \
+        -p 2465:465 \
         -p 2143:143 \
         -p 2993:993 \
-        fj0rd/0x:mail
+        fj0rd/0x:mx
 
 run:
     docker run -d --restart=always \
