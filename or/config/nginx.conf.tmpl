@@ -1,27 +1,32 @@
-{% if NCHAN %}
-load_module modules/ngx_nchan_module.so;
-{% endif %}
 daemon off;
 user www-data;
-{% if WORKER.PROCESSES %}
-worker_processes  {{ WORKER_PROCESSES }};
-{% else %}
+{%- if WORKER_PROCESSES %}
+worker_processes {{ WORKER_PROCESSES }};
+{%- else %}
 worker_processes auto;
-{% endif %}
+{%- endif %}
 
 events {
     worker_connections  {{ WORKER_CONNECTIONS }};
 }
 
-{% if ABOUT %}
+# modules
+{%- if NCHAN %}
+load_module modules/ngx_nchan_module.so;
+{%- endif %}
+
+# about
+{%- if ABOUT %}
 env TIMEZONE;
 env HOSTNAME;
-{% endif %}
-{%- if ABOUT_ENV %}
+{%- endif %}
+{%- if ABOUT_ENV -%}
 {%- for i in ABOUT_ENV %}
 env {{i}};
 {%- endfor %}
 {%- endif %}
+
+# upload
 {%- if UPLOAD_ROOT %}
 # ref by `lua/upload.lua`
 env UPLOAD_ROOT;
@@ -30,11 +35,9 @@ env UPLOAD_ROOT;
 http {
     include            mime.types;
     sendfile           on;
-
     keepalive_timeout  0;
-
     gzip               on;
-
+    # log apm
     {%- if LOG_FORMAT == "apm" %}
     log_format apm     'time=$time_iso8601 client=$remote_addr '
                        'method=$request_method uri=$request_uri proto=$server_protocol '
@@ -51,6 +54,7 @@ http {
                        'ust_header=$upstream_header_time';
     {%- endif %}
 
+    # map vars
     {%- if MAP_VARS %}
     {%- for m in MAP_VARS %}
     map ${{ m.src }} ${{ m.dest }} {
@@ -61,7 +65,8 @@ http {
     {%- endfor %}
     {%- endif %}
 
-    {% if SHORT_URL_JSONFILE %}
+    # short url
+    {%- if SHORT_URL_JSONFILE %}
     lua_shared_dict short_url 10m;
     init_by_lua_block {
         local cjson = require('cjson')
@@ -97,15 +102,18 @@ http {
         client_max_body_size  {{ MAXBODY }};
         chunked_transfer_encoding on;
 
-        {% if RESOLVER %}
+        # resolver
+        {%- if RESOLVER %}
         resolver {{ RESOLVER }};
-        {% endif %}
+        {%- endif %}
 
+        # log apm
         {%- if LOG_FORMAT == "apm" %}
         access_log  /var/log/openresty/access.log   apm;
         {%- endif %}
 
-        {% if FASTCGI == "php" %}
+        # fastcgi
+        {%- if FASTCGI == "php" %}
         location / {
             index index.php index.html index.htm;
             if (!-e $request_filename) {
@@ -120,14 +128,15 @@ http {
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
             fastcgi_pass {{ FASTCGI_PASS }};
         }
-        {% else %}
+        {%- else %}
         location / {
             autoindex on;
             autoindex_format json;
         }
         {%- endif %}
 
-        {% if REAL_REMOTE %}
+        # real_remote
+        {%- if REAL_REMOTE %}
         set_by_lua_block $real_remote {
             if ngx.var.http_x_forwarded_for then
                 for r in ngx.var.http_x_forwarded_for:gmatch('([^,]+)') do
@@ -138,7 +147,8 @@ http {
         }
         {%- endif %}
 
-        {% if ABOUT %}
+        # about
+        {%- if ABOUT %}
         location = /about {
             default_type application/json;
             content_by_lua_block {
@@ -156,7 +166,7 @@ http {
                 data.timezone = os.getenv("TIMEZONE")
                 data.hostname = os.getenv("HOSTNAME")
                 data.useragent = ngx.req.get_headers()['user-agent']
-                {% if ABOUT_ENV %}
+                {%- if ABOUT_ENV %}
                 data.env = {}
                 {%- for i in ABOUT_ENV %}
                 data.env.{{i}} = os.getenv("{{i}}")
@@ -169,8 +179,9 @@ http {
         }
         {%- endif %}
 
+        # replace HTTP_HOST
         {%- if REPLACE_HOST %}
-        {% for i in REPLACE_HOST %}
+        {%- for i in REPLACE_HOST %}
         location = {{ i }} {
             try_files $uri =404;
             header_filter_by_lua_block {
@@ -182,26 +193,29 @@ http {
                 --ngx.arg[1] = ngx.re.sub(ngx.arg[1], '\\${HOST}', host)
             }
         }
-        {% endfor %}
+        {%- endfor %}
         {%- endif %}
 
+        # upload
         {%- if UPLOAD_ROOT %}
         location ~ /{{UPLOAD_ROOT}}/(.*) {
-            {% if HTPASSWORD %}
+            {%- if HTPASSWORD %}
             auth_basic "Please enter your username and password";
             auth_basic_user_file {{ HTACCESS_USER_FILE }};
-            {% endif %}
+            {%- endif %}
             set $path $1;
             content_by_lua_file conf/lua/upload.lua;
         }
         {%- endif %}
 
+        # path to ip
         {%- if PATH_TO_IP %}
         location ~ /([0-9]+)/(.*) {
             proxy_pass http://127.0.0.1:$1/$2;
         }
         {%- endif %}
 
+        # common
         location = /favicon.ico {
             log_not_found off;
             access_log off;
@@ -218,8 +232,9 @@ http {
             root   /usr/share/nginx/html;
         }
 
+        # location
         {%- if location %}
-        {% for i in location %}
+        {%- for i in location %}
         location {{ i.path }} {
             {%- if i.rewrite %}
             rewrite {{ i.rewrite.from }} {{ i.rewrite.to }} break;
@@ -227,13 +242,14 @@ http {
             proxy_set_header Host $host;
             proxy_pass {{ i.backend }};
         }
-        {% endfor %}
+        {%- endfor %}
         {%- endif %}
 
+        # ext
         include ./ext/*.conf;
 
-        {%- if HTTP_BIN %}
         # http_bin
+        {%- if HTTP_BIN %}
         location = /{{ HTTP_BIN }}/ip {
             default_type 'text';
             content_by_lua_block {
@@ -297,7 +313,7 @@ http {
         }
         {%- endif %}
 
-        {% if SHORT_URL_JSONFILE %}
+        {%- if SHORT_URL_JSONFILE %}
         # short url
         location ~ ^/{{ SHORT_URL_PREFIX }}(.+) {
              content_by_lua_block {
@@ -306,10 +322,9 @@ http {
         }
         {%- endif %}
     }
-
-    {% if site %}
     # site
-    {% for s in site %}
+    {%- if site %}
+    {%- for s in site %}
     server {
         set $root             '{{ s.root }}';
         listen                {{ s.port }};
@@ -331,15 +346,15 @@ http {
         client_max_body_size  {{ MAXBODY }};
         chunked_transfer_encoding on;
 
-        {% if s.resolver %}
+        {%- if s.resolver %}
         resolver {{ s.resolver }};
-        {% endif %}
+        {%- endif %}
 
         {%- if LOG_FORMAT == "apm" %}
         access_log  /var/log/openresty/access.log   apm;
         {%- endif %}
 
-        {% if s.fastcgi == "php" %}
+        {%- if s.fastcgi == "php" %}
         location / {
             index index.php index.html index.htm;
             if (!-e $request_filename) {
@@ -354,14 +369,14 @@ http {
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
             fastcgi_pass {{ FASTCGI_PASS }};
         }
-        {% else %}
+        {%- else %}
         location / {
             autoindex on;
             autoindex_format json;
         }
         {%- endif %}
 
-        {% if s.real_remote %}
+        {%- if s.real_remote %}
         set_by_lua_block $real_remote {
             if ngx.var.http_x_forwarded_for then
                 for r in ngx.var.http_x_forwarded_for:gmatch('([^,]+)') do
@@ -389,7 +404,7 @@ http {
         }
 
         {%- if s.location %}
-        {% for i in s.location %}
+        {%- for i in s.location %}
         location {{ i.path }} {
             {%- if i.rewrite %}
             rewrite {{ i.rewrite.from }} {{ i.rewrite.to }} break;
@@ -397,9 +412,9 @@ http {
             proxy_set_header Host $host;
             proxy_pass {{ i.backend }};
         }
-        {% endfor %}
+        {%- endfor %}
         {%- endif %}
     }
-    {% endfor %}
+    {%- endfor %}
     {%- endif %}
 }
