@@ -32,7 +32,7 @@ CREATE TABLE mailbox (
     active tinyint(1) NOT NULL default '1');
 
 INSERT INTO domain ( domain, description, transport )
-	VALUES ( '{{ HOST }}', '{{ HOST }} domain', 'virtual' );
+	VALUES ( '{{ HOST }}', '', 'virtual' );
 
 INSERT INTO mailbox ( username, password, name, maildir, domain, local_part )
 	VALUES ( '{{ MASTER }}@{{ HOST }}', '{{ PASSWD_DIGEST }}', '{{ MASTER }}', '{{ HOST }}/{{ MASTER }}@{{ HOST }}/', '{{ HOST }}', '{{ MASTER }}' );

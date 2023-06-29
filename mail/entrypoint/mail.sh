@@ -56,7 +56,7 @@ elif [ $ds == "pgsql" ]; then
     echo pgsql
 fi
 
-service postfix start
 service dovecot start
+service postfix start
 
 tera -t /tmpl/README.md -e /tmpl/default.yaml

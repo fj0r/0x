@@ -2,7 +2,7 @@
 myhostname = {{ HOST }}
 mydomain = {{ DOMAIN }}
 myorigin = /etc/mailname
-mydestination = $myhostname, localhost.$mydomain, localhost
+mydestination = $myhostname, localhost, localhost.$mydomain, , localhost
 relayhost =
 mynetworks = 127.0.0.0/8 10.0.0.0/24 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_size_limit = 0
@@ -13,7 +13,9 @@ mynetworks_style = host
 append_dot_mydomain = no
 local_recipient_maps =
 readme_directory = no
-compatibility_level = 2
+compatibility_level = 3.6
+
+maillog_file = /var/log/postfix.log
 
 # SMTPD parameters
 smtpd_banner = $myhostname ESMTP $mail_name
@@ -82,32 +84,36 @@ virtual_gid_maps = static:5000
 
 # SASL parameters
 smtpd_sasl_type = dovecot
-smtpd_sasl_path = private/auth
+smtpd_sasl_path = /var/spool/postfix/private/auth-dovecot
 smtpd_sasl_local_domain = $myhostname
+smtpd_sasl_auth_enable = yes
+broken_sasl_auth_clients = yes
 smtpd_sasl_security_options = noanonymous
 {%- if tls.enable == true %}
 smtpd_sasl_tls_security_options = noanonymous
 {%- endif %}
-broken_sasl_auth_clients = yes
-smtpd_sasl_auth_enable = yes
 smtpd_recipient_restrictions = permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination
 
 {%- if tls.enable == true %}
 # TLS parameters
 smtpd_tls_cert_file = {{ tls.cert }}
 smtpd_tls_key_file = {{ tls.key }}
+smtpd_tls_security_level = may
+smtpd_tls_security_level=may
 smtpd_tls_protocols = TLSv1.2, TLSv1.1, !TLSv1, !SSLv2, !SSLv3
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+
+smtp_tls_CApath=/etc/ssl/certs
 smtp_tls_protocols = TLSv1.2, TLSv1.1, !TLSv1, !SSLv2, !SSLv3
+smtp_tls_security_level = may
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
 smtp_tls_ciphers = high
 smtpd_tls_ciphers = high
 smtpd_tls_mandatory_protocols = TLSv1.2, TLSv1.1, !TLSv1, !SSLv2, !SSLv3
 smtp_tls_mandatory_protocols = TLSv1.2, TLSv1.1, !TLSv1, !SSLv2, !SSLv3
 smtp_tls_mandatory_ciphers = high
 smtpd_tls_mandatory_ciphers = high
-smtpd_tls_security_level = may
-smtp_tls_security_level = may
-smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
-smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
 tls_random_source = dev:/dev/urandom
 smtp_tls_note_starttls_offer = yes

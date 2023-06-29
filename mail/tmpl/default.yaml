@@ -22,5 +22,5 @@ datasource:
 
 tls:
     enable: false
-    cert: /PATH/TO/SSL_CERTIFICATE
-    key: /PATH/TO/SSL_CERTIFICATE_KEY
+    cert: /etc/ssl/certs/ssl-cert-snakeoil.pem
+    key: /etc/ssl/private/ssl-cert-snakeoil.key

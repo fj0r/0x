@@ -1,4 +1,6 @@
 test:
+    rm -rf data/mail
+    mkdir -p data/mail
     docker run --name mail --rm \
         -e HOST='localhost' \
         -e EXTERNAL_IP=127.0.0.1 \

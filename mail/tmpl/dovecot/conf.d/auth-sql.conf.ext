@@ -17,7 +17,10 @@ passdb {
 #}
 
 userdb {
-  driver = prefetch
+  driver = sql
+
+  # Path for SQL configuration file, see example-config/dovecot-sql.conf.ext
+  args = /etc/dovecot/dovecot-sql.conf.ext
 }
 
 # If you don't have any user-specific settings, you can avoid the user_query

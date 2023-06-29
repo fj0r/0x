@@ -4,4 +4,4 @@ default_pass_scheme = SSHA512
 password_query = SELECT password FROM mailbox WHERE username = '%u'
 user_query = SELECT '/var/spool/mail/virtual/%d/%n' AS home, \
 5000 AS uid, 5000 AS gid, '*:storage=' || quota AS quota_rule \
-FROM users WHERE email = '%u'
+FROM mailbox WHERE username = '%u'
