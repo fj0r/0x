@@ -5,7 +5,7 @@ set -e
 
 mkdir -p /data/tls
 
-if [ "$tls" == "lego" ]; then
+if [ "$TLS_PROVIDER" == "lego" ]; then
     lego --email="postmaster@${MADDY_HOSTNAME}" --domains="${MADDY_HOSTNAME}" --http --path /data/tls run 2>&1 &
     echo -n "$! " >> /var/run/services
 else
