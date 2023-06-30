@@ -4,7 +4,7 @@ test:
         -e MADDY_DOMAIN='localhost' \
         -v $PWD/entrypoint/mail.sh:/entrypoint/mail.sh \
         -v $PWD/tmpl:/tmpl \
-        -v $PWD/tls:/var/lib/maddy/tls \
+        -v $PWD/tls:/data/tls \
         -p 2525:25 \
         -p 2587:587 \
         -p 2465:465 \

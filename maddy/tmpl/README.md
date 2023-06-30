@@ -26,6 +26,6 @@ default._domainkey.{{ MADDY_DOMAIN }}. TXT "{{ DKIM_KEY }}"
 
 # user settings
 ```
-maddy --config /var/lib/maddy/maddy.conf creds create ${user}@{{ MADDY_DOMAIN }}
-maddy --config /var/lib/maddy/maddy.conf imap-acct create ${user}@{{ MADDY_DOMAIN }}
+maddy --config /data/maddy.conf creds create ${user}@{{ MADDY_DOMAIN }}
+maddy --config /data/maddy.conf imap-acct create ${user}@{{ MADDY_DOMAIN }}
 ```
