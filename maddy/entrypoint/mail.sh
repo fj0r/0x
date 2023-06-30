@@ -6,8 +6,12 @@ set -e
 mkdir -p /data/tls
 
 if [ "$TLS_PROVIDER" == "lego" ]; then
-    lego --email="postmaster@${MADDY_HOSTNAME}" --domains="${MADDY_HOSTNAME}" --http --path /data/tls run 2>&1 &
-    echo -n "$! " >> /var/run/services
+    lego -a --email="postmaster@${MADDY_HOSTNAME}" --domains="${MADDY_HOSTNAME}" --http --path /data/tls run 2>&1
+    opwd=$PWD
+    cd /data/tls
+    cp -f certificates/${MADDY_HOSTNAME}.key .
+    cp -f certificates/${MADDY_HOSTNAME}.crt .
+    cd $opwd
 else
     opwd=$PWD
     cd /data/tls
