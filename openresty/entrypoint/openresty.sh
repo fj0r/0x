@@ -14,17 +14,17 @@ config=/etc/openresty
 
 if [ -n "${SITEFILE}" ]; then
     jq -s '.[0].site = .[1] |.[0]' $config/default.json $SITEFILE \
-    | tera -t $config/nginx.conf.tmpl -e -s -o $config/nginx.conf
+    | tera -t $config/nginx.conf.tmpl -e -i -s -o $config/nginx.conf
 elif [ -n "${ROUTEFILE}" ]; then
     jq -s '.[0].location = .[1] |.[0]' $config/default.json $ROUTEFILE \
-    | tera -t $config/nginx.conf.tmpl -e -s -o $config/nginx.conf
+    | tera -t $config/nginx.conf.tmpl -e -i -s -o $config/nginx.conf
 else
     cat $config/default.json \
-    | tera -t $config/nginx.conf.tmpl -e -s -o $config/nginx.conf
+    | tera -t $config/nginx.conf.tmpl -e -i -s -o $config/nginx.conf
 fi
 
 for t in $(find $config/ext -name '*.tmpl'); do
-    cat $config/default.json | tera -t $t -e -s -o ${t%.tmpl}
+    cat $config/default.json | tera -t $t -e -i -s -o ${t%.tmpl}
 done
 
 /opt/openresty/bin/openresty 2>&1 &

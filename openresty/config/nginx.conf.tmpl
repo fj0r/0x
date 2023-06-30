@@ -81,71 +81,30 @@ http {
     }
     {%- endif %}
 
-    server {
-        set $root             '{{ WEB_ROOT }}';
-        listen                {{ LISTEN_PORT }};
-        root                  $root;
-        charset               utf-8;
-        default_type          application/{{ DEFAULT_TYPE }};
-
-        proxy_http_version    1.1;
-        proxy_set_header      Host              $host;
-        proxy_set_header      X-Real-IP         $remote_addr;
-        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header      X-Forwarded-Proto $scheme;
-        proxy_set_header      X-Original-URI    $request_uri;
-        proxy_set_header      Connection        "upgrade";
-        proxy_set_header      Upgrade           $http_upgrade;
-        proxy_connect_timeout {{ TIMEOUT }};
-        proxy_read_timeout    {{ TIMEOUT }};
-        proxy_send_timeout    {{ TIMEOUT }};
-        client_max_body_size  {{ MAXBODY }};
-        chunked_transfer_encoding on;
-
-        # resolver
+        {%- set root = WEB_ROOT %}
+        {%- set port = LISTEN_PORT %}
         {%- if RESOLVER %}
-        resolver {{ RESOLVER }};
-        {%- endif %}
-
-        # log apm
-        {%- if LOG_FORMAT == "apm" %}
-        access_log  /var/log/openresty/access.log   apm;
-        {%- endif %}
-
-        # fastcgi
-        {%- if FASTCGI == "php" %}
-        location / {
-            index index.php index.html index.htm;
-            if (!-e $request_filename) {
-                rewrite ^(.*)$ /index.php?s=$1 last;
-                break;
-            }
-        }
-
-        location ~ \.{{ FASTCGI }}$ {
-            include fastcgi_params;
-            fastcgi_index index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            fastcgi_pass {{ FASTCGI_PASS }};
-        }
+            {%- set resolver = RESOLVER %}
         {%- else %}
-        location / {
-            autoindex on;
-            autoindex_format json;
-        }
+            {%- set resolver = '' %}
         {%- endif %}
-
-        # real_remote
+        {%- if FASTCGI %}
+            {%- set fastcgi = FASTCGI %}
+        {%- else %}
+            {%- set fastcgi = '' %}
+        {%- endif %}
         {%- if REAL_REMOTE %}
-        set_by_lua_block $real_remote {
-            if ngx.var.http_x_forwarded_for then
-                for r in ngx.var.http_x_forwarded_for:gmatch('([^,]+)') do
-                    return r
-                end
-            end
-            return ngx.var.remote_addr
-        }
+            {%- set real_remote = REAL_REMOTE %}
+        {%- else %}
+            {%- set real_remote = '' %}
         {%- endif %}
+        {%- if s.location %}
+            {%- set location = s.location %}
+        {%- else %}
+            {%- set location = '' %}
+        {%- endif %}
+    server {
+        {%- include "site.conf.tmpl" %}
 
         # about
         {%- if ABOUT %}
@@ -213,36 +172,6 @@ http {
         location ~ /([0-9]+)/(.*) {
             proxy_pass http://127.0.0.1:$1/$2;
         }
-        {%- endif %}
-
-        # common
-        location = /favicon.ico {
-            log_not_found off;
-            access_log off;
-        }
-
-        location = /robots.txt {
-            allow all;
-            log_not_found off;
-            access_log off;
-        }
-
-        error_page      500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
-
-        # location
-        {%- if location %}
-        {%- for i in location %}
-        location {{ i.path }} {
-            {%- if i.rewrite %}
-            rewrite {{ i.rewrite.from }} {{ i.rewrite.to }} break;
-            {%- endif %}
-            proxy_set_header Host $host;
-            proxy_pass {{ i.backend }};
-        }
-        {%- endfor %}
         {%- endif %}
 
         # ext
@@ -325,95 +254,30 @@ http {
     # site
     {%- if site %}
     {%- for s in site %}
-    server {
-        set $root             '{{ s.root }}';
-        listen                {{ s.port }};
-        root                  $root;
-        charset               utf-8;
-        default_type          application/{{ DEFAULT_TYPE }};
-
-        proxy_http_version    1.1;
-        proxy_set_header      Host              $host;
-        proxy_set_header      X-Real-IP         $remote_addr;
-        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header      X-Forwarded-Proto $scheme;
-        proxy_set_header      X-Original-URI    $request_uri;
-        proxy_set_header      Connection        "upgrade";
-        proxy_set_header      Upgrade           $http_upgrade;
-        proxy_connect_timeout {{ TIMEOUT }};
-        proxy_read_timeout    {{ TIMEOUT }};
-        proxy_send_timeout    {{ TIMEOUT }};
-        client_max_body_size  {{ MAXBODY }};
-        chunked_transfer_encoding on;
-
+        {%- set root = s.root %}
+        {%- set port = s.port %}
         {%- if s.resolver %}
-        resolver {{ s.resolver }};
-        {%- endif %}
-
-        {%- if LOG_FORMAT == "apm" %}
-        access_log  /var/log/openresty/access.log   apm;
-        {%- endif %}
-
-        {%- if s.fastcgi == "php" %}
-        location / {
-            index index.php index.html index.htm;
-            if (!-e $request_filename) {
-                rewrite ^(.*)$ /index.php?s=$1 last;
-                break;
-            }
-        }
-
-        location ~ \.{{ s.fastcgi }}$ {
-            include fastcgi_params;
-            fastcgi_index index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            fastcgi_pass {{ FASTCGI_PASS }};
-        }
+            {%- set resolver = s.resolver %}
         {%- else %}
-        location / {
-            autoindex on;
-            autoindex_format json;
-        }
+            {%- set resolver = '' %}
         {%- endif %}
-
+        {%- if s.fastcgi %}
+            {%- set fastcgi = s.fastcgi %}
+        {%- else %}
+            {%- set fastcgi = '' %}
+        {%- endif %}
         {%- if s.real_remote %}
-        set_by_lua_block $real_remote {
-            if ngx.var.http_x_forwarded_for then
-                for r in ngx.var.http_x_forwarded_for:gmatch('([^,]+)') do
-                    return r
-                end
-            end
-            return ngx.var.remote_addr
-        }
+            {%- set real_remote = s.real_remote %}
+        {%- else %}
+            {%- set real_remote = '' %}
         {%- endif %}
-
-        location = /favicon.ico {
-            log_not_found off;
-            access_log off;
-        }
-
-        location = /robots.txt {
-            allow all;
-            log_not_found off;
-            access_log off;
-        }
-
-        error_page      500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
-
         {%- if s.location %}
-        {%- for i in s.location %}
-        location {{ i.path }} {
-            {%- if i.rewrite %}
-            rewrite {{ i.rewrite.from }} {{ i.rewrite.to }} break;
-            {%- endif %}
-            proxy_set_header Host $host;
-            proxy_pass {{ i.backend }};
-        }
-        {%- endfor %}
+            {%- set location = s.location %}
+        {%- else %}
+            {%- set location = '' %}
         {%- endif %}
+    server {
+        {%- include "site.conf.tmpl" %}
     }
     {%- endfor %}
     {%- endif %}

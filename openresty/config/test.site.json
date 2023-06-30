@@ -7,6 +7,25 @@
     {
         "root": "/ab/e",
         "port": 8081,
-        "fastcgi": "php"
+        "fastcgi": "php",
+        "location": [
+            {
+                "path": "/ab/c",
+                "backend": "http://ab.c"
+            },
+            {
+                "path": "/ab/c",
+                "backend": "http://ab.c",
+                "rewrite": {
+                    "from": "^/app/(.*)$",
+                    "to": "/$1"
+                }
+            },
+            {
+                "path": "/att/",
+                "root": "/srv",
+                "autoindex": false
+            }
+        ]
     }
 ]
