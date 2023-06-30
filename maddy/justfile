@@ -12,20 +12,20 @@ test:
         -p 2993:993 \
         fj0rd/0x:mx
 
-run:
-    docker run -d --restart=always \
-        --name mail \
-        -e DOMAIN=lizzie.fun \
-        -e EXTERNAL_IP=67.218.158.11 \
-        -e MASTER=root \
-        -v $PWD/mail:/var/mail \
+run tls='' host='example.com' ip='1.2.3.4':
+    docker run -d --name maddy \
+        --restart=always \
+        -e MADDY_HOSTNAME='mx1.{{host}}' \
+        -e MADDY_HOSTIP='{{ip}}' \
+        -e MADDY_DOMAIN='{{host}}' \
+        -e TLS_PROVIDER='{{tls}}' \
+        -v $HOME/maddy:/data \
+        -p 80:80 \
         -p 25:25 \
+        -p 587:587 \
+        -p 465:465 \
         -p 143:143 \
         -p 993:993 \
-        -p 465:465 \
-        -p 587:587 \
-        -p 110:110 \
-        -p 995:995 \
         fj0rd/0x:mx
 
 send:
