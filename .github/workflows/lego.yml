@@ -7,7 +7,7 @@ name: mail
 
 on:
   push:
-    branches: [ main, lego, maddy ]
+    branches: [ main, lego ]
   workflow_dispatch:
     inputs: {}
 
