@@ -242,8 +242,8 @@ http {
         }
         {%- endif %}
 
-        {%- if SHORT_URL_JSONFILE %}
         # short url
+        {%- if SHORT_URL_JSONFILE %}
         location ~ ^/{{ SHORT_URL_PREFIX }}(.+) {
              content_by_lua_block {
                  ngx.redirect(ngx.shared.short_url:get(ngx.var[1]))

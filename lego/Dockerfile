@@ -16,6 +16,8 @@ RUN set -eux \
   \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
+  ; mkdir /tmpl \
+  \
   ; lego_ver=$(curl -sSL https://api.github.com/repos/go-acme/lego/releases/latest | jq -r '.tag_name') \
   ; lego_url="https://github.com/go-acme/lego/releases/download/${lego_ver}/lego_${lego_ver}_linux_amd64.tar.gz" \
   ; curl -sSL ${lego_url} | tar zxf - -C /usr/local/bin lego \
@@ -23,5 +25,6 @@ RUN set -eux \
 
 WORKDIR /data
 COPY entrypoint/lego.sh /entrypoint/
+COPY tmpl /tmpl
 CMD ["srv"]
 

@@ -1,0 +1,1 @@
+{{ get_random(end=60) }} {{ get_random(end=7) }} * * * lego -a --email="{{ EMAIL }}" {{ DOMAIN_ARGS }} --http --path /data renew --renew-hook="/copy.sh"
