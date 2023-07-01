@@ -1,0 +1,7 @@
+run host='example.com,example2.com' email="master@example.com":
+    docker run -d --name lego \
+        -e DOMAINS='{{host}}' \
+        -e EMAIL='{{email}}' \
+        -v $PWD:/data \
+        -p 80:80 \
+        fj0rd/0x:lego

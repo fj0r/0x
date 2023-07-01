@@ -1,18 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-#make-ssl-cert generate-default-snakeoil
-
 mkdir -p /data/tls
 
-if [ "$TLS_PROVIDER" == "lego" ]; then
-    lego -a --email="postmaster@${MADDY_HOSTNAME}" --domains="${MADDY_HOSTNAME}" --http --path /data/tls run 2>&1
-    opwd=$PWD
-    cd /data/tls
-    cp -f certificates/${MADDY_HOSTNAME}.key .
-    cp -f certificates/${MADDY_HOSTNAME}.crt .
-    cd $opwd
-else
+if [ ! -n "$TLS_PROVIDER" ]; then
     opwd=$PWD
     cd /data/tls
     if [ ! -f ${MADDY_HOSTNAME}.key ]; then

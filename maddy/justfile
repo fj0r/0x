@@ -20,7 +20,6 @@ run tls='' host='example.com' ip='1.2.3.4':
         -e MADDY_DOMAIN='{{host}}' \
         -e TLS_PROVIDER='{{tls}}' \
         -v $HOME/maddy:/data \
-        -p 80:80 \
         -p 25:25 \
         -p 587:587 \
         -p 465:465 \

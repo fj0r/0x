@@ -24,10 +24,6 @@ RUN set -eux \
   ; mv /tmp/maddy/maddy /usr/local/bin/ \
   ; rm -rf /tmp/maddy/ \
   ; useradd -mrU -s /sbin/nologin -d /data -c "maddy mail server" maddy \
-  \
-  ; lego_ver=$(curl -sSL https://api.github.com/repos/go-acme/lego/releases/latest | jq -r '.tag_name') \
-  ; lego_url="https://github.com/go-acme/lego/releases/download/${lego_ver}/lego_${lego_ver}_linux_amd64.tar.gz" \
-  ; curl -sSL ${lego_url} | tar zxf - -C /usr/local/bin lego \
   ;
 
 WORKDIR /data
