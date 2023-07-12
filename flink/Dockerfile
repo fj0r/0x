@@ -36,7 +36,11 @@ RUN set -eux \
         -e 's/\(taskmanager.bind-host\): localhost/\1: 0.0.0.0/g' \
         -e '/taskmanager.host: localhost/d' \
         -i ${FLINK_HOME}/conf/flink-conf.yaml \
-  ; pip3 install --no-cache-dir apache-flink apache-flink-libraries \
+  ; pip3 install --no-cache-dir \
+        apache-flink \
+        apache-flink-libraries \
+        apache-flink-statefun \
+        # apache-flink-ml \
         # numpy pandas \
         debugpy pydantic pytest \
         httpx hydra-core typer pyyaml deepmerge \
