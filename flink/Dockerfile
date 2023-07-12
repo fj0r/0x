@@ -52,12 +52,15 @@ RUN set -eux \
 
 RUN set -eux \
   # sql-connector-pulsar
+  ; repo=https://repo.maven.apache.org/maven2/org/apache/flink \
   ; for c in connector-files sql-avro sql-parquet sql-connector-kafka; do \
         filename=flink-${c}-${FLINK_VERSION}.jar ; \
-        curl -sSLo ${FLINK_HOME}/lib/$filename \
-        https://repo.maven.apache.org/maven2/org/apache/flink/flink-${c}/${FLINK_VERSION}/$filename ; \
+        curl -sSLo ${FLINK_HOME}/lib/$filename ${repo}/flink-${c}/${FLINK_VERSION}/$filename ; \
         chown flink:flink ${FLINK_HOME}/lib/$filename ; \
     done \
+  ; filename=flink-sql-connector-pulsar-4.0.0-1.17.jar \
+  ; curl -sSLo ${FLINK_HOME}/lib/$filename ${repo}/flink-sql-connector-pulsar/4.0.0-1.17/$filename \
+  ; chown flink:flink ${FLINK_HOME}/lib/$filename \
   ;
 
 WORKDIR $FLINK_HOME
