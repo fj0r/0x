@@ -18,9 +18,9 @@ RUN set -eux \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; mkdir /tmp/maddy \
-  ; maddy_ver=$(curl -sSL https://api.github.com/repos/foxcpp/maddy/releases/latest | jq -r '.tag_name' | cut -c 2-) \
+  ; maddy_ver=$(curl --retry 3 -sSL https://api.github.com/repos/foxcpp/maddy/releases/latest | jq -r '.tag_name' | cut -c 2-) \
   ; maddy_url="https://github.com/foxcpp/maddy/releases/download/v${maddy_ver}/maddy-${maddy_ver}-x86_64-linux-musl.tar.zst" \
-  ; curl -sSL ${maddy_url} | zstd -d | tar xf - -C /tmp/maddy --strip-components=2 \
+  ; curl --retry 3 -sSL ${maddy_url} | zstd -d | tar xf - -C /tmp/maddy --strip-components=2 \
   ; mv /tmp/maddy/maddy /usr/local/bin/ \
   ; rm -rf /tmp/maddy/ \
   ; useradd -mrU -s /sbin/nologin -d /data -c "maddy mail server" maddy \

@@ -6,7 +6,7 @@ ENV FLINK_HOME=/opt/flink MVN_HOME=/opt/mvn
 ENV PATH=${FLINK_HOME}/bin:${MVN_HOME}/bin:$PATH
 ENV BUILD_DEPS gpg build-essential
 RUN set -eux \
-  ; curl -sSLo /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/latest/download/gosu-$(dpkg --print-architecture)" \
+  ; curl --retry 3 -sSLo /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/latest/download/gosu-$(dpkg --print-architecture)" \
   ; chmod +x /usr/local/bin/gosu \
   ; gosu nobody true \
   \
@@ -21,12 +21,12 @@ RUN set -eux \
         ${BUILD_DEPS} \
   \
   ; mkdir ${MVN_HOME} \
-  ; mvn_version=$(curl -sSL https://api.github.com/repos/apache/maven/releases/latest | jq -r '.name') \
-  ; curl https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
+  ; mvn_version=$(curl --retry 3 -sSL https://api.github.com/repos/apache/maven/releases/latest | jq -r '.name') \
+  ; curl --retry 3 https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
       | tar zxf - -C ${MVN_HOME} --strip-components=1 \
   \
   ; mkdir -p ${FLINK_HOME} \
-  ; curl -sSL https://dlcdn.apache.org/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_2.12.tgz \
+  ; curl --retry 3 -sSL https://dlcdn.apache.org/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_2.12.tgz \
         | tar -zxf - --strip-components=1 -C ${FLINK_HOME} \
   ; chown -R flink:flink ${FLINK_HOME} \
   ; sed -e 's/\(taskmanager.numberOfTaskSlots\): 1/\1: 8/' \
@@ -60,11 +60,11 @@ RUN set -eux \
         sql-connector-kafka \
   ; do \
         filename=flink-${c}-${FLINK_VERSION}.jar ; \
-        curl -sSLo ${FLINK_HOME}/lib/$filename ${repo}/flink-${c}/${FLINK_VERSION}/$filename ; \
+        curl --retry 3 -sSLo ${FLINK_HOME}/lib/$filename ${repo}/flink-${c}/${FLINK_VERSION}/$filename ; \
         chown flink:flink ${FLINK_HOME}/lib/$filename ; \
     done \
   ; filename=flink-sql-connector-pulsar-4.0.0-1.17.jar \
-  ; curl -sSLo ${FLINK_HOME}/lib/$filename ${repo}/flink-sql-connector-pulsar/4.0.0-1.17/$filename \
+  ; curl --retry 3 -sSLo ${FLINK_HOME}/lib/$filename ${repo}/flink-sql-connector-pulsar/4.0.0-1.17/$filename \
   ; chown flink:flink ${FLINK_HOME}/lib/$filename \
   ;
 

@@ -4,7 +4,7 @@ RUN set -eux \
   ; build_dir=/root/build \
   ; mkdir ${build_dir} \
   ; cd ${build_dir} \
-  ; curl -sSLO https://packages.groonga.org/debian/groonga-apt-source-latest-bullseye.deb \
+  ; curl --retry 3 -sSLO https://packages.groonga.org/debian/groonga-apt-source-latest-bullseye.deb \
   ; apt install -y -V ./groonga-apt-source-latest-bullseye.deb \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends \

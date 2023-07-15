@@ -48,9 +48,9 @@ RUN set -eux \
 
 RUN set -eux \
   ; mkdir /webgrind \
-  ; webgrind_ver=$(curl -sSL https://api.github.com/repos/jokkedk/webgrind/releases/latest | jq -r '.tag_name') \
+  ; webgrind_ver=$(curl --retry 3 -sSL https://api.github.com/repos/jokkedk/webgrind/releases/latest | jq -r '.tag_name') \
   ; webgrind_url="https://github.com/jokkedk/webgrind/archive/refs/tags/${webgrind_ver}.tar.gz" \
-  ; curl -sSL ${webgrind_url} | tar -zxf - -C /webgrind --strip-components=1 \
+  ; curl --retry 3 -sSL ${webgrind_url} | tar -zxf - -C /webgrind --strip-components=1 \
   ;
 
 COPY setup-php /setup-php
@@ -58,7 +58,7 @@ COPY entrypoint/php.sh /entrypoint/
 CMD ["srv"]
 
 RUN set -ex \
-  ; curl -sSL https://getcomposer.org/installer \
+  ; curl --retry 3 -sSL https://getcomposer.org/installer \
     | php -- --install-dir=/usr/local/bin --filename=composer
 
 ENV FASTCGI=php

@@ -62,7 +62,7 @@ RUN set -eux \
   ; pgxn install madlib \
   #; pgxn load madlib \
   \
-  #; curl -sSL https://install.citusdata.com/community/deb.sh | bash \
+  #; curl --retry 3 -sSL https://install.citusdata.com/community/deb.sh | bash \
   #; apt-get install -y --no-install-recommends postgresql-13-citus-10.0 \
   \
   ; build_dir=/root/build \
@@ -80,21 +80,21 @@ RUN set -eux \
   ; make install \
   \
   ; cd $build_dir \
-  ; http_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pramsey/pgsql-http/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  ; curl -sSL https://github.com/pramsey/pgsql-http/archive/refs/tags/v${http_version}.tar.gz | tar zxf - \
+  ; http_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pramsey/pgsql-http/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  ; curl --retry 3 -sSL https://github.com/pramsey/pgsql-http/archive/refs/tags/v${http_version}.tar.gz | tar zxf - \
   ; cd pgsql-http-${http_version} \
   ; make && make install \
   \
   ; cd $build_dir \
-  ; citus_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  ; curl -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
+  ; citus_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  ; curl --retry 3 -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
   ; cd citus-${citus_version} \
   ; ./configure \
   ; make && make install \
   \
   #; cd $build_dir \
-  #; anonymizer_version=$(curl -sSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
-  #; curl -sSL https://gitlab.com/dalibo/postgresql_anonymizer/-/archive/${anonymizer_version}/postgresql_anonymizer-${anonymizer_version}.tar.gz \
+  #; anonymizer_version=$(curl --retry 3 -sSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
+  #; curl --retry 3 -sSL https://gitlab.com/dalibo/postgresql_anonymizer/-/archive/${anonymizer_version}/postgresql_anonymizer-${anonymizer_version}.tar.gz \
   #  | tar zxf - \
   #; cd postgresql_anonymizer-${anonymizer_version} \
   #; make extension \
@@ -102,15 +102,15 @@ RUN set -eux \
   #\
   \
   #; cd $build_dir \
-  #; zson_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  #; curl -sSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
+  #; zson_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  #; curl --retry 3 -sSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
   #; cd zson-${zson_version} \
   #; make && make install \
   #\
   #### via apt
   # ; cd $build_dir \
-  # ; rum_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/rum/releases | jq -r '.[0].tag_name') \
-  # ; curl -sSL https://github.com/postgrespro/rum/archive/${rum_version}.tar.gz | tar zxf - \
+  # ; rum_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/rum/releases | jq -r '.[0].tag_name') \
+  # ; curl --retry 3 -sSL https://github.com/postgrespro/rum/archive/${rum_version}.tar.gz | tar zxf - \
   # ; cd rum-${rum_version} \
   # ; make USE_PGXS=1 \
   # ; make USE_PGXS=1 install \
@@ -130,7 +130,7 @@ RUN set -eux \
   ; cd build && make \
   ; make install \
   #\
-  #; curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
+  #; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
   #; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
   \
   ; rm -rf $build_dir \

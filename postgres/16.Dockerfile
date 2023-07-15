@@ -59,10 +59,10 @@ RUN set -eux \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
   \
-  ; curl -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
+  ; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
   ; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
   \
-  ; curl -sSL https://install.citusdata.com/community/deb.sh | bash \
+  ; curl --retry 3 -sSL https://install.citusdata.com/community/deb.sh | bash \
   ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus | awk -F'/' 'NR==3 {print $1}') \
   ; apt-get install -y --no-install-recommends ${citus_pkg} \
   \
@@ -71,8 +71,8 @@ RUN set -eux \
   \
   ; cd $build_dir \
   ; mkdir pgvector && cd pgvector \
-  ; pgvector_ver=$(curl -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
-  ; curl -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${pgvector_ver}.tar.gz \
+  ; pgvector_ver=$(curl --retry 3 -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
+  ; curl --retry 3 -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${pgvector_ver}.tar.gz \
     | tar zxf - -C . --strip-components=1 \
   ; make && make install \
   \
@@ -112,15 +112,15 @@ RUN set -eux \
   ; make install \
   \
   #; cd $build_dir \
-  #; citus_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  #; curl -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
+  #; citus_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  #; curl --retry 3 -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
   #; cd citus-${citus_version} \
   #; ./configure \
   #; make && make install \
   #\
   #; cd $build_dir \
-  #; anonymizer_version=$(curl -sSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
-  #; curl -sSL https://gitlab.com/dalibo/postgresql_anonymizer/-/archive/${anonymizer_version}/postgresql_anonymizer-${anonymizer_version}.tar.gz \
+  #; anonymizer_version=$(curl --retry 3 -sSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
+  #; curl --retry 3 -sSL https://gitlab.com/dalibo/postgresql_anonymizer/-/archive/${anonymizer_version}/postgresql_anonymizer-${anonymizer_version}.tar.gz \
   #  | tar zxf - \
   #; cd postgresql_anonymizer-${anonymizer_version} \
   #; make extension \
@@ -128,21 +128,21 @@ RUN set -eux \
   #\
   \
   #; cd $build_dir \
-  #; zson_version=$(curl -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  #; curl -sSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
+  #; zson_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  #; curl --retry 3 -sSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
   #; cd zson-${zson_version} \
   #; make && make install \
   #\
   \
   ; rm -rf $build_dir \
   \
-  ; ferret_ver=$(curl -sSL https://api.github.com/repos/FerretDB/FerretDB/releases/latest | jq -r '.tag_name') \
+  ; ferret_ver=$(curl --retry 3 -sSL https://api.github.com/repos/FerretDB/FerretDB/releases/latest | jq -r '.tag_name') \
   ; ferret_url="https://github.com/FerretDB/FerretDB/releases/download/${ferret_ver}/ferretdb" \
-  ; curl -sSL ${ferret_url} -o /usr/local/bin/ferretdb \
+  ; curl --retry 3 -sSL ${ferret_url} -o /usr/local/bin/ferretdb \
   ; chmod +x /usr/local/bin/ferretdb \
   \
   ; mkdir -p /opt/pg_flame \
-  ; curl -sSL https://github.com/fj0r/pg_flame/releases/latest/download/pg_flame.tar.zst \
+  ; curl --retry 3 -sSL https://github.com/fj0r/pg_flame/releases/latest/download/pg_flame.tar.zst \
     | zstd -d | tar -xf - -C /opt/pg_flame \
   \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
