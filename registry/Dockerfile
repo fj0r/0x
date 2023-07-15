@@ -1,11 +1,11 @@
 FROM fj0rd/io:base as reg
 
 RUN set -eux \
-  ; reg_url=$(curl -sSL https://api.github.com/repos/distribution/distribution/releases/latest \
+  ; reg_url=$(curl --retry 3 -sSL https://api.github.com/repos/distribution/distribution/releases/latest \
               | jq -r '.assets[].browser_download_url' \
               | grep -v sha256 \
               | grep linux_amd64) \
-  ; curl -sSL ${reg_url} | tar zxvf - -C /usr/local/bin registry
+  ; curl --retry 3 -sSL ${reg_url} | tar zxvf - -C /usr/local/bin registry
 
 
 FROM fj0rd/0x:or

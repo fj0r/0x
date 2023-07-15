@@ -37,15 +37,15 @@ RUN set -eux \
   ; cd $build_dir \
   \
   ; mkdir $build_dir/cmake \
-  ; curl -sSL https://github.com/Kitware/CMake/releases/download/v3.26.1/cmake-3.26.1-linux-x86_64.tar.gz \
+  ; curl --retry 3 -sSL https://github.com/Kitware/CMake/releases/download/v3.26.1/cmake-3.26.1-linux-x86_64.tar.gz \
     | tar -zxf - -C $build_dir/cmake --strip-components=1 \
   ; ln -sf $build_dir/cmake/bin/cmake /usr/local/bin \
   \
   ; mkdir $build_dir/arrow \
   # 11.0.0 10.0.1 9.0.0
   ; arrow_ver=0.17.1 \
-  #; arrow_ver=$(curl -sSL https://arrow.apache.org/install/ | rg 'Current Version: ([.0-9]+)' -or '$1') \
-  ; curl -sSL https://dlcdn.apache.org/arrow/arrow-${arrow_ver}/apache-arrow-${arrow_ver}.tar.gz \
+  #; arrow_ver=$(curl --retry 3 -sSL https://arrow.apache.org/install/ | rg 'Current Version: ([.0-9]+)' -or '$1') \
+  ; curl --retry 3 -sSL https://dlcdn.apache.org/arrow/arrow-${arrow_ver}/apache-arrow-${arrow_ver}.tar.gz \
     | tar zxf - -C $build_dir/arrow --strip-components=1 \
   ; cd $build_dir/arrow/cpp \
   ; mkdir build \
@@ -82,7 +82,7 @@ RUN set -eux \
   \
   ; mkdir $build_dir/fdw \
   ; paq_version=$(curl https://api.github.com/repos/pgspider/parquet_s3_fdw/releases/latest | jq -r '.tag_name') \
-  ; curl -sSL https://github.com/pgspider/parquet_s3_fdw/archive/refs/tags/${paq_version}.tar.gz | tar zxf - --strip-components=1 -C $build_dir/fdw \
+  ; curl --retry 3 -sSL https://github.com/pgspider/parquet_s3_fdw/archive/refs/tags/${paq_version}.tar.gz | tar zxf - --strip-components=1 -C $build_dir/fdw \
   ; cd $build_dir/fdw \
   #; sed -e 's!\(-std=c++\)11!\117!' -i Makefile \
   ; make install USE_PGXS=1 CCFLAGS=-std=c++17 \
