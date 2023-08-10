@@ -2,7 +2,6 @@ FROM fj0rd/scratch:boringtun as assets
 
 FROM fj0rd/io:base
 
-WORKDIR /app
 COPY --from=assets / /
 
 ENV WG_LOG_LEVEL=info \
@@ -22,3 +21,4 @@ RUN apt-get update \
 
 COPY entrypoint/wireguard.sh /entrypoint/
 CMD [ "srv" ]
+WORKDIR /app
