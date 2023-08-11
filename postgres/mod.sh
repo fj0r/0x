@@ -25,9 +25,9 @@ initialize_password() {
 }
 
 start_ferretdb() {
-    if [ -n "FERRET_PORT" ]; then
+    if [ -n "$FERRET_PORT" ]; then
         local FERRET_DATA=$(dirname $PGDATA)/ferretdb
-        if [ ! -d "${FERRET_DATA:-}"]; then
+        if [ ! -d "${FERRET_DATA:-}" ]; then
             mkdir -p "${FERRET_DATA}"
             if [ "$user" = '0' ]; then
                 find "$FERRET_DATA" \! -user postgres -exec chown postgres '{}' +
