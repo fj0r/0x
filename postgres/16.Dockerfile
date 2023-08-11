@@ -50,6 +50,7 @@ RUN set -eux \
       postgresql-${PG_MAJOR}-jsquery \
       postgresql-${PG_MAJOR}-pgaudit \
       pgxnclient \
+      procps htop net-tools \
       python3 python3-pip python3-setuptools \
       libcurl4 curl jq ca-certificates uuid \
       ${BUILD_DEPS:-} \
