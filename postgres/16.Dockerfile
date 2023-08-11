@@ -1,4 +1,4 @@
-FROM postgres:16beta1
+FROM postgres:16beta2
 ARG PIP_FLAGS="--break-system-packages"
 
 ENV BUILD_DEPS \
@@ -41,7 +41,6 @@ RUN set -eux \
       postgresql-${PG_MAJOR}-mysql-fdw \
       postgresql-${PG_MAJOR}-wal2json \
       postgresql-${PG_MAJOR}-rum \
-      postgresql-${PG_MAJOR}-similarity \
       postgresql-${PG_MAJOR}-rational \
       postgresql-${PG_MAJOR}-cron \
       postgresql-${PG_MAJOR}-extra-window-functions \
@@ -59,9 +58,9 @@ RUN set -eux \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
   \
-  ; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
-  ; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
-  \
+  #; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
+  #; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
+  #\
   ; curl --retry 3 -sSL https://install.citusdata.com/community/deb.sh | bash \
   ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus | awk -F'/' 'NR==3 {print $1}') \
   ; apt-get install -y --no-install-recommends ${citus_pkg} \
@@ -106,10 +105,10 @@ RUN set -eux \
   #; cd build && make \
   #; make install \
   \
-  ; cd $build_dir \
-  ; git clone --depth=1 https://github.com/sraoss/pg_ivm.git \
-  ; cd pg_ivm \
-  ; make install \
+  #; cd $build_dir \
+  #; git clone --depth=1 https://github.com/sraoss/pg_ivm.git \
+  #; cd pg_ivm \
+  #; make install \
   \
   #; cd $build_dir \
   #; citus_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
@@ -117,7 +116,7 @@ RUN set -eux \
   #; cd citus-${citus_version} \
   #; ./configure \
   #; make && make install \
-  #\
+  \
   #; cd $build_dir \
   #; anonymizer_version=$(curl --retry 3 -sSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
   #; curl --retry 3 -sSL https://gitlab.com/dalibo/postgresql_anonymizer/-/archive/${anonymizer_version}/postgresql_anonymizer-${anonymizer_version}.tar.gz \
@@ -125,14 +124,12 @@ RUN set -eux \
   #; cd postgresql_anonymizer-${anonymizer_version} \
   #; make extension \
   #; make install \
-  #\
   \
   #; cd $build_dir \
   #; zson_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
   #; curl --retry 3 -sSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
   #; cd zson-${zson_version} \
   #; make && make install \
-  #\
   \
   ; rm -rf $build_dir \
   \
