@@ -7,4 +7,6 @@ RUN warpgate_ver=$(curl -sSL https://api.github.com/repos/warp-tech/warpgate/rel
 
 COPY entrypoint/warpgate.sh /entrypoint/
 
+WORKDIR /data
+
 CMD [ "srv" ]
