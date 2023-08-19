@@ -1,4 +1,4 @@
-name: playwright, mdbook and typst
+name: typst, mdbook and playwright
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: playwright, mdbook and typst
 
 on:
   push:
-    branches: [ main, playwright ]
+    branches: [ main, typst, playwright ]
   workflow_dispatch:
     inputs: {}
 
@@ -49,6 +49,23 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       # https://github.com/docker/build-push-action
+      - name: Build fonts
+        uses: docker/build-push-action@v4
+        with:
+          file: typst/fonts.Dockerfile
+          context: typst
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:fonts
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build typst
+        uses: docker/build-push-action@v4
+        with:
+          context: typst
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:typst
+          labels: ${{ steps.meta.outputs.labels }}
+
       - name: Build playwright
         uses: docker/build-push-action@v4
         with:
