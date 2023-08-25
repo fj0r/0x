@@ -14,7 +14,7 @@ RUN set -eux \
   ; apt-get update -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-        #python3 python3-pip python3-setuptools ipython3 \
+        #python3 python3-pip python3-setuptools \
         libnss3 libnspr4 libgbm1 libx11-xcb-dev libdbus-glib-1-2 \
         libgles2 gstreamer1.0-libav \
         libglib2.0-0 libatk1.0-0 libatk-bridge2.0-0 libxcb1 \
@@ -23,7 +23,7 @@ RUN set -eux \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   ; pip3 install --default-timeout=100 --no-cache-dir ${PIP_FLAGS} \
         Requests furl html5lib \
-        playwright \
+        playwright ipython \
   ; python3 -m playwright install \
   \
   ; pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
