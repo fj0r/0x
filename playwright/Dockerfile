@@ -6,6 +6,7 @@ RUN cargo install mdbook mdbook-epub mdbook-pdf \
  && strip /opt/cargo/bin/mdbook
 
 FROM fj0rd/0x:fonts
+ARG PIP_FLAGS="--break-system-packages"
 
 COPY --from=build /opt/cargo/bin/mdbook /opt/cargo/bin/mdbook-epub /usr/local/bin
 
@@ -20,7 +21,7 @@ RUN set -eux \
         libcups2 libdbus-1-3 libxkbcommon0 libgtk-3-0 libxt6 \
         libpango-1.0-0 libcairo2 libgdk-pixbuf2.0-0 libasound2 libatspi2.0-0 \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
-  ; pip3 install --default-timeout=100 --no-cache-dir \
+  ; pip3 install --default-timeout=100 --no-cache-dir ${PIP_FLAGS} \
         Requests furl html5lib \
         playwright \
   ; python3 -m playwright install \

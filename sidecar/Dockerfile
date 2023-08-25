@@ -1,4 +1,4 @@
-FROM fj0rd/io:base
+FROM fj0rd/io:common
 
 # vector
 RUN set -eux \

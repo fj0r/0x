@@ -1,6 +1,5 @@
-FROM postgres:bullseye
-#ARG PIP_FLAGS="--break-system-packages"
-ARG PIP_FLAGS=""
+FROM postgres:bookworm
+ARG PIP_FLAGS="--break-system-packages"
 
 ENV BUILD_DEPS \
     git \

@@ -88,5 +88,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php8
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: PHP_VERSION=8.1
+          build-args: PHP_VERSION=8.2
 

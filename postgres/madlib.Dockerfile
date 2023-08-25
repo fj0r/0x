@@ -55,7 +55,7 @@ RUN set -eux \
       uuid mariadb-client \
       ${BUILD_DEPS:-} \
       ${BUILD_CITUS_DEPS:-} \
-  ; pip3 --no-cache-dir install \
+  ; pip3 install --no-cache-dir \
       pgcli pygments \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
