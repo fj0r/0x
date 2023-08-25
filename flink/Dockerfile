@@ -1,5 +1,6 @@
 # https://github.com/apache/flink-docker
-FROM fj0rd/0x:py
+FROM fj0rd/io:latest
+ARG PIP_FLAGS="--break-system-packages"
 
 ARG FLINK_VERSION=1.17.1
 ENV FLINK_HOME=/opt/flink MVN_HOME=/opt/mvn
@@ -13,10 +14,12 @@ RUN set -eux \
   ; groupadd --system --gid=9999 flink \
   ; useradd --system --home-dir $FLINK_HOME --uid=9999 --gid=flink flink \
   \
+  ; curl https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc \
+  ; echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list \
   ; apt-get update \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-        openjdk-11-jdk \
+        temurin-11-jdk \
         libsnappy1v5 gettext-base libjemalloc-dev \
         ${BUILD_DEPS} \
   \
@@ -36,16 +39,11 @@ RUN set -eux \
         -e 's/\(taskmanager.bind-host\): localhost/\1: 0.0.0.0/g' \
         -e '/taskmanager.host: localhost/d' \
         -i ${FLINK_HOME}/conf/flink-conf.yaml \
-  ; pip3 install --no-cache-dir \
+  ; pip3 install --no-cache-dir ${PIP_FLAGS} \
+        'polars[all]' Numpy Pandas numba Scikit-learn \
         apache-flink \
         apache-flink-libraries \
         apache-flink-statefun \
-        # apache-flink-ml \
-        # numpy pandas \
-        debugpy pydantic pytest \
-        httpx hydra-core typer pyyaml deepmerge \
-        PyParsing structlog python-json-logger \
-        decorator more-itertools cachetools \
   ; apt-get remove -y ${BUILD_DEPS} \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   ;

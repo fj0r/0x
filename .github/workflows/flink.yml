@@ -47,15 +47,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build py39
-        uses: docker/build-push-action@v4
-        with:
-          context: flink
-          file: flink/py.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:py
-          labels: ${{ steps.meta.outputs.labels }}
-
       - name: Build pyflink
         uses: docker/build-push-action@v4
         with:
@@ -63,14 +54,5 @@ jobs:
           file: flink/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pyflink
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build pyflink
-        uses: docker/build-push-action@v4
-        with:
-          context: flink
-          file: flink/dev.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pyflink-dev
           labels: ${{ steps.meta.outputs.labels }}
 
