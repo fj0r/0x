@@ -1,4 +1,4 @@
-FROM fj0rd/0x:pyflink-dev
+FROM fj0rd/0x:pyflink
 
 RUN set -eux \
   ; mill_version=$(curl --retry 3 -sSL https://api.github.com/repos/lihaoyi/mill/releases/latest | jq -r '.tag_name') \

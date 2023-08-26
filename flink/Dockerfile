@@ -2,7 +2,6 @@
 FROM fj0rd/io:latest
 ARG PIP_FLAGS="--break-system-packages"
 
-ARG FLINK_VERSION=1.17.1
 ENV FLINK_HOME=/opt/flink MVN_HOME=/opt/mvn
 ENV PATH=${FLINK_HOME}/bin:${MVN_HOME}/bin:$PATH
 ENV BUILD_DEPS gpg build-essential
@@ -28,6 +27,8 @@ RUN set -eux \
   ; curl --retry 3 https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
       | tar zxf - -C ${MVN_HOME} --strip-components=1 \
   \
+  ; FLINK_VERSION=$(curl --retry 3 -sSL https://flink.apache.org/downloads/ | pup '.markdown > h3:nth-of-type(1)' | rg 'Apache Flink ([.0-9]+)' -or '$1') \
+  \
   ; mkdir -p ${FLINK_HOME} \
   ; curl --retry 3 -sSL https://dlcdn.apache.org/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_2.12.tgz \
         | tar -zxf - --strip-components=1 -C ${FLINK_HOME} \
@@ -44,11 +45,7 @@ RUN set -eux \
         apache-flink \
         apache-flink-libraries \
         apache-flink-statefun \
-  ; apt-get remove -y ${BUILD_DEPS} \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
-  ;
-
-RUN set -eux \
+  \
   # sql-connector-pulsar
   ; repo=https://repo.maven.apache.org/maven2/org/apache/flink \
   ; for c in \
@@ -64,6 +61,9 @@ RUN set -eux \
   ; filename=flink-sql-connector-pulsar-4.0.0-1.17.jar \
   ; curl --retry 3 -sSLo ${FLINK_HOME}/lib/$filename ${repo}/flink-sql-connector-pulsar/4.0.0-1.17/$filename \
   ; chown flink:flink ${FLINK_HOME}/lib/$filename \
+  \
+  ; apt-get remove -y ${BUILD_DEPS} \
+  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   ;
 
 WORKDIR $FLINK_HOME
