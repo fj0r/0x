@@ -11,15 +11,20 @@
         "location": [
             {
                 "path": "/ab/c",
-                "backend": "http://ab.c"
+                "backend": "http://ab.cc"
             },
             {
-                "path": "/ab/c",
-                "backend": "http://ab.c",
+                "path": "/ab/d",
+                "backend": "http://ab.com",
                 "rewrite": {
                     "from": "^/app/(.*)$",
                     "to": "/$1"
                 }
+            },
+            {
+                "path": "/att/",
+                "root": "/srv",
+                "autoindex": false
             }
         ]
     }

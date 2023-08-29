@@ -1,11 +1,11 @@
 [
     {
         "path": "/ab/c",
-        "backend": "http://ab.c"
+        "backend": "http://ab.cc"
     },
     {
         "path": "/ab/c",
-        "backend": "http://ab.c",
+        "backend": "http://ab.cc",
         "rewrite": {
             "from": "^/app/(.*)$",
             "to": "/$1"

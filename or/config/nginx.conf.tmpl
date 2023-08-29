@@ -98,11 +98,6 @@ http {
         {%- else %}
             {%- set real_remote = '' %}
         {%- endif %}
-        {%- if s.location %}
-            {%- set location = s.location %}
-        {%- else %}
-            {%- set location = '' %}
-        {%- endif %}
     server {
         {%- include "site.conf.tmpl" %}
 

@@ -9,23 +9,29 @@ if [ -n "${UPLOAD_ROOT}" ]; then
     chown www-data:www-data $UPLOADDIR
 fi
 
+merge_config () {
+    local cfg=$(cat /etc/openresty/default.json)
 
-config=/etc/openresty
+    if [ -n "${ROUTEFILE}" ]; then
+        cfg=$(echo $cfg | jq -s '.[0].location = .[1] | .[0]' - $ROUTEFILE)
+    fi
 
-if [ -n "${SITEFILE}" ]; then
-    jq -s '.[0].site = .[1] |.[0]' $config/default.json $SITEFILE \
-    | tera -t $config/nginx.conf.tmpl -e -i -s -o $config/nginx.conf
-elif [ -n "${ROUTEFILE}" ]; then
-    jq -s '.[0].location = .[1] |.[0]' $config/default.json $ROUTEFILE \
-    | tera -t $config/nginx.conf.tmpl -e -i -s -o $config/nginx.conf
-else
-    cat $config/default.json \
-    | tera -t $config/nginx.conf.tmpl -e -i -s -o $config/nginx.conf
-fi
+    if [ -n "${SITEFILE}" ]; then
+        cfg=$(echo $cfg | jq -s '.[0].site = .[1] | .[0]' - $SITEFILE)
+    fi
 
-for t in $(find $config/ext -name '*.tmpl'); do
-    cat $config/default.json | tera -t $t -e -i -s -o ${t%.tmpl}
+    echo -n $cfg
+}
+
+config=$(merge_config)
+
+dest=/etc/openresty
+echo $config | tera -t $dest/nginx.conf.tmpl -e -i -s -o $dest/nginx.conf
+
+for t in $(find $dest/ext -name '*.tmpl'); do
+    echo $config | tera -t $t -e -i -s -o ${t%.tmpl}
 done
+
 
 /usr/local/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
