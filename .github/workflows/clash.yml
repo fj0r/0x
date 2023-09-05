@@ -66,3 +66,12 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Build clash.cloudflare
+        uses: docker/build-push-action@v4
+        with:
+          context: clash
+          file: clash/cloudflare.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash-cf
+          labels: ${{ steps.meta.outputs.labels }}
+
