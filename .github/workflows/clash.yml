@@ -57,12 +57,12 @@ jobs:
       #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
       #    labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build clash.meta
+      - name: Build clash
         uses: docker/build-push-action@v4
         with:
           context: clash
-          file: clash/meta.Dockerfile
+          file: clash/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash.meta
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
           labels: ${{ steps.meta.outputs.labels }}
 
