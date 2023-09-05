@@ -6,7 +6,7 @@ RUN set -eux \
     | tar zxf - -C /opt/CloudflareST \
   ; chmod +x /opt/CloudflareST/CloudflareST
 
-COPY entrypoint/cloudflare.sh /entrypoint/
+COPY cloudflare.sh /
 COPY cloudflare.cron /
 ENV CRONFILE=/cloudflare.cron
 ENV CONFIG_CLOUDFLARE="/config/proxies/cloudflare.yaml|.proxies[0].server"
