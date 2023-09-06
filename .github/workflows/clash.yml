@@ -72,6 +72,6 @@ jobs:
           context: clash
           file: clash/cloudflare.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash-cf
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash.cloudflare
           labels: ${{ steps.meta.outputs.labels }}
 

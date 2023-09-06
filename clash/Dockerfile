@@ -19,8 +19,9 @@ RUN set -eux \
   ;
 
 # CLASH_FLAVOR: premium | meta
-ENV CLASH_FLAVOR=meta
+ENV CLASH_FLAVOR=premium
 COPY entrypoint/clash.sh /entrypoint/
 EXPOSE 7890 7891 9090
-VOLUME /config
-WORKDIR /config
+CMD ["srv"]
+VOLUME /data
+WORKDIR /data

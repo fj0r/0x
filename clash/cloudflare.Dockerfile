@@ -9,4 +9,5 @@ RUN set -eux \
 COPY cloudflare.sh /
 COPY cloudflare.cron /
 ENV CRONFILE=/cloudflare.cron
-ENV CONFIG_CLOUDFLARE="/config/proxies/cloudflare.yaml|.proxies[0].server"
+ENV CONFIG_CLOUDFLARE="/data/proxies/cloudflare.yaml|.proxies[0].server"
+ENV CLASH_FLAVOR=meta
