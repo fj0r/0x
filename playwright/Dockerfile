@@ -1,14 +1,5 @@
-FROM fj0rd/io:rs as build
-
-RUN cargo install mdbook mdbook-epub mdbook-pdf \
- && strip /opt/cargo/bin/mdbook-epub \
- && strip /opt/cargo/bin/mdbook-pdf \
- && strip /opt/cargo/bin/mdbook
-
 FROM fj0rd/0x:fonts
 ARG PIP_FLAGS="--break-system-packages"
-
-COPY --from=build /opt/cargo/bin/mdbook /opt/cargo/bin/mdbook-epub /usr/local/bin
 
 RUN set -eux \
   ; apt-get update -y \
