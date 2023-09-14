@@ -20,7 +20,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, '#na') }}
+    if: ${{ !startsWith(github.event.head_commit.message, ' ') }}
     permissions:
       contents: read
       packages: write
@@ -55,4 +55,15 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg16
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build pgis
+        uses: docker/build-push-action@v4
+        with:
+          context: postgres
+          file: postgres/gis.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pgis
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BASEIMAGE=fj0rd/0x:pg16
 

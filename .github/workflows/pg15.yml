@@ -7,7 +7,7 @@ name: postgres 15
 
 on:
   push:
-    branches: [ main, pg ]
+    branches: [ pg15 ]
   workflow_dispatch:
     inputs: {}
 
@@ -20,7 +20,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, '#na') }}
+    if: ${{ !startsWith(github.event.head_commit.message, ' ') }}
     permissions:
       contents: read
       packages: write
@@ -64,4 +64,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pgis
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BASEIMAGE=fj0rd/0x:pg15
 
