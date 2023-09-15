@@ -1,4 +1,4 @@
-FROM postgres:16rc1
+FROM postgres:16
 ARG PIP_FLAGS="--break-system-packages"
 
 ENV BUILD_DEPS \
@@ -60,12 +60,13 @@ RUN set -eux \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
   \
-  #; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
-  #; apt-get install -y --no-install-recommends timescaledb-2-postgresql-${PG_MAJOR} \
+  ; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
+  ; timescale_pkg=$(apt search timescaledb-[0-9]+-postgresql-${PG_MAJOR} 2>&1 | grep '/' | tail -n 1 | awk -F'/' '{print $1}') \
   \
   ; curl --retry 3 -sSL https://install.citusdata.com/community/deb.sh | bash \
-  ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus | awk -F'/' 'NR==3 {print $1}') \
-  ; apt-get install -y --no-install-recommends ${citus_pkg} \
+  ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus 2>&1 | grep '/' | grep -v dbgsym | tail -n 1 | awk -F'/' '{print $1}') \
+  \
+  ; apt-get install -y --no-install-recommends ${timescale_pkg} ${citus_pkg} \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
@@ -164,5 +165,5 @@ ENV PGCONF_RANDOM_PAGE_COST=1.1
 ENV PGCONF_WAL_LEVEL=logical
 ENV PGCONF_MAX_REPLICATION_SLOTS=10
 #ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'citus,pg_stat_statements,timescaledb,pg_jieba.so'"
-ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'citus,pg_stat_statements,timescaledb,pg_bigm'"
+ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_bigm,pg_jieba.so'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
