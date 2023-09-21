@@ -27,7 +27,7 @@ RUN set -eux \
   ; curl --retry 3 https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
       | tar zxf - -C ${MVN_HOME} --strip-components=1 \
   \
-  ; FLINK_VERSION=$(curl --retry 3 -sSL https://flink.apache.org/downloads/ | pup '.markdown > h3:nth-of-type(1)' | rg 'Apache Flink ([.0-9]+)' -or '$1') \
+  ; FLINK_VERSION=$(curl --retry 3 -sSL https://flink.apache.org/downloads/ | nu -c "cat | query web -q '.markdown > h3:nth-of-type(1)' | parse -r 'Apache Flink (?<ver>[.0-9]+)' | get ver.0") \
   \
   ; mkdir -p ${FLINK_HOME} \
   ; curl --retry 3 -sSL https://dlcdn.apache.org/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_2.12.tgz \

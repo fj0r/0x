@@ -4,10 +4,6 @@ ENV SCALA_HOME=/opt/scala
 ENV PATH=${SCALA_HOME}/bin:$PATH
 
 RUN set -eux \
-  ; pup_ver=$(curl -sSL https://api.github.com/repos/ericchiang/pup/releases -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].tag_name') \
-  ; pup_url="https://github.com/ericchiang/pup/releases/download/${pup_ver}/pup_${pup_ver}_linux_amd64.zip" \
-  ; curl -sSLo pup.zip ${pup_url} && unzip pup.zip && rm -f pup.zip && chmod +x pup && mv pup /opt/assets/ \
-  \
   ; mkdir -p /usr/share/man/man1 \
   ; mkdir -p ${SCALA_HOME} \
   ; curl -sSL $(curl -sSL https://scala-lang.org/download/|pup '[id="#link-main-unixsys"] attr{href}') \
