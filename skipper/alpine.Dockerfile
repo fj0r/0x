@@ -24,13 +24,7 @@ RUN set -eux \
     tzdata \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   ; echo "$TIMEZONE" > /etc/timezone \
-  \
-  ; xh_ver=$(curl --retry 3 -sSL https://api.github.com/repos/ducaale/xh/releases/latest | jq -r '.tag_name') \
-  ; xh_url="https://github.com/ducaale/xh/releases/latest/download/xh-${xh_ver}-x86_64-unknown-linux-musl.tar.gz" \
-  ; mkdir xh && cd xh \
-  ; curl --retry 3 -sSL ${xh_url} | tar zxf - -C /usr/local/bin --strip-components=1 \
-  ; mv xh /usr/local/bin && ln -sr /usr/local/bin/xh /usr/local/bin/xhs \
-  ; cd .. && rm -rf xh
+  ;
 
 
 COPY entrypoint /entrypoint

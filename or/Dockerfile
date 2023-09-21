@@ -15,7 +15,6 @@ RUN set -eux \
         zlib \
         bash \
         curl \
-        xh \
         jq \
         zstd \
         patch \
