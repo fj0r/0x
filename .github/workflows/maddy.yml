@@ -7,7 +7,7 @@ name: maddy
 
 on:
   push:
-    branches: [ main, maddy ]
+    branches: [ maddy ]
   workflow_dispatch:
     inputs: {}
 
