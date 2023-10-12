@@ -1,4 +1,4 @@
-name: sidecar
+name: ci
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: sidecar
 
 on:
   push:
-    branches: [ main, sidecar ]
+    branches: [ main, ci ]
   workflow_dispatch:
     inputs: {}
 
@@ -47,11 +47,20 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build sidecar
+      - name: Build ci
         uses: docker/build-push-action@v4
         with:
-          context: sidecar
+          context: ci
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sidecar
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ci
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build ci.debug
+        uses: docker/build-push-action@v4
+        with:
+          context: ci
+          file: ci/debug.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ci.debug
           labels: ${{ steps.meta.outputs.labels }}
 

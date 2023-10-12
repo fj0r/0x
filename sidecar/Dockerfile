@@ -1,4 +1,5 @@
-FROM fj0rd/io:common
+ARG BASEIMAGE=fj0rd/io:common
+FROM ${BASEIMAGE}
 
 # vector
 RUN set -eux \
