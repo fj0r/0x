@@ -13,11 +13,11 @@ merge_config () {
     local cfg=$(cat /etc/openresty/default.json)
 
     if [ -n "${ROUTEFILE}" ]; then
-        cfg=$(echo $cfg | jq -s '.[0].location = .[1] | .[0]' - $ROUTEFILE)
+        cfg=$(echo $cfg | jq -s '.[0].LOCATION = .[1] | .[0]' - $ROUTEFILE)
     fi
 
     if [ -n "${SITEFILE}" ]; then
-        cfg=$(echo $cfg | jq -s '.[0].site = .[1] | .[0]' - $SITEFILE)
+        cfg=$(echo $cfg | jq -s '.[0].SITE = .[1] | .[0]' - $SITEFILE)
     fi
 
     echo -n $cfg

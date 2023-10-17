@@ -98,6 +98,11 @@ http {
         {%- else %}
             {%- set real_remote = '' %}
         {%- endif %}
+        {%- if LOCATION %}
+            {%- set location = LOCATION %}
+        {%- else %}
+            {%- set location = '' %}
+        {%- endif %}
     server {
         {%- include "site.conf.tmpl" %}
 
@@ -246,9 +251,9 @@ http {
         }
         {%- endif %}
     }
-    # site
-    {%- if site %}
-    {%- for s in site %}
+    # SITE
+    {%- if SITE %}
+    {%- for s in SITE %}
         {%- set root = s.root %}
         {%- set port = s.port %}
         {%- if s.resolver %}

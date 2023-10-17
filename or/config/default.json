@@ -28,6 +28,6 @@
   "MAP_VARS": [],
   "SHORT_URL_JSONFILE": null,
   "SHORT_URL_PREFIX": "-",
-  "location": [],
-  "site": []
+  "LOCATION": [],
+  "SITE": []
 }
