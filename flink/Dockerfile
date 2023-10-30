@@ -77,6 +77,7 @@ RUN set -eux \
   \
   \
   ; FLINK_VERSION=$(curl --retry 3 -sSL https://flink.apache.org/downloads/ | nu -c "cat | query web -q '.markdown > h3:nth-of-type(1)' | parse -r 'Apache Flink (?<ver>[.0-9]+)' | get ver.0") \
+  ; FLINK_VER=$(echo $FLINK_VERSION | nu -c "cat | split row '.' | range 0..1 | str join '.'") \
   \
   ; mkdir -p ${FLINK_HOME} \
   ; curl --retry 3 -sSL https://dlcdn.apache.org/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_2.12.tgz \
@@ -102,7 +103,7 @@ RUN set -eux \
         flink-sql-avro/${FLINK_VERSION}/flink-sql-avro-${FLINK_VERSION}.jar \
         flink-sql-parquet/${FLINK_VERSION}/flink-sql-parquet-${FLINK_VERSION}.jar \
         flink-sql-connector-kafka/${FLINK_VERSION}/flink-sql-connector-kafka-${FLINK_VERSION}.jar \
-        flink-sql-connector-pulsar/4.0.0-${FLINK_VERSION::-2}/flink-sql-connector-pulsar-4.0.0-${FLINK_VERSION::-2}.jar \
+        flink-sql-connector-pulsar/4.0.0-${FLINK_VER}/flink-sql-connector-pulsar-4.0.0-${FLINK_VER}.jar \
   ; do \
         curl --retry 3 -sSLO ${repo}/${c} ; \
     done \
