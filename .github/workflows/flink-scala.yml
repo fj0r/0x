@@ -8,7 +8,7 @@ name: pyflink-scala
 on:
   workflow_run:
     workflows: [ pyflink ]
-    branches: [ flink ]
+    branches: [ flink-scala ]
     types:
       - completed
   workflow_dispatch:
