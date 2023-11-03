@@ -1,3 +1,8 @@
+# modules
+{%- if NCHAN %}
+load_module modules/ngx_nchan_module.so;
+{%- endif %}
+
 daemon off;
 user www-data;
 {%- if WORKER_PROCESSES %}
@@ -9,11 +14,6 @@ worker_processes auto;
 events {
     worker_connections  {{ WORKER_CONNECTIONS }};
 }
-
-# modules
-{%- if NCHAN %}
-load_module modules/ngx_nchan_module.so;
-{%- endif %}
 
 # about
 {%- if ABOUT %}
@@ -54,6 +54,11 @@ http {
                        'ust_header=$upstream_header_time';
     {%- endif %}
 
+    {%- if NCHAN %}
+    variables_hash_max_size 4096;
+    variables_hash_bucket_size 256;
+    {%- endif %}
+
     # map vars
     {%- if MAP_VARS %}
     {%- for m in MAP_VARS %}
@@ -92,6 +97,11 @@ http {
             {%- set fastcgi = FASTCGI %}
         {%- else %}
             {%- set fastcgi = '' %}
+        {%- endif %}
+        {%- if FASTCGI_PATHINFO %}
+            {%- set fastcgi_pathinfo = FASTCGI_PATHINFO %}
+        {%- else %}
+            {%- set fastcgi_pathinfo = '' %}
         {%- endif %}
         {%- if REAL_REMOTE %}
             {%- set real_remote = REAL_REMOTE %}
@@ -137,6 +147,92 @@ http {
             }
         }
         {%- endif %}
+
+        # nchan
+        {%- if NCHAN %}
+
+        ## subscribe
+        location ~ /sub/(.*)$ {
+            nchan_subscriber;
+            nchan_channel_id "$1";
+            nchan_channel_id_split_delimiter ",";
+            nchan_subscriber_first_message 0;
+            nchan_authorize_request /auth;
+            nchan_subscribe_request /upstream_sub;
+            nchan_unsubscribe_request /upstream_unsub;
+            {%- if NCHAN_REDIS %}
+            nchan_use_redis on;
+            nchan_redis_pass {{NCHAN_REDIS}};
+            {%- endif %}
+        }
+
+        ## publish
+        location ~ /pub/(.*)$ {
+            nchan_publisher;
+            nchan_channel_id "$1";
+            {%- if NCHAN_REDIS %}
+            nchan_redis_pass {{NCHAN_REDIS}};
+            {%- endif %}
+            nchan_authorize_request /auth;
+            nchan_publisher_upstream_request /upstream_pub;
+            nchan_message_timeout 5m;
+            # deny all;
+        }
+
+        ## Message forwarding
+        location = /upstream_pub {
+            proxy_pass http://127.0.0.1/nchan/pub;
+            proxy_pass_request_body on;
+            proxy_set_header X-Publisher-Type $nchan_publisher_type ;
+            proxy_set_header X-Prev-Message-Id $nchan_prev_message_id ;
+            proxy_set_header X-Channel-Id $nchan_channel_id ;
+            proxy_set_header X-Original-URI $request_uri ;
+            proxy_set_header X-Access-Token $http_access_token ;
+            # deny all;
+        }
+
+        ## cancel subscribe Message forwarding
+        location = /upstream_unsub {
+            proxy_pass http://127.0.0.1/nchan/unsub;
+            proxy_ignore_client_abort on; #!!!important!!!!
+            proxy_set_header X-Subscriber-Type $nchan_subscriber_type;
+            proxy_set_header X-Channel-Id $nchan_channel_id;
+            proxy_set_header X-Original-URI $request_uri;
+            # deny all;
+        }
+
+        ## subscribe Message forwarding
+        location = /upstream_sub {
+            proxy_pass http://127.0.0.1/nchan/sub;
+            proxy_set_header X-Subscriber-Type $nchan_subscriber_type;
+            proxy_set_header X-Message-Id $nchan_message_id;
+            proxy_set_header X-Channel-Id $nchan_channel_id;
+            proxy_set_header X-Original-URI $request_uri;
+            proxy_set_header X-Access-Token $http_access_token ;
+            # deny all;
+        }
+
+        ## nchan authentication
+        location = /auth {
+            proxy_pass http://127.0.0.1/nchan/auth;
+            proxy_pass_request_body off;
+            proxy_set_header Content-Length "";
+            proxy_set_header X-Subscriber-Type $nchan_subscriber_type;
+            proxy_set_header X-Publisher-Type $nchan_publisher_type;
+            proxy_set_header X-Prev-Message-Id $nchan_prev_message_id;
+            proxy_set_header X-Channel-Id $nchan_channel_id;
+            proxy_set_header X-Original-URI $request_uri;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            # deny all;
+        }
+
+        ## nchan status
+        location = /private/status {
+            nchan_stub_status;
+            deny all;
+        }
+        {%- endif %}
+
 
         # replace HTTP_HOST
         {%- if REPLACE_HOST %}

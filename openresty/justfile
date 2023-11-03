@@ -7,14 +7,40 @@ test1 file="justfile" path="justfile":
 srv:
     #!/bin/bash
         #-v $PWD/entrypoint.sh:/entrypoint.sh
+        #-e ROUTEFILE=/etc/openresty/test.location.json \
+        #-e SITEFILE=/etc/openresty/test.site.json \
     podman run --rm -it --name=test -p 8020:80 \
         -v $PWD/entrypoint/openresty.sh:/entrypoint/openresty.sh \
         -v $PWD/config/nginx.conf.tmpl:/etc/openresty/nginx.conf.tmpl \
         -v $PWD/config/test.site.json:/etc/openresty/test.site.json \
-        -e ROUTEFILE=/etc/openresty/test.location.json \
-        -e SITEFILE=/etc/openresty/test.site.json \
         -e ed25519_root=123 \
         -e UPLOAD_ROOT=upload/ \
         -e HTPASSWD=admin:123 \
+        -e FASTCGI_PATHINFO=1 \
+        -e NCHAN=1 \
         0x:openresty bash
 
+gen:
+    #!/bin/bash
+    merge_config () {
+        local cfg=$(cat {{justfile_directory()}}/config/default.json)
+
+        if [ -n "${ROUTEFILE}" ]; then
+            cfg=$(echo $cfg | jq -s '.[0].LOCATION = .[1] | .[0]' - $ROUTEFILE)
+        fi
+
+        if [ -n "${SITEFILE}" ]; then
+            cfg=$(echo $cfg | jq -s '.[0].SITE = .[1] | .[0]' - $SITEFILE)
+        fi
+
+        echo -n $cfg
+    }
+
+    config=$(merge_config)
+
+    dest={{justfile_directory()}}/test
+    echo $config | tera -t {{justfile_directory()}}/config/nginx.conf.tmpl -e -i -s -o $dest/nginx.conf
+
+    for t in $(find $dest/ext -name '*.tmpl'); do
+        echo $config | tera -t $t -e -i -s -o ${t%.tmpl}
+    done
