@@ -1,11 +1,11 @@
 FROM fj0rd/io:common
 
 RUN set -eux \
-  ; premium_url=$(curl --retry 3 -sSL https://api.github.com/repos/Dreamacro/clash/releases/tags/premium -H 'Accept: application/vnd.github.v3+json' \
-    | jq -r '.assets[].browser_download_url' | grep linux-amd64 | grep -v v3) \
-  ; curl --retry 3 -sSL ${premium_url} | gzip -d > /usr/local/bin/clash.premium \
-  ; chmod +x /usr/local/bin/clash.premium \
-  \
+  #; premium_url=$(curl --retry 3 -sSL https://api.github.com/repos/Dreamacro/clash/releases/tags/premium -H 'Accept: application/vnd.github.v3+json' \
+  #  | jq -r '.assets[].browser_download_url' | grep linux-amd64 | grep -v v3) \
+  #; curl --retry 3 -sSL ${premium_url} | gzip -d > /usr/local/bin/clash.premium \
+  #; chmod +x /usr/local/bin/clash.premium \
+  #\
   ; meta_ver=$(curl --retry 3 -sSL https://api.github.com/repos/MetaCubeX/Clash.Meta/releases -H 'Accept: application/vnd.github.v3+json' \
     | jq -r '[.[]|select(.prerelease != true)][0].tag_name') \
   ; meta_url="https://github.com/MetaCubeX/Clash.Meta/releases/download/${meta_ver}/clash.meta-linux-amd64-${meta_ver}.gz" \
@@ -19,7 +19,7 @@ RUN set -eux \
   ;
 
 # CLASH_FLAVOR: premium | meta
-ENV CLASH_FLAVOR=premium
+ENV CLASH_FLAVOR=meta
 COPY entrypoint/clash.sh /entrypoint/
 EXPOSE 7890 7891 9090
 CMD ["srv"]
