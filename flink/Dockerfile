@@ -28,7 +28,7 @@ RUN set -eux \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
       openjdk-17-jdk \
-      jq ripgrep \
+      jq ripgrep sqlite3 \
       libsnappy1v5 gettext-base libjemalloc-dev \
       ${BUILD_DEPS} \
   \
