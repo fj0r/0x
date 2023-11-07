@@ -17,6 +17,20 @@ RUN set -eux \
   ; echo "$TIMEZONE" > /etc/timezone \
   \
   ; apt-get install -y --no-install-recommends build-essential \
+  \
+  ; nu_ver=$(curl --retry 3 -sSL https://api.github.com/repos/nushell/nushell/releases/latest | jq -r '.tag_name') \
+  ; nu_url="https://github.com/nushell/nushell/releases/latest/download/nu-${nu_ver}-x86_64-unknown-linux-musl.tar.gz" \
+  ; curl --retry 3 -sSL ${nu_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/nu' '*/nu_plugin_query' \
+  \
+  ; for x in nu nu_plugin_query \
+  ; do strip -s /usr/local/bin/$x; done \
+  \
+  ; echo '/usr/local/bin/nu' >> /etc/shells \
+  ; git clone --depth=1 https://github.com/fj0r/nushell.git /etc/nushell \
+  ; opwd=$PWD; cd /etc/nushell; git log -1 --date=iso; cd $opwd \
+  ; nu -c 'register /usr/local/bin/nu_plugin_query' \
+  \
+  \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       pydantic structlog pyyaml PyParsing \
       httpx furl markdown chevron \
@@ -41,8 +55,9 @@ RUN set -eux \
   \
   ; k8s_ver=$(curl --retry 3 -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | cut -c 2-) \
   ; curl --retry 3 -L https://dl.k8s.io/v${k8s_ver}/kubernetes-client-linux-amd64.tar.gz \
-      | tar zxf - --strip-components=3 -C /usr/local/bin kubernetes/client/bin/kubectl \
+      | tar zxf - --strip-components=3 -C /usr/local/bin kubernetes/client/bin/kubectl kubernetes/client/bin/kubeadm \
   ; chmod +x /usr/local/bin/kubectl \
+  ; chmod +x /usr/local/bin/kubeadm \
   \
   ; helm_ver=$(curl --retry 3 -sSL https://api.github.com/repos/helm/helm/releases/latest | jq -r '.tag_name' | cut -c 2-) \
   ; curl --retry 3 -L https://get.helm.sh/helm-v${helm_ver}-linux-amd64.tar.gz \

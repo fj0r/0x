@@ -43,7 +43,7 @@ push:
     podman push localhost:5000/0x:registry
     podman rmi localhost:5000/0x:registry
 
-    podman tag 0x:latest localhost:5000/0x:latest
+    podman tag 0x:openresty localhost:5000/0x:latest
     podman push localhost:5000/0x:latest
     podman rmi localhost:5000/0x:latest
 
@@ -63,7 +63,7 @@ push:
     podman push localhost:5000/docker.io/ubuntu:latest
     podman rmi localhost:5000/docker.io/ubuntu:latest
 
-    podman tag 0x:latest localhost:5000/docker.io/ubuntu:test
+    podman tag 0x:openresty localhost:5000/docker.io/ubuntu:test
     podman push localhost:5000/docker.io/ubuntu:test
     podman rmi localhost:5000/docker.io/ubuntu:test
 
