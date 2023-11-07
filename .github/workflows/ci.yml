@@ -55,12 +55,12 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ci
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build ci.debug
-        uses: docker/build-push-action@v4
-        with:
-          context: ci
-          file: ci/debug.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ci.debug
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build ci.debug
+      #  uses: docker/build-push-action@v4
+      #  with:
+      #    context: ci
+      #    file: ci/debug.Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ci.debug
+      #    labels: ${{ steps.meta.outputs.labels }}
 

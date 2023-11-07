@@ -1,4 +1,4 @@
-ARG BASEIMAGE=fj0rd/io:latest
+ARG BASEIMAGE=fj0rd/io:common
 FROM ${BASEIMAGE}
 
 ARG PIP_FLAGS="--break-system-packages"
@@ -9,13 +9,22 @@ RUN set -eux \
   ; apt-get update -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
+      python3 python3-pip \
+      git openssh-client \
       buildah skopeo podman \
   ; ln -sf /usr/bin/python3 /usr/bin/python \
+  ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
+  ; echo "$TIMEZONE" > /etc/timezone \
+  \
+  ; apt-get install -y --no-install-recommends build-essential \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
+      pydantic structlog pyyaml PyParsing \
+      httpx furl markdown chevron \
       ansible kubernetes \
       psycopg[binary] kafka-python \
       pymongo github3.py \
+  ; apt-get remove -y build-essential \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   \
   ; for i in \
