@@ -5,6 +5,7 @@ ARG PIP_FLAGS="--break-system-packages"
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV PYTHONUNBUFFERED=x
 
+VOLUME /var/lib/containers
 RUN set -eux \
   ; apt-get update -y \
   ; DEBIAN_FRONTEND=noninteractive \
@@ -45,3 +46,4 @@ RUN set -eux \
   ; curl --retry 3 -L https://github.com/istio/istio/releases/latest/download/istioctl-${istio_ver}-linux-amd64.tar.gz \
       | tar zxvf - -C /usr/local/bin istioctl \
   ;
+
