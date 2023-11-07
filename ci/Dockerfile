@@ -54,8 +54,8 @@ RUN set -eux \
     done \
   \
   ; k8s_ver=$(curl --retry 3 -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | cut -c 2-) \
-  ; curl --retry 3 -L https://dl.k8s.io/v${k8s_ver}/kubernetes-client-linux-amd64.tar.gz \
-      | tar zxf - --strip-components=3 -C /usr/local/bin kubernetes/client/bin/kubectl kubernetes/client/bin/kubeadm \
+  ; curl --retry 3 -L https://dl.k8s.io/v${k8s_ver}/kubernetes-node-linux-amd64.tar.gz \
+      | tar zxf - --strip-components=3 -C /usr/local/bin kubernetes/node/bin/kubectl kubernetes/node/bin/kubeadm \
   ; chmod +x /usr/local/bin/kubectl \
   ; chmod +x /usr/local/bin/kubeadm \
   \
