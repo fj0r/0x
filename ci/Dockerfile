@@ -10,8 +10,8 @@ RUN set -eux \
   ; apt-get update -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
+      openssh-client \
       buildah skopeo podman \
-  ; ln -sf /usr/bin/python3 /usr/bin/python \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       ansible kubernetes \
