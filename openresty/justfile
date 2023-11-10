@@ -9,7 +9,7 @@ srv:
         #-v $PWD/entrypoint.sh:/entrypoint.sh
         #-e ROUTEFILE=/etc/openresty/test.location.json \
         #-e SITEFILE=/etc/openresty/test.site.json \
-    podman run --rm -it --name=test -p 8020:80 \
+    nerdctl run --rm -it --name=test -p 8020:80 \
         -v $PWD/entrypoint/openresty.sh:/entrypoint/openresty.sh \
         -v $PWD/config/nginx.conf.tmpl:/etc/openresty/nginx.conf.tmpl \
         -v $PWD/config/test.site.json:/etc/openresty/test.site.json \
@@ -18,7 +18,8 @@ srv:
         -e HTPASSWD=admin:123 \
         -e FASTCGI_PATHINFO=1 \
         -e NCHAN=1 \
-        0x:openresty bash
+        -e ABOUT="" \
+        localhost/0x:openresty bash
 
 gen:
     #!/bin/bash
