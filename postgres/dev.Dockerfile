@@ -23,7 +23,7 @@ RUN set -eux \
   ; nvim_url="https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz" \
   ; curl --retry 3 -sSL ${nvim_url} | tar zxf - -C /usr/local --strip-components=1 \
   ; strip -s /usr/local/bin/nvim \
-  ; git clone --depth=1 https://github.com/fj0r/nvim-lua.git /etc/nvim \
+  ; git clone --depth=3 https://github.com/fj0r/nvim-lua.git /etc/nvim \
   ; opwd=$PWD; cd /etc/nvim; git log -1 --date=iso; cd $opwd \
   ; nvim --headless "+Lazy! sync" +qa \
   \
