@@ -12,10 +12,13 @@ srv:
     nerdctl run --rm -it --name=test -p 8020:80 \
         -v $PWD/entrypoint/openresty.sh:/entrypoint/openresty.sh \
         -v $PWD/config/nginx.conf.tmpl:/etc/openresty/nginx.conf.tmpl \
+        -v $PWD/config/site.conf.tmpl:/etc/openresty/site.conf.tmpl \
         -v $PWD/config/test.site.json:/etc/openresty/test.site.json \
         -e ed25519_root=123 \
         -e UPLOAD_ROOT=upload/ \
         -e HTPASSWD=admin:123 \
+        -e FASTCGI=php \
+        -e IGNORE_INDEX=1 \
         -e FASTCGI_PATHINFO=1 \
         -e NCHAN=1 \
         -e ABOUT="" \

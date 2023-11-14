@@ -103,6 +103,11 @@ http {
         {%- else %}
             {%- set fastcgi_pathinfo = '' %}
         {%- endif %}
+        {%- if IGNORE_INDEX %}
+            {%- set ignore_index = IGNORE_INDEX %}
+        {%- else %}
+            {%- set ignore_index = '' %}
+        {%- endif %}
         {%- if REAL_REMOTE %}
             {%- set real_remote = REAL_REMOTE %}
         {%- else %}
@@ -361,6 +366,16 @@ http {
             {%- set fastcgi = s.fastcgi %}
         {%- else %}
             {%- set fastcgi = '' %}
+        {%- endif %}
+        {%- if s.fastcgi_pathinfo %}
+            {%- set fastcgi_pathinfo = s.fastcgi_pathinfo %}
+        {%- else %}
+            {%- set fastcgi_pathinfo = '' %}
+        {%- endif %}
+        {%- if s.ignore_index %}
+            {%- set ignore_index = s.ignore_index %}
+        {%- else %}
+            {%- set ignore_index = '' %}
         {%- endif %}
         {%- if s.real_remote %}
             {%- set real_remote = s.real_remote %}

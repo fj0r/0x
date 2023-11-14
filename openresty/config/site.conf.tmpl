@@ -1,23 +1,29 @@
 
-        set $root             '{{ root }}';
-        listen                {{ port }};
-        root                  $root;
-        charset               utf-8;
-        default_type          application/{{ DEFAULT_TYPE }};
-
-        proxy_http_version    1.1;
-        proxy_set_header      Host              $host;
-        proxy_set_header      X-Real-IP         $remote_addr;
-        proxy_set_header      X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header      X-Forwarded-Proto $scheme;
-        proxy_set_header      X-Original-URI    $request_uri;
-        proxy_set_header      Connection        "upgrade";
-        proxy_set_header      Upgrade           $http_upgrade;
-        proxy_connect_timeout {{ TIMEOUT }};
-        proxy_read_timeout    {{ TIMEOUT }};
-        proxy_send_timeout    {{ TIMEOUT }};
-        client_max_body_size  {{ MAXBODY }};
+        set $root                 '{{ root }}';
+        listen                    {{ port }};
+        root                      $root;
+        charset                   utf-8;
+        default_type              application/{{ DEFAULT_TYPE }};
         chunked_transfer_encoding on;
+
+        proxy_http_version        1.1;
+        proxy_set_header          Host              $host;
+        proxy_set_header          X-Real-IP         $remote_addr;
+        proxy_set_header          X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header          X-Forwarded-Proto $scheme;
+        proxy_set_header          X-Original-URI    $request_uri;
+        proxy_set_header          Connection        "upgrade";
+        proxy_set_header          Upgrade           $http_upgrade;
+        proxy_connect_timeout     {{ TIMEOUT }};
+        proxy_read_timeout        {{ TIMEOUT }};
+        proxy_send_timeout        {{ TIMEOUT }};
+        client_max_body_size      {{ MAXBODY }};
+        {%- if fastcgi %}
+        fastcgi_connect_timeout   {{ TIMEOUT }};
+        fastcgi_send_timeout      {{ TIMEOUT }};
+        fastcgi_read_timeout      {{ TIMEOUT }};
+        {%- endif %}
+
 
         # resolver
         {%- if resolver %}
@@ -33,10 +39,14 @@
         {%- if fastcgi == "php" %}
         location / {
             index index.php index.html index.htm;
+            {%- if ignore_index %}
+            try_files $uri $uri/ /index.php?$args;
+            {%- else %}
             if (!-e $request_filename) {
                 rewrite ^(.*)$ /index.php?s=$1 last;
                 break;
             }
+            {%- endif %}
         }
 
         location ~ \.{{ fastcgi }}$ {
