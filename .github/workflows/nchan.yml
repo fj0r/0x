@@ -1,0 +1,96 @@
+name: nginx 
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  push:
+    branches: [ main, nginx ]
+  workflow_dispatch:
+    inputs: {}
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: fj0rd/0x
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.event.head_commit.message, ' ') }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: fj0rd
+          password: ${{ secrets.DOCKER }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build openresty
+        uses: docker/build-push-action@v4
+        with:
+          context: openresty
+          file: nginx/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build php7.4
+        uses: docker/build-push-action@v4
+        with:
+          context: php
+          file: php/7.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx.php7
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PHP_VERSION=7.4
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx
+
+      - name: Build php7.2
+        uses: docker/build-push-action@v4
+        with:
+          context: php
+          file: php/7.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx.php72
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PHP_VERSION=7.2
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx
+
+      - name: Build php8
+        uses: docker/build-push-action@v4
+        with:
+          context: php
+          file: php/8.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx.php8
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PHP_VERSION=8.2
+            BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nginx
+
