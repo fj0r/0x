@@ -1,4 +1,4 @@
-name: openresty (layer), registry, skipper
+name: openresty (layer), registry, reproxy
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -73,11 +73,11 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:registry
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build skipper
+      - name: Build reproxy
         uses: docker/build-push-action@v4
         with:
-          context: skipper
+          context: reproxy
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:skipper
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:reproxy
           labels: ${{ steps.meta.outputs.labels }}
 
