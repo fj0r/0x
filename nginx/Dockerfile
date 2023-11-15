@@ -5,7 +5,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV DEV_DEPS \
         apache2-utils \
         libpcre3-dev libssl-dev \
-        zlib1g-dev
+        zlib1g-dev libxml2-dev libxslt1-dev
 
 ENV BUILD_DEPS lsb-release software-properties-common build-essential gnupg binutils
 
@@ -17,15 +17,11 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
+    openssl libpcre3 libxml2 libxslt1.1 \
     $DEV_DEPS $BUILD_DEPS \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
-  \
-  ; cd $build_dir \
-  ; mkdir nginx-upload \
-  ; UPLOAD_VER=$(curl -sSL https://api.github.com/repos/fdintino/nginx-upload-module/tags -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].name') \
-  ; curl -sSL https://github.com/fdintino/nginx-upload-module/archive/refs/tags/${UPLOAD_VER}.tar.gz | tar -zxf - -C nginx-upload --strip-components=1 \
   \
   ; cd $build_dir \
   ; mkdir nchan \
@@ -59,7 +55,6 @@ RUN set -eux \
         --with-stream_realip_module \
         --with-stream_ssl_preread_module \
         --add-module=../njs/nginx \
-        --add-module=../nginx-upload \
         --add-dynamic-module=../nchan \
         --http-log-path=/var/log/nginx/access.log \
         --error-log-path=/var/log/nginx/error.log \
