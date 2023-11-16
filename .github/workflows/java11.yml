@@ -7,7 +7,7 @@ name: java11
 
 on:
   push:
-    branches: [ main, java ]
+    branches: [ java ]
   workflow_dispatch:
     inputs: {}
 

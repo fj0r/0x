@@ -1,4 +1,4 @@
-name: nginx 
+name: nginx
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: nginx
 
 on:
   push:
-    branches: [ main, nginx ]
+    branches: [ nginx ]
   workflow_dispatch:
     inputs: {}
 

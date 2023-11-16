@@ -1,6 +1,10 @@
 # CLASH_FLAVOR: premium | meta
 if [ -n "$CLASH_FLAVOR" ]; then
     ln -fs /opt/Country.mmdb /data
-    watchexec -r -w /data/ -e yaml,yml -- clash.$CLASH_FLAVOR -d /data -ext-ctl 0.0.0.0:9090 2>&1 &
+    if [ -n "$WATCH_ALL" ]; then
+        watchexec -r -w /data/ -e yaml,yml -- clash.$CLASH_FLAVOR -d /data -ext-ctl 0.0.0.0:9090 2>&1 &
+    else
+        watchexec -r -w /data/config.yaml -- clash.$CLASH_FLAVOR -d /data -ext-ctl 0.0.0.0:9090 2>&1 &
+    fi
     echo -n "$! " >> /var/run/services
 fi
