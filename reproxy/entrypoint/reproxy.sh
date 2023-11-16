@@ -1,12 +1,15 @@
 routes=""
+static_enabled=""
 for i in "${!R_@}"; do
+    static_enabled="y"
     n=${i:2}
     r=$(eval "echo \"\$$i\"")
-    routes="${routes}${n}: ${r};"
+    #routes="${routes}${n}: ${r};"
+    routes="${routes} --static.rule=\"${r}\""
 done
 
-if [ -n "$routes" ]; then
-    routes="-inline-routes '${routes}'"
+if [ -n "$static_enabled" ]; then
+    routes="--static.enabled ${routes}"
 fi
 
 routefile=""
