@@ -1,4 +1,4 @@
-FROM fj0rd/0x:clash
+FROM fj0rd/0x:mihomo
 
 RUN set -eux \
   ; mkdir -p /opt/CloudflareST \
@@ -10,4 +10,3 @@ COPY cloudflare.sh /
 COPY cloudflare.cron.tmpl /
 COPY entrypoint/cloudflare.sh /entrypoint/
 ENV CONFIG_CLOUDFLARE="/data/proxies/cloudflare.yaml|.proxies[0].server"
-ENV CLASH_FLAVOR=meta

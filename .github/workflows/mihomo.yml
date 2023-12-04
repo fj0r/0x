@@ -1,4 +1,4 @@
-name: clash
+name: mihomo
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: clash
 
 on:
   push:
-    branches: [ main, clash ]
+    branches: [ main, mihomo ]
   workflow_dispatch:
     inputs: {}
 
@@ -49,29 +49,29 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      #- name: Build clash
+      #- name: Build mihomo
       #  uses: docker/build-push-action@v4
       #  with:
-      #    context: clash
+      #    context: mihomo
       #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mihomo
       #    labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build clash
+      - name: Build mihomo
         uses: docker/build-push-action@v4
         with:
-          context: clash
-          file: clash/Dockerfile
+          context: mihomo
+          file: mihomo/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mihomo
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build clash.cloudflare
+      - name: Build mihomo.cloudflare
         uses: docker/build-push-action@v4
         with:
-          context: clash
-          file: clash/cloudflare.Dockerfile
+          context: mihomo
+          file: mihomo/cloudflare.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:clash.cloudflare
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mihomo.cloudflare
           labels: ${{ steps.meta.outputs.labels }}
 
