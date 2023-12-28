@@ -23,14 +23,16 @@ merge_config () {
     echo -n $cfg
 }
 
-config=$(merge_config)
+if [ -n "${ROUTEFILE}" ] || [ -n "${SITEFILE}" ]; then
+    config=$(merge_config)
 
-dest=/etc/openresty
-echo $config | tera -t $dest/nginx.conf.tmpl -e -i -s -o $dest/nginx.conf
+    dest=/etc/openresty
+    echo $config | tera -t $dest/nginx.conf.tmpl -e -i -s -o $dest/nginx.conf
 
-for t in $(find $dest/ext -name '*.tmpl'); do
-    echo $config | tera -t $t -e -i -s -o ${t%.tmpl}
-done
+    for t in $(find $dest/ext -name '*.tmpl'); do
+        echo $config | tera -t $t -e -i -s -o ${t%.tmpl}
+    done
+fi
 
 
 /opt/openresty/bin/openresty 2>&1 &

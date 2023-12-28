@@ -1,10 +1,10 @@
 [
     {
-        "path": "/ab/c",
+        "path": "/a/b/c",
         "backend": "http://ab.cc"
     },
     {
-        "path": "/ab/c",
+        "path": "/d/e/f",
         "backend": "http://ab.cc",
         "rewrite": {
             "from": "^/app/(.*)$",

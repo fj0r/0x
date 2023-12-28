@@ -29,13 +29,13 @@ if [ -n "$PHP_PROFILE" ] || [ -n "$PHP_DEBUG" ]; then
 fi
 
 if [ -n "$PHP_DEBUG" ]; then
-    IFS=':' read -ra ARR <<< "$PHP_DEBUG"
+    IFS=':' read -ra ADDR <<< "$PHP_DEBUG"
     { \
       echo 'xdebug.mode=debug' ; \
       echo 'xdebug.remote_handler=dbgp' ; \
-      #echo 'xdebug.discover_client_host=true' ; \
-      echo "xdebug.client_host=${ARR[0]:-127.0.0.1}" ; \
-      echo "xdebug.client_port=${ARR[1]:-9000}" ; \
+      echo "xdebug.idekey=${PHP_DEBUG_IDEKEY:-xdebug}" ; \
+      echo "xdebug.client_host=${ADDR[0]:-127.0.0.1}" ; \
+      echo "xdebug.client_port=${ADDR[1]:-9000}" ; \
     } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 fi
 
