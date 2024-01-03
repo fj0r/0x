@@ -7,9 +7,10 @@ RUN set -eux \
   ; curl --retry 3 -sSL ${mihomo_url} | gzip -d > /usr/local/bin/mihomo \
   ; chmod +x /usr/local/bin/mihomo \
   \
-  ; CountryMmdbUrl=$(curl -sSL https://api.github.com/repos/alecthw/mmdb_china_ip_list/releases -H 'Accept: application/vnd.github.v3+json' \
-    | jq -r '.[0].assets[].browser_download_url' | grep mmdb | grep -v lite) \
-  ; curl -sSL ${CountryMmdbUrl} -o /opt/Country.mmdb \
+  ; curl -sSL "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb" -o /opt/Country.mmdb \
+  ; curl -sSL "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat" -o /opt/geoip.dat \
+  ; curl -sSL "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db" -o /opt/geoip.db \
+  ; curl -sSL "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/cn_domain.yaml" -o /opt/cn_domain.yaml \
   \
   ;
 
