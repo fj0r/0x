@@ -27,7 +27,7 @@ for t in read-header write idle dial keep-alive resp-header idle-conn tls contin
     timeout="${timeout} --timeout.${t}=${TIMEOUT:-0}"
 done
 
-cmd="reproxy --listen 0.0.0.0:80 ${assets} ${routefile} ${routes} ${timeout}"
+cmd="reproxy --listen 0.0.0.0:${LISTEN_PORT:-80} ${assets} ${routefile} ${routes} ${timeout}"
 
 eval "$cmd 2>&1 &"
 echo -n "$! " >> /var/run/services
