@@ -7,6 +7,9 @@ storage:
     blobdescriptor: inmemory
   filesystem:
     rootdirectory: /var/lib/registry
+  delete:
+    enabled:
+      true
 http:
   addr: :5001
   headers:
