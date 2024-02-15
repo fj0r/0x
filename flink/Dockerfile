@@ -72,7 +72,7 @@ RUN set -eux \
   ; nu -c 'register /usr/local/bin/nu_plugin_query' \
   \
   \
-  ; FLINK_VERSION=$(curl --retry 3 -sSL https://flink.apache.org/downloads/ | nu -c "cat | query web -q '.markdown > h3:nth-of-type(1)' | parse -r 'Apache Flink (?<ver>[.0-9]+)' | get ver.0") \
+  ; FLINK_VERSION=$(curl --retry 3 -sSL https://flink.apache.org/downloads/ | nu -c "cat | query web -m -q '.markdown > h3:nth-of-type(1)' | parse -r 'Apache Flink (?<ver>[.0-9]+)' | get ver.0") \
   ; FLINK_VER=$(echo $FLINK_VERSION | nu -c "cat | split row '.' | range 0..1 | str join '.'") \
   \
   ; mkdir -p ${FLINK_HOME} \
