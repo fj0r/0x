@@ -28,6 +28,7 @@ $env.comma = {|_|{
         $_.a: {|a,s|
             mut args = [
                 --rm --name=test-pg
+                -e POSTGRES_USER=test
                 -e POSTGRES_PASSWORD=test
                 -e POSTGRES_DB=test
                 -p 15432:5432
