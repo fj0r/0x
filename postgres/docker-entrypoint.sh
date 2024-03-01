@@ -298,6 +298,17 @@ _pg_want_help() {
 	return 1
 }
 
+pg_calc_mem() {
+	IFS=',' read -ra mem <<< "$1"
+	local shared=$(( ${mem[0]} * 40 / 100 ))
+	local temp=${mem[2]:-8}
+	local conn=$(( ${mem[0]} * 60 / 100 / (${mem[1]} + ${temp}) ))
+	echo "shared_buffers = ${shared}MB"
+	echo "work_mem = ${mem[1]}MB"
+	echo "temp_buffers = ${temp}MB"
+	echo "max_connections = ${conn}"
+}
+
 pg_setup_conf() {
 	echo "## Setup \"$PGDATA/usr.conf\""
 	echo "" > $PGDATA/usr.conf
@@ -311,14 +322,7 @@ pg_setup_conf() {
 	done
 
 	if [ -n "$POSTGRES_MAX_MEMORY_USAGE" ]; then
-        IFS=',' read -ra mem <<< "$POSTGRES_MAX_MEMORY_USAGE"
-        local shared=$(( ${mem[0]} * 40 / 100 ))
-        local temp=${mem[2]:-8}
-        local conn=$(( ${mem[0]} * 60 / 100 / (${mem[1]} + ${temp}) ))
-        echo "shared_buffers = ${shared}MB" >> $PGDATA/usr.conf
-        echo "work_mem = ${mem[1]}MB" >> $PGDATA/usr.conf
-        echo "temp_buffers = ${temp}MB" >> $PGDATA/usr.conf
-        echo "max_connections = ${conn}" >> $PGDATA/usr.conf
+		pg_calc_mem "$POSTGRES_MAX_MEMORY_USAGE" >> $PGDATA/usr.conf
 	fi
 
 	echo "pg_stat_statements.max = 10000" >> $PGDATA/usr.conf
@@ -334,9 +338,16 @@ initialize_password() {
 	fi
 }
 
+start_pgcat() {
+	if [ -n "$PGCAT_CONF" ]; then
+		echo "## starting pgcat"
+		pgcat $PGCAT_CONF &> /var/log/postgresql/pgcat.log &
+	fi
+}
+
 start_ferretdb() {
 	if [ -n "$FERRET_PORT" ]; then
-		echo "## Setup FERRETDB"
+		echo "## starting ferretdb"
 		local FERRET_DATA=$(dirname $PGDATA)/ferretdb
 		if [ ! -d "${FERRET_DATA:-}" ]; then
 			mkdir -p "${FERRET_DATA}"
@@ -407,6 +418,7 @@ _main() {
 
 	pg_setup_conf
 	start_ferretdb
+	start_pgcat
 	exec "$@"
 }
 

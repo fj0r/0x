@@ -1,4 +1,17 @@
+FROM rust:1-slim-bookworm AS builder
+
+RUN set -eux \
+  ; apt-get update \
+  ; apt-get install -y build-essential git \
+  ; git clone --depth=1 https://github.com/postgresml/pgcat.git /app \
+  ; cd /app \
+  ; cargo build --release
+
 FROM postgres:16
+
+COPY --from=builder /app/target/release/pgcat /usr/bin/pgcat
+COPY --from=builder /app/pgcat.toml /etc/pgcat/pgcat.toml
+
 ARG PIP_FLAGS="--break-system-packages"
 
 ENV BUILD_DEPS \
@@ -107,12 +120,12 @@ RUN set -eux \
   #; ./bootstrap \
   #; cd build && make \
   #; make install \
-  \
-  ; cd $build_dir \
-  ; git clone --depth=1 https://github.com/sraoss/pg_ivm.git \
-  ; cd pg_ivm \
-  ; make install \
-  \
+  #\
+  #; cd $build_dir \
+  #; git clone --depth=1 https://github.com/sraoss/pg_ivm.git \
+  #; cd pg_ivm \
+  #; make install \
+  #\
   #; cd $build_dir \
   #; citus_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
   #; curl --retry 3 -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \

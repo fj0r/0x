@@ -1,9 +1,20 @@
 --- docker-entrypoint.sh.origin	2024-02-20 13:29:56.096149153 +0800
-+++ docker-entrypoint.sh	2024-02-20 13:02:37.045617331 +0800
-@@ -298,6 +298,59 @@
++++ docker-entrypoint.sh	2024-02-29 16:15:23.837521062 +0800
+@@ -298,6 +298,72 @@
  	return 1
  }
  
++pg_calc_mem() {
++	IFS=',' read -ra mem <<< "$1"
++	local shared=$(( ${mem[0]} * 40 / 100 ))
++	local temp=${mem[2]:-8}
++	local conn=$(( ${mem[0]} * 60 / 100 / (${mem[1]} + ${temp}) ))
++	echo "shared_buffers = ${shared}MB"
++	echo "work_mem = ${mem[1]}MB"
++	echo "temp_buffers = ${temp}MB"
++	echo "max_connections = ${conn}"
++}
++
 +pg_setup_conf() {
 +	echo "## Setup \"$PGDATA/usr.conf\""
 +	echo "" > $PGDATA/usr.conf
@@ -16,13 +27,8 @@
 +		fi
 +	done
 +
-+	if [ -z "$POSTGRES_MAX_MEMORY_USAGE" ]; then
-+        IFS=',' read -ra mem <<< "$POSTGRES_MAX_MEMORY_USAGE"
-+        local buffer=$(( ${mem[0]} * 40 / 100 ))
-+        local conn=$(( ${mem[0]} * 60 / 100 / (${mem[1]} + ${mem[2]:-8}) ))
-+        echo "shared_buffers = ${buffer}MB" >> $PGDATA/usr.conf
-+        echo "work_mem = ${mem[1]}MB" >> $PGDATA/usr.conf
-+        echo "max_connections = ${conn}MB" >> $PGDATA/usr.conf
++	if [ -n "$POSTGRES_MAX_MEMORY_USAGE" ]; then
++		pg_calc_mem "$POSTGRES_MAX_MEMORY_USAGE" >> $PGDATA/usr.conf
 +	fi
 +
 +	echo "pg_stat_statements.max = 10000" >> $PGDATA/usr.conf
@@ -38,9 +44,16 @@
 +	fi
 +}
 +
++start_pgcat() {
++	if [ -n "$PGCAT_CONF" ]; then
++		echo "## starting pgcat"
++		pgcat $PGCAT_CONF &> /var/log/postgresql/pgcag.log &
++	fi
++}
++
 +start_ferretdb() {
 +	if [ -n "$FERRET_PORT" ]; then
-+		echo "## Setup FERRETDB"
++		echo "## starting ferretdb"
 +		local FERRET_DATA=$(dirname $PGDATA)/ferretdb
 +		if [ ! -d "${FERRET_DATA:-}" ]; then
 +			mkdir -p "${FERRET_DATA}"
@@ -60,7 +73,7 @@
  _main() {
  	# if first arg looks like a flag, assume we want to run postgres server
  	if [ "${1:0:1}" = '-' ]; then
-@@ -315,6 +368,7 @@
+@@ -315,6 +381,7 @@
  
  		# only run initialization on an empty data directory
  		if [ -z "$DATABASE_ALREADY_EXISTS" ]; then
@@ -68,7 +81,7 @@
  			docker_verify_minimum_env
  
  			# check dir permissions to reduce likelihood of half-initialized database
-@@ -322,6 +376,7 @@
+@@ -322,6 +389,7 @@
  
  			docker_init_database_dir
  			pg_setup_hba_conf "$@"
@@ -76,12 +89,13 @@
  
  			# PGPASSWORD is required for psql when authentication is required for 'local' connections via pg_hba.conf and is otherwise harmless
  			# e.g. when '--auth=md5' or '--auth-local=md5' is used in POSTGRES_INITDB_ARGS
-@@ -348,6 +403,8 @@
+@@ -348,6 +416,9 @@
  		fi
  	fi
  
 +	pg_setup_conf
 +	start_ferretdb
++	start_pgcat
  	exec "$@"
  }
  
