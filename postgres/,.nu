@@ -67,6 +67,33 @@ $env.comma = {|_|{
             temp
         ]}
     }
+    restore: {
+        $_.a: {|a,s|
+            let container = $a.0
+            let data = $a.1
+            pp $env.docker-cli rm -f $container
+            sudo rm -rf $data
+            mkdir $data
+            pp $env.docker-cli run ...[
+                -d --restart=always
+                -v $"($_.wd)/($data):/var/lib/postgresql/data"
+                -v $"($_.wd)/backup:/backup"
+                -e $"POSTGRES_USER=($s.pg.user)"
+                -e $"POSTGRES_DB=($s.pg.db)"
+                -e $"POSTGRES_PASSWORD=($s.pg.passwd)"
+                --security-opt apparmor=unconfined
+                --name $container
+                postgres:16
+            ]
+            wait-cmd -t 'wait postgresql' {
+                sudo $env.docker-cli ...[
+                    exec $container
+                    bash -c $'pg_isready -U ($s.pg.user)'
+                ]
+            }
+            sudo $env.docker-cli exec $container bash -c $'cat /backup/($s.pg.db).pg.sql | psql -U ($s.pg.user)'
+        }
+    }
     calc_mem: {|a,s|
         let fn = 'pg_calc_mem'
         let f = $'/tmp/pg_calc_mem.bash'
@@ -92,8 +119,8 @@ $env.comma = {|_|{
         pp $env.docker-cli run ...[
             -d --name pgcat
             --restart=always
-            # --privileged
-            # '--security-opt="seccomp=unconfined"'
+            --privileged
+            --security-opt apparmor=unconfined
             -p 6432:6432
             -v $"($_.wd)/pgcat.toml:/etc/pgcat/pgcat.toml"
             ghcr.io/postgresml/pgcat:latest
