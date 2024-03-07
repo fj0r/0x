@@ -103,20 +103,24 @@ docker_init_database_dir() {
 # print large warning if POSTGRES_HOST_AUTH_METHOD is set to 'trust'
 # assumes database is not set up, ie: [ -z "$DATABASE_ALREADY_EXISTS" ]
 docker_verify_minimum_env() {
-	# check password first so we can output the warning before postgres
-	# messes it up
-	if [ "${#POSTGRES_PASSWORD}" -ge 100 ]; then
-		cat >&2 <<-'EOWARN'
+	case "${PG_MAJOR:-}" in
+		12 | 13) # https://github.com/postgres/postgres/commit/67a472d71c98c3d2fa322a1b4013080b20720b98
+			# check password first so we can output the warning before postgres
+			# messes it up
+			if [ "${#POSTGRES_PASSWORD}" -ge 100 ]; then
+				cat >&2 <<-'EOWARN'
 
-			WARNING: The supplied POSTGRES_PASSWORD is 100+ characters.
+					WARNING: The supplied POSTGRES_PASSWORD is 100+ characters.
 
-			  This will not work if used via PGPASSWORD with "psql".
+					  This will not work if used via PGPASSWORD with "psql".
 
-			  https://www.postgresql.org/message-id/flat/E1Rqxp2-0004Qt-PL%40wrigleys.postgresql.org (BUG #6412)
-			  https://github.com/docker-library/postgres/issues/507
+					  https://www.postgresql.org/message-id/flat/E1Rqxp2-0004Qt-PL%40wrigleys.postgresql.org (BUG #6412)
+					  https://github.com/docker-library/postgres/issues/507
 
-		EOWARN
-	fi
+				EOWARN
+			fi
+			;;
+	esac
 	if [ -z "$POSTGRES_PASSWORD" ] && [ 'trust' != "$POSTGRES_HOST_AUTH_METHOD" ]; then
 		# The - option suppresses leading tabs but *not* spaces. :)
 		cat >&2 <<-'EOE'
@@ -225,6 +229,7 @@ docker_setup_env() {
 	: "${POSTGRES_HOST_AUTH_METHOD:=}"
 
 	declare -g DATABASE_ALREADY_EXISTS
+	: "${DATABASE_ALREADY_EXISTS:=}"
 	# look specifically for PG_VERSION, as it is expected in the DB dir
 	if [ -s "$PGDATA/PG_VERSION" ]; then
 		DATABASE_ALREADY_EXISTS='true'
@@ -293,47 +298,70 @@ _pg_want_help() {
 	return 1
 }
 
-pg_setup_conf() {
-    echo "## Setup \"$PGDATA/usr.conf\""
-    echo "" > $PGDATA/usr.conf
+pg_calc_mem() {
+	IFS=',' read -ra mem <<< "$1"
+	local shared=$(( ${mem[0]} * 40 / 100 ))
+	local temp=${mem[2]:-8}
+	local conn=$(( ${mem[0]} * 60 / 100 / (${mem[1]} + ${temp}) ))
+	echo "shared_buffers = ${shared}MB"
+	echo "work_mem = ${mem[1]}MB"
+	echo "temp_buffers = ${temp}MB"
+	echo "max_connections = ${conn}"
+}
 
-    for i in "${!PGCONF_@}"; do
-        local k=$(echo ${i:7} | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
-        local v=$(eval "echo \"\$$i\"")
-        if [ -n "$v" ]; then
-            echo "$k = $v" >> $PGDATA/usr.conf
-        fi
-    done
-    echo "pg_stat_statements.max = 10000" >> $PGDATA/usr.conf
-    echo "pg_stat_statements.track = all" >> $PGDATA/usr.conf
+pg_setup_conf() {
+	echo "## Setup \"$PGDATA/usr.conf\""
+	echo "" > $PGDATA/usr.conf
+
+	for i in "${!PGCONF_@}"; do
+		local k=$(echo ${i:7} | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
+		local v=$(eval "echo \"\$$i\"")
+		if [ -n "$v" ]; then
+			echo "$k = $v" >> $PGDATA/usr.conf
+		fi
+	done
+
+	if [ -n "$POSTGRES_MAX_MEMORY_USAGE" ]; then
+		pg_calc_mem "$POSTGRES_MAX_MEMORY_USAGE" >> $PGDATA/usr.conf
+	fi
+
+	echo "pg_stat_statements.max = 10000" >> $PGDATA/usr.conf
+	echo "pg_stat_statements.track = all" >> $PGDATA/usr.conf
 }
 
 initialize_password() {
-    if [ -z "$POSTGRES_PASSWORD" ]; then
-        export POSTGRES_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 19)
-        echo
-        echo "export \$POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
-        echo
-    fi
+	if [ -z "$POSTGRES_PASSWORD" ]; then
+		export POSTGRES_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 19)
+		echo
+		echo "export \$POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+		echo
+	fi
+}
+
+start_pgcat() {
+	if [ -n "$PGCAT_CONF" ]; then
+		echo "## starting pgcat"
+		pgcat $PGCAT_CONF &> /var/log/postgresql/pgcat.log &
+	fi
 }
 
 start_ferretdb() {
-    if [ -n "$FERRET_PORT" ]; then
-        echo "## Setup FERRETDB"
-        local FERRET_DATA=$(dirname $PGDATA)/ferretdb
-        if [ ! -d "${FERRET_DATA:-}" ]; then
-            mkdir -p "${FERRET_DATA}"
-            if [ "$user" = '0' ]; then
-                find "$FERRET_DATA" \! -user postgres -exec chown postgres '{}' +
-            fi
-            chmod 700 "$FERRET_DATA"
-        fi
-        ferretdb \
-            --state-dir="${FERRET_DATA}" \
-            --postgresql-url=postgres://${POSTGRES_USER:-postgres}@localhost:5432/${POSTGRES_DB:-postgres} \
-            --listen-addr=0.0.0.0:${FERRET_PORT} \
-            &> /var/log/postgresql/ferretdb.log &
-    fi
+	if [ -n "$FERRET_PORT" ]; then
+		echo "## starting ferretdb"
+		local FERRET_DATA=$(dirname $PGDATA)/ferretdb
+		if [ ! -d "${FERRET_DATA:-}" ]; then
+			mkdir -p "${FERRET_DATA}"
+			if [ "$user" = '0' ]; then
+				find "$FERRET_DATA" \! -user postgres -exec chown postgres '{}' +
+			fi
+			chmod 700 "$FERRET_DATA"
+		fi
+		ferretdb \
+			--state-dir="${FERRET_DATA}" \
+			--postgresql-url=postgres://${POSTGRES_USER:-postgres}@localhost:5432/${POSTGRES_DB:-postgres} \
+			--listen-addr=0.0.0.0:${FERRET_PORT} \
+			&> /var/log/postgresql/ferretdb.log &
+	fi
 }
 
 _main() {
@@ -390,6 +418,7 @@ _main() {
 
 	pg_setup_conf
 	start_ferretdb
+	start_pgcat
 	exec "$@"
 }
 

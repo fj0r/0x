@@ -26,11 +26,11 @@ $env.comma = {|_|{
             let config = ls config/**/*
                 | where type == file
                 | each { $in.name |path relative-to config }
-                | each { [-v $"($env.PWD)/config/($in):/etc/openresty/($in)"] }
+                | each { [-v $"($_.wd)/config/($in):/etc/openresty/($in)"] }
             mut args = [
                 --rm -it --name=test
                 -p 8020:80
-                -v $"($env.PWD)/entrypoint/openresty.sh:/entrypoint/openresty.sh"
+                -v $"($_.wd)/entrypoint/openresty.sh:/entrypoint/openresty.sh"
                 $config
                 -e ed25519_root=123
                 -e FASTCGI=php
@@ -44,7 +44,7 @@ $env.comma = {|_|{
             if 'pass' in $a { $args ++= [[-e HTPASSWD=admin:123]] }
             if 'route' in $a { $args ++= [[-e ROUTEFILE=/etc/openresty/test.location.json]] }
             if 'site' in $a { $args ++= [[-e SITEFILE=/etc/openresty/test.site.json]] }
-            pp $env.docker-cli run $args localhost/0x:openresty bash
+            pp $env.docker-cli run ...$args localhost/0x:openresty bash
         }
         $_.cmp: { [
             upload

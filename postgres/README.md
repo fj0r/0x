@@ -22,10 +22,10 @@ This optional environment variable can be used to define another location for th
 Note: on PostgreSQL 9.x, this variable is POSTGRES_INITDB_XLOGDIR (reflecting the changed name of the --xlogdir flag to --waldir in PostgreSQL 10+).
 
 ### postgresql.conf
-- PGC_SHARED_BUFFERS
-- PGC_SHARED_PRELOAD_LIBRARIES
-- PGC_WAL_LEVEL
-- PGC_MAX_REPLICATION_SLOTS
+- PGCONF_SHARED_BUFFERS
+- PGCONF_SHARED_PRELOAD_LIBRARIES
+- PGCONF_WAL_LEVEL
+- PGCONF_MAX_REPLICATION_SLOTS
 
 ## PGDATA
 This optional variable can be used to define another location - like a subdirectory - for the database files. The default is /var/lib/postgresql/data, but if the data volume you're using is a filesystem mountpoint (like with GCE persistent disks), Postgres initdb recommends a subdirectory (for example /var/lib/postgresql/data/pgdata ) be created to contain the data.
@@ -42,4 +42,13 @@ docker run --rm -u 999 \
     -e PGCONF_SHARED_BUFFERS=512MB \
     -v $PWD/user.dict:/usr/share/postgresql/12/tsearch_data/jieba_user.dict \
     fj0rd/pg
+```
+
+## memory
+Actual max RAM = shared_buffers + (temp_buffers + work_mem) * max_connections
+As a rough guide, shared_buffers should be set to 40% of the memory you are willing to use for PostgreSQL, max_connections to maximum number of parallel connections you want to have and temp_buffers and work_mem so that you don't go over your RAM budget. If you don't use temporary tables, setting temp_buffers to pretty low (default is 8 MB) will allow setting work_mem a bit higher
+```
+-e PGCONF_SHARED_BUFFERS=4GB \
+-e PGCONF_WORK_MEM=32MB \
+-e PGCONF_MAX_CONNECTIONS=200 \
 ```

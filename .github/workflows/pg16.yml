@@ -47,6 +47,15 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Build pgrx
+        uses: docker/build-push-action@v4
+        with:
+          context: postgres
+          file: postgres/rx.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pgrx
+          labels: ${{ steps.meta.outputs.labels }}
+
       - name: Build pg 16
         uses: docker/build-push-action@v4
         with:
