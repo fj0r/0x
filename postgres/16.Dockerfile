@@ -12,7 +12,6 @@ RUN set -eux \
 ######################
 # paradedb
 ######################
-
 FROM fj0rd/0x:pgrx as builder-paradedb
 WORKDIR /tmp/paradedb
 
@@ -60,6 +59,23 @@ RUN set -eux \
   ; cp ../target/release/pg_analytics-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_analytics/share/postgresql/${PG_MAJOR}/extension \
   ; cd /out/pg_analytics \
   ; tar zcvf /tmp/paradedb/pg_analytics.tar.gz *
+
+######################
+# pg_graphql
+######################
+RUN set -eux \
+  ; git clone --depth=1 https://github.com/supabase/pg_graphql.git /tmp/pg_graphql \
+  ; cd /tmp/pg_graphql \
+  ; rustup override set nightly \
+  ; cargo install --locked cargo-pgrx --version "${PGRX_VERSION}" --force \
+  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+  \
+  ; mkdir -p /out/pg_graphql/lib/postgresql/${PG_MAJOR}/lib \
+  ; cp target/release/pg_graphql-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_graphql/lib/postgresql/${PG_MAJOR}/lib \
+  ; mkdir -p /out/pg_graphql/share/postgresql/${PG_MAJOR}/extension \
+  ; cp target/release/pg_graphql-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_graphql/share/postgresql/${PG_MAJOR}/extension \
+  ; cd /out/pg_graphql \
+  ; tar zcvf /tmp/pg_graphql.tar.gz *
 
 ######################
 # pgvector
@@ -119,9 +135,10 @@ COPY --from=builder-pg_cron /tmp/pg_cron.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/paradedb/pg_sparse.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/paradedb/pg_bm25.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/paradedb/pg_analytics.tar.gz /tmp
+COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector cron sparse bm25 analytics \
+  ; for x in vector cron sparse bm25 analytics graphql \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done
 
@@ -175,6 +192,7 @@ RUN set -eux \
   ; apt-get install -y --no-install-recommends \
       postgresql-plpython3-${PG_MAJOR} \
       postgresql-${PG_MAJOR}-mysql-fdw \
+      postgresql-${PG_MAJOR}-repack \
       postgresql-${PG_MAJOR}-wal2json \
       postgresql-${PG_MAJOR}-rum \
       #postgresql-${PG_MAJOR}-similarity \
