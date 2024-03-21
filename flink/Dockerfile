@@ -39,8 +39,8 @@ RUN set -eux \
   \
   \
   ; mkdir -p ${NODE_ROOT} \
-  ; node_version=$(curl --retry 3 -sSL https://nodejs.org/en/download/ | rg 'Latest LTS Version.*<strong>(.+)</strong>' -or '$1') \
-  ; curl --retry 3 -sSL https://nodejs.org/dist/v${node_version}/node-v${node_version}-linux-x64.tar.xz \
+  ; node_version=$(curl --retry 3 -sSL https://nodejs.org/dist/index.json | jq -r '[.[]|select(.lts != false)][0].version') \
+  ; curl --retry 3 -sSL https://nodejs.org/dist/${node_version}/node-${node_version}-linux-x64.tar.xz \
     | tar Jxf - --strip-components=1 -C ${NODE_ROOT} \
   \
   ; mkdir -p ${LS_ROOT} \
