@@ -24,8 +24,10 @@ set_user () {
     _HOME_DIR=$(getent passwd $1 | cut -d: -f6)
 
     _PROFILE="${_HOME_DIR}/.profile"
-    echo "" >> ${_PROFILE}
-    echo "PATH=$PATH" >> ${_PROFILE}
+    { \
+        echo "" ;\
+        echo "PATH=$PATH" ;\
+    } >> ${_PROFILE}
 
     mkdir -p ${_HOME_DIR}/.ssh
     echo "ssh-ed25519 $3" >> ${_HOME_DIR}/.ssh/authorized_keys
