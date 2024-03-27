@@ -2,6 +2,15 @@ $env.comma_scope = {|_|{
     created: '2024-02-20{2}13:21:43'
     computed: {$_.computed:{|a, s| $'($s.created)($a)' }}
     log_args: {$_.filter:{|a, s| do $_.tips 'received arguments' $a }}
+    pg: {
+        db: foo
+        user: foo
+        passwd: foo
+    }
+    rt: {
+        container: test-pg
+        dir: pg16
+    }
 }}
 
 $env.comma = {|_|{
@@ -27,10 +36,10 @@ $env.comma = {|_|{
     test: {
         $_.a: {|a,s|
             mut args = [
-                --rm --name=test-pg
-                -e POSTGRES_USER=foo
-                -e POSTGRES_PASSWORD=foo
-                -e POSTGRES_DB=foo
+                --rm $"--name=($s.rt.container)"
+                -e $"POSTGRES_USER=($s.pg.user)"
+                -e $"POSTGRES_DB=($s.pg.db)"
+                -e $"POSTGRES_PASSWORD=($s.pg.passwd)"
                 -p 15432:5432
                 -v $"($_.wd)/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
             ]
@@ -67,31 +76,42 @@ $env.comma = {|_|{
             temp
         ]}
     }
+    backup: {|a,s|
+        sudo $env.docker-cli ...[
+            exec $s.rt.container
+            bash -c
+            $'pg_dumpall -U ($s.pg.user) > /backup/($s.pg.db).pg.sql'
+        ]
+        sudo chown $env.USER -R backup/
+    }
     restore: {
         $_.a: {|a,s|
-            let container = $a.0
-            let data = $a.1
-            pp $env.docker-cli rm -f $container
-            sudo rm -rf $data
-            mkdir $data
+            pp $env.docker-cli rm -f $s.rt.container
+            sudo rm -rf $"($s.rt.dir)/"
+            mkdir $s.rt.dir
             pp $env.docker-cli run ...[
                 -d --restart=always
-                -v $"($_.wd)/($data):/var/lib/postgresql/data"
+                -v $"($_.wd)/($s.rt.dir):/var/lib/postgresql/data"
                 -v $"($_.wd)/backup:/backup"
-                -e $"POSTGRES_USER=($s.pg.user)"
                 -e $"POSTGRES_DB=($s.pg.db)"
+                -e $"POSTGRES_USER=($s.pg.user)"
                 -e $"POSTGRES_PASSWORD=($s.pg.passwd)"
                 --security-opt apparmor=unconfined
-                --name $container
+                --name $s.rt.container
                 postgres:16
             ]
             wait-cmd -t 'wait postgresql' {
                 sudo $env.docker-cli ...[
-                    exec $container
-                    bash -c $'pg_isready -U ($s.pg.user)'
+                    exec $s.rt.container
+                    bash -c
+                    $'pg_isready -U ($s.pg.user)'
                 ]
             }
-            sudo $env.docker-cli exec $container bash -c $'cat /backup/($s.pg.db).pg.sql | psql -U ($s.pg.user)'
+            sudo $env.docker-cli ...[
+                exec $s.rt.container
+                bash -c
+                $'cat /backup/($s.pg.db).pg.sql | psql -U ($s.pg.user)'
+            ]
         }
     }
     calc_mem: {|a,s|
