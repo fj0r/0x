@@ -1,0 +1,12 @@
+name: example
+cidr: 10.11.0.0/16
+lighthouse:
+    x: { host: 172.178.5.123:51821, group: [default] }
+    y: { host: 172.178.5.111:51821, group: [default] }
+node:
+    a: { group: [default] }
+    b: { group: [default] }
+    c: { group: [default] }
+    d: { group: [default] }
+    e: { group: [default] }
+    f: { group: [default] }
