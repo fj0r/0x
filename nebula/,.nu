@@ -22,7 +22,7 @@ $env.comma_scope = {|_|{
         mut caddr = $cidr.0 | split row '.' | each {|x| $x | into int }
         let cmask = $cidr.1 | into int
         if $cmask != 16 {
-            log crt 'mask must be 16' {mask: $cmask, type: ($cmask | describe)}
+            lg crt 'mask must be 16' {mask: $cmask, type: ($cmask | describe)}
             return
         }
         mut sn2 = 0
@@ -120,7 +120,7 @@ $env.comma_scope = {|_|{
 $env.comma = {|_|{
     start: {
         $_.act: {|a,s|
-            log msg start
+            lg msg start
         }
         $_.cmp: {|a,s|
             match ($a | length) {
@@ -130,7 +130,7 @@ $env.comma = {|_|{
         }
     }
     stop: {
-        log wrn 'stop'
+        lg wrn 'stop'
     }
     new: {
         $_.a: {|a,s|
@@ -144,7 +144,7 @@ $env.comma = {|_|{
 
             let network_exist = [...$basedir 'ca.key'] | path join | path exists
             let ll = if $network_exist { 'wrn' } else { 'msg' }
-            log $ll {act: create type: network net: $config.network ignore: $network_exist}
+            lg $ll {act: create type: network net: $config.network ignore: $network_exist}
             if not $network_exist {
                 pp ...$s.cmd ...[ca -name $config.network -duration 876000h0m0s]
             } else {
@@ -160,7 +160,7 @@ $env.comma = {|_|{
                     let name = $"($h)_($i.name)"
                     let node_exist = [...$basedir $"($name).yaml"] | path join | path exists
                     let ll = if $node_exist { 'wrn' } else { 'msg' }
-                    log $ll {act: create type: $h net: $config.network ignore: $node_exist name: $name}
+                    lg $ll {act: create type: $h net: $config.network ignore: $node_exist name: $name}
                     if $node_exist {
                         continue
                     }
