@@ -7,7 +7,7 @@ name: nebula, wireguard, warpgate
 
 on:
   push:
-    branches: [ main, wg, warpgate ]
+    branches: [ main, nebula, wg, warpgate ]
   workflow_dispatch:
     inputs: {}
 

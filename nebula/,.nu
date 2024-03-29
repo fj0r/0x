@@ -108,7 +108,7 @@ $env.comma_scope = {|_|{
             sshd: {
                 enabled: $cfg.lighthouse
                 listen: $'($cfg.vaddr):2222'
-                #host_key: '/nebula/ssh_host_ed25519_key'
+                host_key: '/nebula/ssh_host_ed25519_key'
                 authorized_users: [
                     {user: root, keys: $cfg.sshkey}
                 ]
