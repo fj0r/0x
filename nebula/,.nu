@@ -38,8 +38,7 @@ $env.comma_scope = {|_|{
             }
             $sn3 += 1
         }
-        mut sn2 = 1
-        mut sn3 = 1
+        mut sn3 = 100
         mut node = []
         for n in ($cfg.node | transpose k v) {
             $caddr.2 = $sn2
@@ -90,7 +89,7 @@ $env.comma_scope = {|_|{
             }
             tun: {
                 dev: (if $cfg.lighthouse { null } else { 'nebula1' })
-                disabled: (not $cfg.lighthouse)
+                disabled: $cfg.lighthouse
             }
             firewall: {
                 inbound: [
@@ -107,7 +106,7 @@ $env.comma_scope = {|_|{
             }
             sshd: {
                 enabled: $cfg.lighthouse
-                listen: $'($cfg.vaddr):2222'
+                listen: $'0.0.0.0:2222'
                 host_key: '/nebula/ssh_host_ed25519_key'
                 authorized_users: [
                     {user: root, keys: $cfg.sshkey}
@@ -118,20 +117,6 @@ $env.comma_scope = {|_|{
 }}
 
 $env.comma = {|_|{
-    start: {
-        $_.act: {|a,s|
-            lg msg start
-        }
-        $_.cmp: {|a,s|
-            match ($a | length) {
-                1 => []
-                _ => {}
-            }
-        }
-    }
-    stop: {
-        lg wrn 'stop'
-    }
     new: {
         $_.a: {|a,s|
             let config = $s.config
@@ -157,24 +142,24 @@ $env.comma = {|_|{
             let relay = $config.lighthouse | get vaddr
             for h in [lighthouse node] {
                 for i in ($config | get $h) {
-                    let name = $"($h)_($i.name)"
-                    let node_exist = [...$basedir $"($name).yaml"] | path join | path exists
+                    let name = if $h == 'lighthouse' { $"_($i.name)" }  else { $i.name }
+                    let dir = [...$basedir $name] | path join
+                    let node_exist = $dir | path exists
                     let ll = if $node_exist { 'wrn' } else { 'msg' }
-                    lg $ll {act: create type: $h net: $config.network ignore: $node_exist name: $name}
-                    if $node_exist {
-                        continue
+                    let cidr = $"($i.vaddr)/($config.cidr.1)"
+                    lg $ll {act: create type: $h net: $config.network ignore: $node_exist name: $name cidr: $cidr}
+                    if not $node_exist {
+                        cd ($basedir | path join)
+                        pp ...$s.cmd ...[sign -name $"($name)" -ip $cidr -groups $i.group]
+                        mkdir $dir
+                        ssh-keygen -t ed25519 -f "ssh" -C $name -q -N ''
+                        for f in [$"($name).crt" $"($name).key" "ssh" "ssh.pub"] {
+                            mv $f $dir
+                        }
                     }
-                    pp ...$s.cmd ...[sign -name $"($name)" -ip $"($i.vaddr)/($config.cidr.1)" -groups $i.group]
-                    let cert_file = [...$basedir $"($name).crt"] | path join
-                    let cert = open $cert_file
-                    rm -f $cert_file
-                    let key_file = [...$basedir $"($name).key"] | path join
-                    let key = open $key_file
-                    rm -f $key_file
-                    let ssh_file = [...$basedir $"ssh_($name)"] | path join
-                    ssh-keygen -t ed25519 -f $ssh_file -C $name -q -N ''
-                    let pubkey = open $"($ssh_file).pub"
-                    rm -f $"($ssh_file).pub"
+                    let cert = open ([$dir $"($name).crt"] | path join)
+                    let key = open ([$dir $"($name).key"] | path join)
+                    let pubkey = open ([$dir $"ssh.pub"] | path join)
                     let c = {
                         lighthouse: ($h == 'lighthouse')
                         vaddr: $i.vaddr
@@ -189,12 +174,17 @@ $env.comma = {|_|{
                         key: $key
                         sshkey: $pubkey
                     }
-                    $cfg | merge (do $s.config_file $c) | save -f ([...$basedir $"($name).yaml"] | path join)
+                    let output = [$dir "config.yaml"] | path join
+                    $"# ($i.name): ($cidr)(char newline)" | save -f $output
+                    $cfg | merge (do $s.config_file $c) | save -af $output
                 }
             }
         }
         $_.flt: [cmd config]
         $_.cmp: {|a,s| ls *.network.yaml | get name }
+    }
+    sync: {
+        cp $"($_.wd)/,.nu" ~/data/docker.io/0x/nebula/,.nu
     }
     .: {
         .: {

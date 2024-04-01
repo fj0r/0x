@@ -10,3 +10,5 @@ node:
     d: { group: [default] }
     e: { group: [default] }
     f: { group: [default] }
+
+block: []
