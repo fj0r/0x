@@ -86,7 +86,7 @@ RUN set -eux \
         -e 's/\(jobmanager.bind-host\): localhost/\1: 0.0.0.0/g' \
         -e 's/\(taskmanager.bind-host\): localhost/\1: 0.0.0.0/g' \
         -e '/taskmanager.host: localhost/d' \
-        -i ${FLINK_HOME}/conf/flink-conf.yaml \
+        -i ${FLINK_HOME}/conf/config.yaml \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
         'polars[all]' Numpy Pandas numba Scikit-learn \
         apache-flink \
