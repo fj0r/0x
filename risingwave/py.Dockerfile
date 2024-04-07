@@ -1,4 +1,5 @@
-FROM python3
+FROM python:3.11-bookworm
 
 RUN set -eux \
-  ; pip install --break-system-packages risingwave requests
+  ; pip install --no-cache-dir --break-system-packages \
+    risingwave requests
