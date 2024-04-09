@@ -139,7 +139,7 @@ COPY --from=builder-paradedb /tmp/paradedb/pg_analytics.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector cron sparse bm25 analytics graphql \
+  ; for x in vector cron sparse search analytics graphql \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done
 

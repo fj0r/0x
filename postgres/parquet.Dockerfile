@@ -1,4 +1,4 @@
-FROM postgres:15
+FROM postgres:16
 
 ENV BUILD_DEPS \
     git \
@@ -11,11 +11,13 @@ ENV BUILD_DEPS \
     libicu-dev \
     uuid-dev \
     build-essential \
+    ninja-build \
+    cmake \
     libpq-dev \
     libkrb5-dev \
     postgresql-server-dev-${PG_MAJOR} \
     libstdc++-10-dev \
-    tree ninja-build
+    tree
 
 ENV LANG zh_CN.utf8
 ENV TIMEZONE=Asia/Shanghai
@@ -36,10 +38,20 @@ RUN set -eux \
   \
   ; cd $build_dir \
   \
-  ; mkdir $build_dir/cmake \
-  ; curl --retry 3 -sSL https://github.com/Kitware/CMake/releases/download/v3.26.1/cmake-3.26.1-linux-x86_64.tar.gz \
-    | tar -zxf - -C $build_dir/cmake --strip-components=1 \
-  ; ln -sf $build_dir/cmake/bin/cmake /usr/local/bin \
+  # array
+  ; mkdir /tmp/target/array
+  ; git clone https://github.com/apache/arrow.git \
+  ; cd arrow/cpp \
+  ; mkdir build \
+  ; cd build \
+  # https://github.com/apache/arrow/blob/main/cpp/CMakePresets.json
+  ; cmake .. --preset ninja-release-python -DCMAKE_INSTALL_PREFIX=/tmp/target/array \
+  ; cmake --build . \
+
+
+
+
+
   \
   ; mkdir $build_dir/arrow \
   # 11.0.0 10.0.1 9.0.0
