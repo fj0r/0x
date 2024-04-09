@@ -48,6 +48,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build pgrx
+        # if: ${{ startsWith(github.event.head_commit.message, '+pgrx') }}
         uses: docker/build-push-action@v4
         with:
           context: postgres

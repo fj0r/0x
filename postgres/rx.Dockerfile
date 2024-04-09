@@ -2,7 +2,7 @@ ARG PG_VERSION_MAJOR=16
 FROM postgres:${PG_VERSION_MAJOR}
 
 ARG RUST_CHANNEL=stable
-ENV PGRX_VERSION=0.11.2
+ENV PGRX_VERSION=0.12.0-alpha.1
 
 ENV PATH="/root/.cargo/bin:$PATH"
 ENV PGX_HOME=/usr/lib/postgresql/${PG_MAJOR}

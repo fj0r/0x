@@ -35,15 +35,15 @@ RUN set -eux \
   ; tar zcvf /tmp/paradedb/pg_sparse.tar.gz *
 
 RUN set -eux \
-  ; cd /tmp/paradedb/pg_bm25 \
+  ; cd /tmp/paradedb/pg_search \
   ; cargo pgrx package --features icu --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
   \
-  ; mkdir -p /out/pg_bm25/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp ../target/release/pg_bm25-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_bm25/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/pg_bm25/share/postgresql/${PG_MAJOR}/extension \
-  ; cp ../target/release/pg_bm25-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_bm25/share/postgresql/${PG_MAJOR}/extension \
-  ; cd /out/pg_bm25 \
-  ; tar zcvf /tmp/paradedb/pg_bm25.tar.gz *
+  ; mkdir -p /out/pg_search/lib/postgresql/${PG_MAJOR}/lib \
+  ; cp ../target/release/pg_search-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_search/lib/postgresql/${PG_MAJOR}/lib \
+  ; mkdir -p /out/pg_search/share/postgresql/${PG_MAJOR}/extension \
+  ; cp ../target/release/pg_search-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_search/share/postgresql/${PG_MAJOR}/extension \
+  ; cd /out/pg_search \
+  ; tar zcvf /tmp/paradedb/pg_search.tar.gz *
 
 # Note: We require Rust nightly to build pg_analytics with SIMD
 RUN set -eux \
@@ -66,8 +66,9 @@ RUN set -eux \
 RUN set -eux \
   ; git clone --depth=1 https://github.com/supabase/pg_graphql.git /tmp/pg_graphql \
   ; cd /tmp/pg_graphql \
+  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
   ; rustup override set nightly \
-  ; cargo install --locked cargo-pgrx --version "${PGRX_VERSION}" --force \
+  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
   ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
   \
   ; mkdir -p /out/pg_graphql/lib/postgresql/${PG_MAJOR}/lib \
@@ -133,7 +134,7 @@ COPY --from=builder-pg_cron /tmp/pg_cron.tar.gz /tmp
 
 # Copy the ParadeDB extensions from their builder stages
 COPY --from=builder-paradedb /tmp/paradedb/pg_sparse.tar.gz /tmp
-COPY --from=builder-paradedb /tmp/paradedb/pg_bm25.tar.gz /tmp
+COPY --from=builder-paradedb /tmp/paradedb/pg_search.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/paradedb/pg_analytics.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
@@ -311,5 +312,6 @@ ENV PGCONF_EFFECTIVE_IO_CONCURRENCY=200
 ENV PGCONF_RANDOM_PAGE_COST=1.1
 ENV PGCONF_WAL_LEVEL=logical
 ENV PGCONF_MAX_REPLICATION_SLOTS=10
-ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'citus,pg_stat_statements,pg_cron,pg_bm25,pg_analytics,timescaledb'"
+ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'citus,pg_stat_statements,pg_cron,pg_search,pg_analytics,timescaledb'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
+ENV PARADEDB_TELEMETRY=false

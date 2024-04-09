@@ -1,5 +1,5 @@
---- docker-entrypoint.sh.origin	2024-02-20 13:29:56.096149153 +0800
-+++ docker-entrypoint.sh	2024-02-29 16:15:23.837521062 +0800
+--- docker-entrypoint.sh.origin	2024-04-09 09:14:46.475049832 +0800
++++ docker-entrypoint.sh	2024-03-07 13:20:54.303934991 +0800
 @@ -298,6 +298,72 @@
  	return 1
  }
@@ -47,7 +47,7 @@
 +start_pgcat() {
 +	if [ -n "$PGCAT_CONF" ]; then
 +		echo "## starting pgcat"
-+		pgcat $PGCAT_CONF &> /var/log/postgresql/pgcag.log &
++		pgcat $PGCAT_CONF &> /var/log/postgresql/pgcat.log &
 +	fi
 +}
 +
