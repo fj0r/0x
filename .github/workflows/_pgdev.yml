@@ -7,7 +7,7 @@ name: postgres dev
 
 on:
   push:
-    branches: [ pg-dev ]
+    branches: [ pg.dev ]
   workflow_dispatch:
     inputs: {}
 
@@ -51,9 +51,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: postgres
-          file: postgres/dev.Dockerfile
+          file: postgres/s3.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg.dev
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg.s3
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BASEIMAGE=fj0rd/0x:pg
