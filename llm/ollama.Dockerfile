@@ -1,5 +1,5 @@
 FROM ollama/ollama
 
-RUN ollama pull llama2-chinese
+RUN ollama pull llama3
 
 # ollama run llama2-chinese
