@@ -19,7 +19,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    if: ${{ !startsWith(github.event.head_commit.message, ' ') }}
+    if: ${{ !endsWith(github.event.head_commit.message, '~') }}
     permissions:
       contents: read
       packages: write
