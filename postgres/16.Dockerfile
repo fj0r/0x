@@ -206,7 +206,7 @@ RUN set -eux \
       postgresql-${PG_MAJOR}-jsquery \
       postgresql-${PG_MAJOR}-pgaudit \
       pgxnclient \
-      procps htop net-tools \
+      procps htop net-tools unzip \
       python3 python3-pip python3-setuptools \
       libcurl4 curl jq ca-certificates uuid \
       ${BUILD_DEPS:-} \
@@ -234,11 +234,21 @@ RUN set -eux \
   #; make && make install \
   \
   ; cd $build_dir \
-  ; git clone --depth=1 https://github.com/adjust/clickhouse_fdw.git \
-  ; cd clickhouse_fdw \
-  ; mkdir build && cd build \
-  ; cmake .. \
-  ; make && make install \
+  ; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
+  ; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
+  ; unzip -d . libduckdb-linux-amd64.zip \
+  ; cp libduckdb.so $(pg_config --libdir)  \
+  ; git clone --depth=1 https://github.com/alitrack/duckdb_fdw \
+  ; cd duckdb_fdw \
+  ; make USE_PGXS=1 \
+  ; make install USE_PGXS=1 \
+  \
+  #; cd $build_dir \
+  #; git clone --depth=1 https://github.com/adjust/clickhouse_fdw.git \
+  #; cd clickhouse_fdw \
+  #; mkdir build && cd build \
+  #; cmake .. \
+  #; make && make install \
   \
   #; cd $build_dir \
   #; git clone --depth=1 https://github.com/jaiminpan/pg_jieba \
