@@ -1,0 +1,1 @@
+			echo "include_if_exists = 'usr.conf'">> $PGDATA/postgresql.conf

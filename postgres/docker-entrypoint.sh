@@ -298,6 +298,7 @@ _pg_want_help() {
 	return 1
 }
 
+###{{{ main
 pg_calc_mem() {
 	IFS=',' read -ra mem <<< "$1"
 	local shared=$(( ${mem[0]} * 40 / 100 ))
@@ -338,32 +339,20 @@ initialize_password() {
 	fi
 }
 
-start_pgcat() {
-	if [ -n "$PGCAT_CONF" ]; then
-		echo "## starting pgcat"
-		pgcat $PGCAT_CONF &> /var/log/postgresql/pgcat.log &
+start_readyset() {
+	if [ -n "$READYSET_MEMORY_LIMIT" ]; then
+		echo "## starting readyset"
+        readyset --address $"0.0.0.0:${READYSET_PORT:-5433}" \
+            --database-type postgresql \
+            --upstream-db-url postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB:-postgres} \
+            --no-color --log-path /var/lib/postgresql/readyset \
+            --storage-dir /var/lib/postgresql/readyset \
+            --memory-limit ${READYSET_MEMORY_LIMIT} &
 	fi
 }
 
-start_ferretdb() {
-	if [ -n "$FERRET_PORT" ]; then
-		echo "## starting ferretdb"
-		local FERRET_DATA=$(dirname $PGDATA)/ferretdb
-		if [ ! -d "${FERRET_DATA:-}" ]; then
-			mkdir -p "${FERRET_DATA}"
-			if [ "$user" = '0' ]; then
-				find "$FERRET_DATA" \! -user postgres -exec chown postgres '{}' +
-			fi
-			chmod 700 "$FERRET_DATA"
-		fi
-		ferretdb \
-			--state-dir="${FERRET_DATA}" \
-			--postgresql-url=postgres://${POSTGRES_USER:-postgres}@localhost:5432/${POSTGRES_DB:-postgres} \
-			--listen-addr=0.0.0.0:${FERRET_PORT} \
-			&> /var/log/postgresql/ferretdb.log &
-	fi
-}
 
+###}}}
 _main() {
 	# if first arg looks like a flag, assume we want to run postgres server
 	if [ "${1:0:1}" = '-' ]; then
@@ -381,7 +370,10 @@ _main() {
 
 		# only run initialization on an empty data directory
 		if [ -z "$DATABASE_ALREADY_EXISTS" ]; then
+###{{{ init
 			initialize_password
+
+###}}}
 			docker_verify_minimum_env
 
 			# check dir permissions to reduce likelihood of half-initialized database
@@ -389,7 +381,10 @@ _main() {
 
 			docker_init_database_dir
 			pg_setup_hba_conf "$@"
+###{{{ user
 			echo "include_if_exists = 'usr.conf'">> $PGDATA/postgresql.conf
+
+###}}}
 
 			# PGPASSWORD is required for psql when authentication is required for 'local' connections via pg_hba.conf and is otherwise harmless
 			# e.g. when '--auth=md5' or '--auth-local=md5' is used in POSTGRES_INITDB_ARGS
@@ -416,9 +411,11 @@ _main() {
 		fi
 	fi
 
+###{{{ hook
 	pg_setup_conf
-	start_ferretdb
-	start_pgcat
+	start_readyset
+
+###}}}
 	exec "$@"
 }
 

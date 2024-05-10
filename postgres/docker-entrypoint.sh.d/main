@@ -1,0 +1,52 @@
+pg_calc_mem() {
+	IFS=',' read -ra mem <<< "$1"
+	local shared=$(( ${mem[0]} * 40 / 100 ))
+	local temp=${mem[2]:-8}
+	local conn=$(( ${mem[0]} * 60 / 100 / (${mem[1]} + ${temp}) ))
+	echo "shared_buffers = ${shared}MB"
+	echo "work_mem = ${mem[1]}MB"
+	echo "temp_buffers = ${temp}MB"
+	echo "max_connections = ${conn}"
+}
+
+pg_setup_conf() {
+	echo "## Setup \"$PGDATA/usr.conf\""
+	echo "" > $PGDATA/usr.conf
+
+	for i in "${!PGCONF_@}"; do
+		local k=$(echo ${i:7} | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
+		local v=$(eval "echo \"\$$i\"")
+		if [ -n "$v" ]; then
+			echo "$k = $v" >> $PGDATA/usr.conf
+		fi
+	done
+
+	if [ -n "$POSTGRES_MAX_MEMORY_USAGE" ]; then
+		pg_calc_mem "$POSTGRES_MAX_MEMORY_USAGE" >> $PGDATA/usr.conf
+	fi
+
+	echo "pg_stat_statements.max = 10000" >> $PGDATA/usr.conf
+	echo "pg_stat_statements.track = all" >> $PGDATA/usr.conf
+}
+
+initialize_password() {
+	if [ -z "$POSTGRES_PASSWORD" ]; then
+		export POSTGRES_PASSWORD=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 19)
+		echo
+		echo "export \$POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+		echo
+	fi
+}
+
+start_readyset() {
+	if [ -n "$READYSET_MEMORY_LIMIT" ]; then
+		echo "## starting readyset"
+        readyset --address $"0.0.0.0:${READYSET_PORT:-5433}" \
+            --database-type postgresql \
+            --upstream-db-url postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB:-postgres} \
+            --no-color --log-path /var/lib/postgresql/readyset \
+            --storage-dir /var/lib/postgresql/readyset \
+            --memory-limit ${READYSET_MEMORY_LIMIT} &
+	fi
+}
+

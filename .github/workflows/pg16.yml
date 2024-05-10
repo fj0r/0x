@@ -47,14 +47,24 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build pgrx
-        # if: ${{ startsWith(github.event.head_commit.message, '+pgrx') }}
+      - name: Build pg_rx
+        if: ${{ !contains(github.event.head_commit.message, '-pg_rx') }}
         uses: docker/build-push-action@v4
         with:
           context: postgres
           file: postgres/rx.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pgrx
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg_rx
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build pg_ext
+        if: ${{ !contains(github.event.head_commit.message, '-pg_ext') }}
+        uses: docker/build-push-action@v4
+        with:
+          context: postgres
+          file: postgres/ext.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg_ext
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build pg 16
