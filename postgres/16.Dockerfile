@@ -64,7 +64,7 @@ RUN set -eux \
       postgresql-${PG_MAJOR}-jsquery \
       postgresql-${PG_MAJOR}-pgaudit \
       pgxnclient \
-      procps htop net-tools unzip \
+      procps htop net-tools unzip tree \
       python3 python3-pip python3-setuptools \
       libcurl4 curl jq ca-certificates uuid \
       ${BUILD_DEPS:-} \
@@ -72,6 +72,10 @@ RUN set -eux \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
+  \
+  ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
+  ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \
+  ; curl --retry 3 -sSL ${dust_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/dust' \
   \
   ; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
   ; timescale_pkg=$(apt search timescaledb-[0-9]+-postgresql-${PG_MAJOR} 2>&1 | grep '/' | tail -n 1 | awk -F'/' '{print $1}') \
@@ -91,15 +95,15 @@ RUN set -eux \
   #  | tar zxf - -C . --strip-components=1 \
   #; make && make install \
   \
-  ; cd $build_dir \
-  ; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
-  ; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
-  ; unzip -d . libduckdb-linux-amd64.zip \
-  ; cp libduckdb.so $(pg_config --libdir)  \
-  ; git clone --depth=1 https://github.com/alitrack/duckdb_fdw \
-  ; cd duckdb_fdw \
-  ; make USE_PGXS=1 \
-  ; make install USE_PGXS=1 \
+  #; cd $build_dir \
+  #; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
+  #; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
+  #; unzip -d . libduckdb-linux-amd64.zip \
+  #; cp libduckdb.so $(pg_config --libdir)  \
+  #; git clone --depth=1 https://github.com/alitrack/duckdb_fdw \
+  #; cd duckdb_fdw \
+  #; make USE_PGXS=1 \
+  #; make install USE_PGXS=1 \
   \
   #; cd $build_dir \
   #; git clone --depth=1 https://github.com/adjust/clickhouse_fdw.git \
@@ -176,7 +180,7 @@ ENV PGCONF_RANDOM_PAGE_COST=1.1
 ENV PGCONF_WAL_LEVEL=logical
 ENV PGCONF_MAX_REPLICATION_SLOTS=10
 # ,citus,timescaledb
-ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,pg_analytics'"
+ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,pg_lakehouse'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
 ENV READYSET_MEMORY_LIMIT=
