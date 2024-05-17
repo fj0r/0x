@@ -24,5 +24,9 @@ RUN set -eux \
   ; mkdir -p /world/typst \
   ; curl -sSL https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
     | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/typst' \
+  \
+  ; curl -sSLo /usr/local/bin/typst-lsp \
+    https://github.com/nvarner/typst-lsp/releases/latest/download/typst-lsp-x86_64-unknown-linux-musl \
+  ; chmod +x /usr/local/bin/typst-lsp \
   ;
 COPY assets/cn.typ /world/typst
