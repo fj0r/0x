@@ -29,4 +29,4 @@ RUN set -eux \
     https://github.com/nvarner/typst-lsp/releases/latest/download/typst-lsp-x86_64-unknown-linux-musl \
   ; chmod +x /usr/local/bin/typst-lsp \
   ;
-COPY assets/cn.typ /world/typst
+COPY templates /world
