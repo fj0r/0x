@@ -158,10 +158,6 @@ RUN set -eux \
   \
   ; rm -rf $build_dir \
   \
-  ; mkdir -p /opt/pg_flame \
-  ; curl --retry 3 -sSL https://github.com/fj0r/pg_flame/releases/latest/download/pg_flame.tar.zst \
-    | zstd -d | tar -xf - -C /opt/pg_flame \
-  \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
   ; apt-get clean -y && rm -rf /var/lib/apt/lists/*
@@ -184,3 +180,7 @@ ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,pg_la
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
 ENV READYSET_MEMORY_LIMIT=
+
+ENV POSTGRES_USER=foo
+ENV POSTGRES_DB=bar
+ENV POSTGRES_PASSWORD=foobar
