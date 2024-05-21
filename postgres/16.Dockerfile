@@ -158,10 +158,6 @@ RUN set -eux \
   \
   ; rm -rf $build_dir \
   \
-  ; mkdir -p /opt/pg_flame \
-  ; curl --retry 3 -sSL https://github.com/fj0r/pg_flame/releases/latest/download/pg_flame.tar.zst \
-    | zstd -d | tar -xf - -C /opt/pg_flame \
-  \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
   ; apt-get clean -y && rm -rf /var/lib/apt/lists/*

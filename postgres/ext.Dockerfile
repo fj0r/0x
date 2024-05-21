@@ -2,12 +2,13 @@
 # paradedb
 ######################
 FROM fj0rd/0x:pg_rx as builder-paradedb
+
 WORKDIR /tmp/paradedb
 
 RUN set -eux \
   ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/paradedb/paradedb/tags | jq -r '.[0].name') \
   ; curl --retry 3 -sSL https://github.com/paradedb/paradedb/archive/refs/tags/${ver}.tar.gz \
-    | tar zxf - -C . --strip-components=1
+  | tar zxf - -C . --strip-components=1
 
 RUN set -eux \
   ; cd /tmp/paradedb/pg_lakehouse \
@@ -31,21 +32,26 @@ RUN set -eux \
   ; cd /out/pg_search \
   ; tar zcvf /tmp/paradedb/pg_search.tar.gz *
 
-# Note: We require Rust nightly to build pg_analytics with SIMD
-#RUN set -eux \
-#  ; git clone --depth=1 https://github.com/paradedb/pg_analytics.git /tmp/pg_analytics \
-#  ; cd /tmp/pg_analytics \
-#  ; rustup update nightly \
-#  ; rustup override set nightly \
-#  ; cargo install --locked cargo-pgrx --version "${PGRX_VERSION}" --force \
-#  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
-#  \
-#  ; mkdir -p /out/pg_analytics/lib/postgresql/${PG_MAJOR}/lib \
-#  ; cp ../target/release/pg_analytics-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_analytics/lib/postgresql/${PG_MAJOR}/lib \
-#  ; mkdir -p /out/pg_analytics/share/postgresql/${PG_MAJOR}/extension \
-#  ; cp ../target/release/pg_analytics-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_analytics/share/postgresql/${PG_MAJOR}/extension \
-#  ; cd /out/pg_analytics \
-#  ; tar zcvf /tmp/paradedb/pg_analytics.tar.gz *
+
+######################
+# pg_jsonschema
+######################
+
+RUN set -eux \
+  ; mkdir -p /tmp/pg_jsonschema \
+  ; cd /tmp/pg_jsonschema \
+  \
+  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/supabase/pg_jsonschema/releases | jq -r '.[0].name') \
+  ; curl --retry 3 -sSL https://github.com/supabase/pg_jsonschema/archive/refs/tags/${ver}.tar.gz \
+  | tar zxf - -C . --strip-components=1 \
+  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+  \
+  ; mkdir -p /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
+  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
+  ; mkdir -p /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
+  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
+  ; cd /out/pg_jsonschema \
+  ; tar zcvf /tmp/pg_jsonschema.tar.gz *
 
 ######################
 # pg_graphql
@@ -123,9 +129,10 @@ COPY --from=builder-pg_cron /tmp/pg_cron.tar.gz /tmp
 # Copy the ParadeDB extensions from their builder stages
 COPY --from=builder-paradedb /tmp/paradedb/pg_lakehouse.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/paradedb/pg_search.tar.gz /tmp
+COPY --from=builder-paradedb /tmp/pg_jsonschema.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector cron lakehouse search graphql \
+  ; for x in vector cron lakehouse search jsonschema graphql \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done
