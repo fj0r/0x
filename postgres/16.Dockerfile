@@ -97,7 +97,6 @@ RUN set -eux \
   \
   ; cd $build_dir \
   ; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
-  ; duckdb_ver="v0.9.2" \
   ; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
   ; unzip -d . libduckdb-linux-amd64.zip \
   ; cp libduckdb.so $(pg_config --libdir)  \
@@ -181,3 +180,7 @@ ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,pg_la
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
 ENV READYSET_MEMORY_LIMIT=
+
+ENV POSTGRES_USER=foo
+ENV POSTGRES_DB=bar
+ENV POSTGRES_PASSWORD=foobar
