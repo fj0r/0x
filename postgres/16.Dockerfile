@@ -97,6 +97,7 @@ RUN set -eux \
   \
   ; cd $build_dir \
   ; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
+  ; duckdb_ver="v0.9.2" \
   ; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
   ; unzip -d . libduckdb-linux-amd64.zip \
   ; cp libduckdb.so $(pg_config --libdir)  \
