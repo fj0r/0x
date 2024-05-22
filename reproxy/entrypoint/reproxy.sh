@@ -22,14 +22,19 @@ if [ -n "$WEB_ROOT" ]; then
     assets="--assets.location=${WEB_ROOT}"
 fi
 
+args=""
+if [ -n "$ARGS" ]; then
+    args="${ARGS}"
+fi
+
 timeout=""
 for t in read-header write idle dial keep-alive resp-header idle-conn tls continue; do
     timeout="${timeout} --timeout.${t}=${TIMEOUT:-0}"
 done
 
-opts="--max=0"
+others="--max=0"
 
-cmd="reproxy --listen 0.0.0.0:${LISTEN_PORT:-80} ${assets} ${routefile} ${routes} ${timeout} ${opts}"
+cmd="reproxy --listen 0.0.0.0:${LISTEN_PORT:-80} ${assets} ${routefile} ${routes} ${timeout} ${args} ${others}"
 
 eval "$cmd 2>&1 &"
 echo -n "$! " >> /var/run/services
