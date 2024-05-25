@@ -41,14 +41,15 @@ $env.comma = {|_|{}}
         --rm
         --workdir '/world'
         -v $"($env.PWD):/world"
-    ] fj0rd/0x:typst ...[
-        typst watch $a.0 $"out/($a.0).pdf"
+    ] '0x:typst' ...[
+        typst compile $a.0 $"out/($a.0).pdf"
     ]
+    zathura $"out/($a.0).pdf"
 } {
     cmp: {
-        ls *.typ | get name
+        ls *.typ | sort-by modified -r | get name
     }
-    # wth: { glob: '*.typ' }
+    wth: { glob: '*.typ' }
 }
 
 'clean'
