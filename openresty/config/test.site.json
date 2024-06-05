@@ -1,7 +1,7 @@
 [
     {
-        "root": "/ab/c",
-        "port": 8080,
+        "root": "/webgrind",
+        "port": 8090,
         "fastcgi": "php"
     },
     {

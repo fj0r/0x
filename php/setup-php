@@ -42,6 +42,7 @@ fi
 if [ -n "$PHP_PROFILE" ]; then
     { \
       echo 'xdebug.mode=profile' ;\
+      echo 'xdebug.profiler_output_name="cachegrind.%u.%H_%R"' ;\
     } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 fi
 

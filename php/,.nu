@@ -68,14 +68,18 @@ for e in [nuon toml yaml json] {
     let dev = [
         -v $"($_.wd):($s.dev.wd)"
         -w $s.dev.wd
-        -p $"($port):80"
+        -p $"($port):8090"
         -e $"ed25519_($s.dev.user)=($sshkey)"
     ]
     $args ++= $dev
 
     $args ++= [
         -e PHP_PROFILE='1'
+        -e PHP_DEBUG='1'
         -v $"($env.PWD)/../openresty/entrypoint/openresty.sh:/entrypoint/openresty.sh"
+        -v $"($env.PWD)/setup-php:/setup-php"
+        -v $"($env.PWD)/webgrind.json:/webgrind.json"
+        -e $"SITEFILE=/webgrind.json"
     ]
 
     $args ++= ($s.dev.env
