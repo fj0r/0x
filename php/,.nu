@@ -74,6 +74,10 @@ for e in [nuon toml yaml json] {
     $args ++= $dev
 
     $args ++= [
+        -e LOG_FORMAT=json
+        -v $"($env.PWD)/../openresty/config/nginx.conf.tmpl:/etc/openresty/nginx.conf.tmpl"
+        -v $"($env.PWD)/../openresty/config/site.conf.tmpl:/etc/openresty/site.conf.tmpl"
+        -v $"($env.PWD)/../openresty/config/default.json:/etc/openresty/default.json"
         -e PHP_PROFILE='1'
         -e PHP_DEBUG='1'
         -v $"($env.PWD)/../openresty/entrypoint/openresty.sh:/entrypoint/openresty.sh"

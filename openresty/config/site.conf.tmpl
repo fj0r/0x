@@ -30,9 +30,9 @@
         resolver {{ resolver }};
         {%- endif %}
 
-        # log apm
-        {%- if LOG_FORMAT == "apm" %}
-        access_log  /var/log/openresty/access.log   apm;
+        # log {{ LOG_FORMAT }}
+        {%- if LOG_FORMAT %}
+        access_log  /var/log/openresty/access.log   {{ LOG_FORMAT }};
         {%- endif %}
 
         # fastcgi

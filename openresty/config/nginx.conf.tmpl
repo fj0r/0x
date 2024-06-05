@@ -37,9 +37,32 @@ http {
     sendfile           on;
     keepalive_timeout  0;
     gzip               on;
-    # log apm
-    {%- if LOG_FORMAT == "apm" %}
-    log_format apm     'time=$time_iso8601 client=$remote_addr '
+    # log format {{ LOG_FORMAT }}
+    {%- if LOG_FORMAT == "json" %}
+    log_format json escape=json '{'
+        '"source":"openresty",'
+        '"time":"$time_iso8601",'
+        '"resp_body_size":$body_bytes_sent,'
+        '"host":"$http_host",'
+        '"address":"$remote_addr",'
+        '"request_length":$request_length,'
+        '"proto":"$server_protocol",'
+        '"method":"$request_method",'
+        '"uri":"$request_uri",'
+        '"status":$status,'
+        '"referer":"$http_referer",'
+        '"user_agent":"$http_user_agent",'
+        '"resp_time":$request_time,'
+        '"upstream":{'
+            '"addr":"$upstream_addr",'
+            '"status":"$upstream_status",'
+            '"resp_time":"$upstream_response_time",'
+            '"conn_time":"$upstream_connect_time",'
+            '"header_time":"$upstream_header_time"'
+        '}'
+    '}';
+    {%- elif LOG_FORMAT == "logfmt" %}
+    log_format logfmt  'time=$time_iso8601 client=$remote_addr '
                        'method=$request_method uri=$request_uri proto=$server_protocol '
                        'req_len=$request_length '
                        'req_time=$request_time '
@@ -52,6 +75,7 @@ http {
                        'ust_res=$upstream_response_time '
                        'ust_conn=$upstream_connect_time '
                        'ust_header=$upstream_header_time';
+    {%- else %}
     {%- endif %}
 
     {%- if NCHAN %}
