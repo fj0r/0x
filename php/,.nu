@@ -82,8 +82,8 @@ for e in [nuon toml yaml json] {
         -e PHP_DEBUG='1'
         -v $"($env.PWD)/../openresty/entrypoint/openresty.sh:/entrypoint/openresty.sh"
         -v $"($env.PWD)/setup-php:/setup-php"
-        -v $"($env.PWD)/webgrind.json:/webgrind.json"
-        -e $"SITEFILE=/webgrind.json"
+        -v $"($env.PWD)/webgrind.json:/etc/openresty/webgrind.json"
+        #-e $"SITEFILE=/etc/openresty/webgrind.json"
     ]
 
     $args ++= ($s.dev.env
