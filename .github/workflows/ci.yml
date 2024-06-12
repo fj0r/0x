@@ -54,6 +54,9 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ci
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BASEIMAGE=${{ env.REGISTRY }}/fj0r/io:common
+            PIP_FLAGS=--break-system-packages
 
       #- name: Build ci.debug
       #  uses: docker/build-push-action@v4
