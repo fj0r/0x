@@ -1,4 +1,4 @@
-FROM fj0rd/io:common
+FROM ghcr.io/fj0r/io:common
 
 RUN set -eux \
   ; mihomo_ver=$(curl --retry 3 -sSL https://api.github.com/repos/MetaCubeX/mihomo/releases -H 'Accept: application/vnd.github.v3+json' \

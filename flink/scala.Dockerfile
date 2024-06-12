@@ -1,4 +1,5 @@
-FROM fj0rd/0x:pyflink
+ARG BASEIMAGE=fj0rd/0x:pyflink
+FROM ${BASEIMAGE}
 
 RUN set -eux \
   ; mill_version=$(curl --retry 3 -sSL https://api.github.com/repos/lihaoyi/mill/releases/latest | jq -r '.tag_name') \

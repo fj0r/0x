@@ -1,5 +1,5 @@
-FROM fj0rd/scratch:dropbear-alpine as dropbear
-FROM fj0rd/scratch:tera-cli as tera
+FROM ghcr.io/fj0r/scratch:dropbear-alpine as dropbear
+FROM ghcr.io/fj0r/scratch:tera-cli as tera
 
 FROM openresty/openresty:alpine-amd64
 

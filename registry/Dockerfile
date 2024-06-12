@@ -1,4 +1,4 @@
-FROM fj0rd/io:base as reg
+FROM ghcr.io/fj0r/io:base as reg
 
 RUN set -eux \
   ; reg_url=$(curl --retry 3 -sSL https://api.github.com/repos/distribution/distribution/releases/latest \
@@ -8,7 +8,7 @@ RUN set -eux \
   ; curl --retry 3 -sSL ${reg_url} | tar zxvf - -C /usr/local/bin registry
 
 
-FROM fj0rd/0x:or
+FROM ghcr.io/fj0r/0x:or
 COPY --from=reg /usr/local/bin/registry /usr/local/bin
 COPY config.yml /etc/docker/registry/config.yml
 COPY openresty /etc/openresty

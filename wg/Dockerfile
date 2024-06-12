@@ -1,6 +1,6 @@
-FROM fj0rd/scratch:boringtun as assets
+FROM ghcr.io/fj0r/scratch:boringtun as assets
 
-FROM fj0rd/io:base
+FROM ghcr.io/fj0r/io:base
 
 COPY --from=assets / /
 

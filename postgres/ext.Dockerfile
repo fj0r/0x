@@ -1,7 +1,7 @@
 ######################
 # paradedb
 ######################
-FROM fj0rd/0x:pg_rx as builder-paradedb
+FROM ghcr.io/fj0r/0x:pg_rx as builder-paradedb
 
 WORKDIR /tmp/paradedb
 
@@ -76,7 +76,7 @@ RUN set -eux \
 # pgvector
 ######################
 
-FROM fj0rd/0x:pg_rx as builder-pg_vector
+FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_vector
 
 WORKDIR /tmp/pg_vector
 RUN set -eux \
@@ -100,7 +100,7 @@ RUN set -eux \
 # pg_cron
 ######################
 
-FROM fj0rd/0x:pg_rx as builder-pg_cron
+FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_cron
 
 WORKDIR /tmp/pg_cron
 RUN set -eux \

@@ -1,4 +1,4 @@
-FROM fj0rd/0x:wg
+FROM ghcr.io/fj0r/0x:wg
 
 RUN set -eux \
   ; warpgate_ver=$(curl -sSL https://api.github.com/repos/warp-tech/warpgate/releases/latest | jq -r '.tag_name') \

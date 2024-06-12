@@ -12,9 +12,8 @@ on:
     inputs: {}
 
 env:
-  REGISTRY: docker.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: fj0rd/0x
+  REGISTRY: ghcr.io
+  IMAGE_NAME: fj0r/0x
 
 
 jobs:
@@ -37,8 +36,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: fj0rd
-          password: ${{ secrets.DOCKER }}
+          username: fj0r
+          password: ${{ secrets.GHCR_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action

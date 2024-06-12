@@ -1,4 +1,4 @@
-FROM fj0rd/io:go AS build
+FROM ghcr.io/fj0r/io:go AS build
 WORKDIR /app
 RUN set -eux \
   ; git clone --depth=1 https://github.com/vx3r/wg-gen-web.git /app \
@@ -13,8 +13,8 @@ RUN set -eux \
   ; cp -r /app/ui/dist /target/ui \
   ; cp /app/.env /target
 
-FROM fj0rd/scratch:dropbear as dropbear
-FROM fj0rd/0x:wg
+FROM ghcr.io/fj0r/scratch:dropbear as dropbear
+FROM ghcr.io/fj0r/0x:wg
 WORKDIR /app
 
 COPY --from=dropbear / /

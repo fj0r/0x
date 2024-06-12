@@ -1,4 +1,4 @@
-ARG BASEIMAGE=fj0rd/0x:openresty
+ARG BASEIMAGE=ghcr.io/fj0r/0x:openresty
 FROM ${BASEIMAGE}
 
 ARG PHP_VERSION=7.4

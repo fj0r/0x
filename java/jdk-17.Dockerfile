@@ -1,4 +1,4 @@
-FROM fj0rd/io
+FROM ghcr.io/fj0r/io
 
 ENV PATH=/opt/mvn/bin:${LS_ROOT}/jdtls/bin:$PATH
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64

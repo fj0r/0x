@@ -1,4 +1,4 @@
-FROM fj0rd/io:rs as build
+FROM ghcr.io/fj0r/io:rs as build
 
 RUN cargo install mdbook mdbook-pdf mdbook-epub mdbook-typst \
  && strip /opt/cargo/bin/mdbook-pdf \
@@ -6,7 +6,7 @@ RUN cargo install mdbook mdbook-pdf mdbook-epub mdbook-typst \
  && strip /opt/cargo/bin/mdbook-typst \
  && strip /opt/cargo/bin/mdbook
 
-FROM fj0rd/0x:fonts
+FROM ghcr.io/fj0r/0x:fonts
 
 COPY --from=build \
      /opt/cargo/bin/mdbook \

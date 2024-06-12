@@ -1,5 +1,5 @@
-FROM fj0rd/scratch:dropbear as dropbear
-FROM fj0rd/io:base
+FROM ghcr.io/fj0r/scratch:dropbear as dropbear
+FROM ghcr.io/fj0r/io:base
 COPY --from=dropbear / /
 
 EXPOSE 80

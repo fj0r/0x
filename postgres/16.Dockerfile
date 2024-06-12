@@ -1,6 +1,6 @@
 ARG PG_VERSION_MAJOR=16
 
-FROM fj0rd/0x:pg_ext as pg_ext
+FROM ghcr.io/fj0r/0x:pg_ext as pg_ext
 FROM readysettech/readyset:latest as readyset
 
 FROM postgres:${PG_VERSION_MAJOR}

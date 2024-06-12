@@ -1,4 +1,4 @@
-FROM fj0rd/io as build
+FROM ghcr.io/fj0r/io as build
 
 RUN set -eux \
   ; apt-get update \
@@ -23,7 +23,7 @@ RUN set -eux \
   ;
 
 
-FROM fj0rd/io:base
+FROM ghcr.io/fj0r/io:base
 WORKDIR /nebula
 
 COPY --from=build /root/assets /usr/local/bin

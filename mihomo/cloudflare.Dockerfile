@@ -1,4 +1,4 @@
-FROM fj0rd/0x:mihomo
+FROM ghcr.io/fj0r/0x:mihomo
 
 RUN set -eux \
   ; mkdir -p /opt/CloudflareST \

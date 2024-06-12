@@ -1,4 +1,4 @@
-FROM fj0rd/io:base
+FROM ghcr.io/fj0r/io:base
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 

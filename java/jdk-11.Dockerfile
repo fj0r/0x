@@ -1,4 +1,4 @@
-FROM fj0rd/io
+FROM ghcr.io/fj0r/io
 
 ENV PATH=/opt/mvn/bin:$PATH
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
