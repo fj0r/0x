@@ -8,7 +8,7 @@
             "name": "Listen for XDebug",
             "type": "php",
             "request": "launch",
-            "hostname": "172.178.5.21",
+            "hostname": "0.0.0.0",
             "port": 9001
         },
         {

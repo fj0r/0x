@@ -112,7 +112,7 @@ $env.comma = {}
             $args ++= [-e "POSTGRES_MAX_MEMORY_USAGE=16000,32"]
         }
     }
-    pp $env.docker-cli run ...$args fj0rd/0x:pg
+    pp $env.docker-cli run ...$args '0x:pg'
 } {
     cmp: {[
         base

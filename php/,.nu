@@ -68,7 +68,7 @@ for e in [nuon toml yaml json] {
     let dev = [
         -v $"($_.wd):($s.dev.wd)"
         -w $s.dev.wd
-        -p $"($port):8090"
+        -p $"($port):80"
         -e $"ed25519_($s.dev.user)=($sshkey)"
     ]
     $args ++= $dev
@@ -78,8 +78,9 @@ for e in [nuon toml yaml json] {
         -v $"($env.PWD)/../openresty/config/nginx.conf.tmpl:/etc/openresty/nginx.conf.tmpl"
         -v $"($env.PWD)/../openresty/config/site.conf.tmpl:/etc/openresty/site.conf.tmpl"
         -v $"($env.PWD)/../openresty/config/default.json:/etc/openresty/default.json"
-        -e PHP_PROFILE='1'
-        -e PHP_DEBUG='1'
+        #-e PHP_PROFILE='1'
+        #-e PHP_DEBUG=host.containers.internal:9001
+        -e PHP_DEBUG=localhost:9000
         -v $"($env.PWD)/../openresty/entrypoint/openresty.sh:/entrypoint/openresty.sh"
         -v $"($env.PWD)/setup-php:/setup-php"
         -v $"($env.PWD)/webgrind.json:/etc/openresty/webgrind.json"
