@@ -2,9 +2,11 @@
 
 if [ -n "$UPLOAD_MAX_FILESIZE" ]; then
     echo "-- \$UPLOAD_MAX_FILESIZE been set to $UPLOAD_MAX_FILESIZE(MB)"
-    sed -i 's!\(upload_max_filesize =\).*!\1 '"$UPLOAD_MAX_FILESIZE"'M!g' /etc/php/${PHP_VERSION}/fpm/php.ini
-    sed -i 's!\(post_max_size =\).*!\1 '"$(($UPLOAD_MAX_FILESIZE * 4))"'M!g' /etc/php/${PHP_VERSION}/fpm/php.ini
-    sed -i 's!\(client_max_body_size \).*!\1 '"$UPLOAD_MAX_FILESIZE"'m;!g' /etc/openresty/nginx.conf
+    sed -e 's!\(post_max_size =\).*!\1 '"$(($UPLOAD_MAX_FILESIZE * 4))"'M!g' \
+        -e 's!\(upload_max_filesize =\).*!\1 '"$UPLOAD_MAX_FILESIZE"'M!g' \
+        -i /etc/php/${PHP_VERSION}/fpm/php.ini
+    sed -e 's!\(client_max_body_size \).*!\1 '"$UPLOAD_MAX_FILESIZE"'m;!g' \
+        -i /etc/openresty/nginx.conf
 fi
 
 if [ -n "$PHP_FPM_SERVERS" ]; then
@@ -21,9 +23,19 @@ if [ -n "$PHP_FPM_SERVERS" ]; then
 fi
 
 if [ -n "$PHP_PROFILE" ] || [ -n "$PHP_DEBUG" ]; then
+    xdebug_mode='trace'
+    if [ -n "$PHP_DEBUG" ]; then
+        xdebug_mode="${xdebug_mode},debug"
+    fi
+    if [ -n "$PHP_PROFILE" ]; then
+        xdebug_mode="${xdebug_mode},profile"
+    fi
+
     mkdir -p /var/log/xdebug
     chmod 1777 /var/log/xdebug
+
     { \
+      echo "xdebug.mode=${xdebug_mode}" ;\
       echo 'xdebug.log="/var/log/xdebug/xdebug.log"' ;\
     } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 fi
@@ -31,7 +43,6 @@ fi
 if [ -n "$PHP_DEBUG" ]; then
     IFS=':' read -ra ADDR <<< "$PHP_DEBUG"
     { \
-      echo 'xdebug.mode=debug' ;\
       echo 'xdebug.remote_handler=dbgp' ;\
       echo "xdebug.idekey=${PHP_DEBUG_IDEKEY:-xdebug}" ;\
       echo "xdebug.client_host=${ADDR[0]:-127.0.0.1}" ;\
@@ -41,31 +52,33 @@ fi
 
 if [ -n "$PHP_PROFILE" ]; then
     { \
-      echo 'xdebug.mode=profile' ;\
       echo 'xdebug.profiler_output_name="cachegrind.%u.%H_%R"' ;\
     } >> /etc/php/${PHP_VERSION}/mods-available/xdebug.ini
 fi
 
 for i in "${!CONF_PHP_@}"; do
-  k=$(echo ${i:9} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
-  v=$(eval "echo \"\$$i\"")
-  if [ -n "$v" ]; then
-			sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' -i /etc/php/${PHP_VERSION}/fpm/php.ini
-	fi
+    k=$(echo ${i:9} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
+    v=$(eval "echo \"\$$i\"")
+    if [ -n "$v" ]; then
+        sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' \
+            -i /etc/php/${PHP_VERSION}/fpm/php.ini
+    fi
 done
 
 for i in "${!CONF_FPM_@}"; do
-  k=$(echo ${i:9} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
-  v=$(eval "echo \"\$$i\"")
-  if [ -n "$v" ]; then
-			sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' -i /etc/php/${PHP_VERSION}/fpm/php-fpm.ini
-	fi
+    k=$(echo ${i:9} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
+    v=$(eval "echo \"\$$i\"")
+    if [ -n "$v" ]; then
+        sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' \
+            -i /etc/php/${PHP_VERSION}/fpm/php-fpm.ini
+    fi
 done
 
 for i in "${!CONF_POOL_@}"; do
-  k=$(echo ${i:10} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
-  v=$(eval "echo \"\$$i\"")
-  if [ -n "$v" ]; then
-			sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' -i /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-	fi
+    k=$(echo ${i:10} | sed 's!__!.!g' | tr '[:upper:]' '[:lower:]')
+    v=$(eval "echo \"\$$i\"")
+    if [ -n "$v" ]; then
+        sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' \
+            -i /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+    fi
 done
