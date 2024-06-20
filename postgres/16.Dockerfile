@@ -72,6 +72,7 @@ RUN set -eux \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       numpy httpx pyyaml deepmerge cachetools \
       pydantic more-itertools fn.py PyParsing \
+      pyiceberg[s3fs,hive,pyarrow,pandas] \
   \
   ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
   ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \
@@ -95,15 +96,15 @@ RUN set -eux \
   #  | tar zxf - -C . --strip-components=1 \
   #; make && make install \
   \
-  ; cd $build_dir \
-  ; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
-  ; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
-  ; unzip -d . libduckdb-linux-amd64.zip \
-  ; cp libduckdb.so $(pg_config --libdir)  \
-  ; git clone --depth=1 https://github.com/alitrack/duckdb_fdw \
-  ; cd duckdb_fdw \
-  ; make USE_PGXS=1 \
-  ; make install USE_PGXS=1 \
+  #; cd $build_dir \
+  #; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
+  #; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
+  #; unzip -d . libduckdb-linux-amd64.zip \
+  #; cp libduckdb.so $(pg_config --libdir)  \
+  #; git clone --depth=1 https://github.com/alitrack/duckdb_fdw \
+  #; cd duckdb_fdw \
+  #; make USE_PGXS=1 \
+  #; make install USE_PGXS=1 \
   \
   #; cd $build_dir \
   #; git clone --depth=1 https://github.com/adjust/clickhouse_fdw.git \

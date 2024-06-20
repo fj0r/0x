@@ -1,4 +1,4 @@
-name: postgres dev
+name: postgres 16
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,13 +7,13 @@ name: postgres dev
 
 on:
   push:
-    branches: [ pg.dev ]
+    branches: [ pg ]
   workflow_dispatch:
     inputs: {}
 
 env:
-  REGISTRY: docker.io
-  IMAGE_NAME: fj0rd/0x
+  REGISTRY: ghcr.io
+  IMAGE_NAME: fj0r/0x
 
 
 jobs:
@@ -36,8 +36,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: fj0rd
-          password: ${{ secrets.DOCKER }}
+          username: fj0r
+          password: ${{ secrets.GHCR_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
@@ -47,14 +47,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build dev
+      - name: Build pg 16
         uses: docker/build-push-action@v4
         with:
           context: postgres
-          file: postgres/s3.Dockerfile
+          file: postgres/16.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg.s3
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            BASEIMAGE=fj0rd/0x:pg
 
