@@ -70,8 +70,9 @@ RUN set -eux \
       ${BUILD_DEPS:-} \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-      numpy httpx pyyaml deepmerge cachetools \
-      pydantic more-itertools fn.py PyParsing \
+      pydantic PyParsing \
+      boltons decorator deepmerge \
+      numpy httpx pyyaml \
       pyiceberg[s3fs,hive,pyarrow,pandas] \
   \
   ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \

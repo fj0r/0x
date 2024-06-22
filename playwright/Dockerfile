@@ -13,8 +13,13 @@ RUN set -eux \
         libpango-1.0-0 libcairo2 libgdk-pixbuf2.0-0 libasound2 libatspi2.0-0 \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
   ; pip3 install --default-timeout=100 --no-cache-dir ${PIP_FLAGS} \
-        Requests furl html5lib \
-        playwright ipython \
+        playwright furl html5lib \
+        httpx aiofile aiostream fastapi uvicorn \
+        debugpy pytest pydantic PyParsing \
+        ipython typer pydantic-settings pyyaml \
+        boltons decorator deepmerge \
+        structlog python-json-logger \
+        #pyiceberg[s3fs,hive,pyarrow,pandas] \
   ; python3 -m playwright install \
   \
   ; pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
