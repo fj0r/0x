@@ -20,7 +20,7 @@ RUN set -eux \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       pydantic structlog pyyaml PyParsing \
-      httpx furl markdown chevron \
+      httpx markdown jinja2 \
       ansible kubernetes \
       psycopg[binary] kafka-python \
       pymongo github3.py \
