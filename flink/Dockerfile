@@ -70,8 +70,6 @@ RUN set -eux \
   ; echo '/usr/local/bin/nu' >> /etc/shells \
   ; git clone --depth=3 https://github.com/fj0r/nushell.git $XDG_CONFIG_HOME/nushell \
   ; opwd=$PWD; cd $XDG_CONFIG_HOME/nushell; git log -1 --date=iso; cd $opwd \
-  ; nu -c 'register /usr/local/bin/nu_plugin_query' \
-  \
   \
   ; FLINK_VERSION=$(curl --retry 3 -sSL https://flink.apache.org/downloads/ | nu -c "cat | query web -m -q '.markdown > h3:nth-of-type(1)' | parse -r 'Apache Flink (?<ver>[.0-9]+)' | get ver.0") \
   ; FLINK_VER=$(echo $FLINK_VERSION | nu -c "cat | split row '.' | range 0..1 | str join '.'") \
