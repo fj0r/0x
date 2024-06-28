@@ -19,7 +19,7 @@ RUN set -eux \
         ipython typer pydantic-settings pyyaml \
         boltons decorator deepmerge \
         structlog python-json-logger \
-        #pyiceberg[s3fs,hive,pyarrow,pandas] \
+        #pyiceberg[s3fs,pyarrow,pandas] \
   ; python3 -m playwright install \
   \
   ; pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
