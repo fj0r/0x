@@ -55,6 +55,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pyflink
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            BASEIMAGE=${{ env.REGISTRY }}/fj0r/io:common
+          #build-args: |
+          #  BASEIMAGE=${{ env.REGISTRY }}/fj0r/io:common
 
