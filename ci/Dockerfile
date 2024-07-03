@@ -13,7 +13,7 @@ RUN set -eux \
   ; ln -sf /usr/bin/python3 /usr/bin/python \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-      furl \
+      pyyaml requests furl markdown \
       ansible kubernetes \
       psycopg[binary] kafka-python \
       pymongo github3.py \
