@@ -7,7 +7,7 @@ name: pyflink
 
 on:
   push:
-    branches: [ flink ]
+    branches: [ main, flink ]
   workflow_dispatch:
     inputs: {}
 

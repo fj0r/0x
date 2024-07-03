@@ -1,4 +1,4 @@
-name: libretranslate
+name: wal-g
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,13 +7,13 @@ name: libretranslate
 
 on:
   push:
-    branches: [ main, libretranslate ]
+    branches: [ wal-g ]
   workflow_dispatch:
     inputs: {}
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: fj0r/0x
+  REGISTRY: docker.io
+  IMAGE_NAME: fj0rd/0x
 
 
 jobs:
@@ -36,8 +36,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: fj0r
-          password: ${{ secrets.GHCR_TOKEN }}
+          username: fj0rd
+          password: ${{ secrets.DOCKER }}
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
@@ -47,12 +47,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build libretranslate
+      - name: Build wal-g
         uses: docker/build-push-action@v4
         with:
-          context: libretranslate
-          file: libretranslate/Dockerfile
+          context: wal-g
+          file: wal-g/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:libretranslate
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wal-g
           labels: ${{ steps.meta.outputs.labels }}
 

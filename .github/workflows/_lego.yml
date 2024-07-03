@@ -7,7 +7,7 @@ name: lego
 
 on:
   push:
-    branches: [ main, lego ]
+    branches: [ lego ]
   workflow_dispatch:
     inputs: {}
 
