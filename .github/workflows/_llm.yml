@@ -47,6 +47,15 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Build embedding
+        uses: docker/build-push-action@v4
+        with:
+          context: llm
+          file: llm/embedding.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:embedding
+          labels: ${{ steps.meta.outputs.labels }}
+
       - name: Build llama3
         uses: docker/build-push-action@v4
         with:
@@ -56,14 +65,6 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:llama3
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build embedding
-        uses: docker/build-push-action@v4
-        with:
-          context: llm
-          file: llm/embedding.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:embedding
-          labels: ${{ steps.meta.outputs.labels }}
 
       #- name: Build flag_embedding
       #  uses: docker/build-push-action@v4
