@@ -87,7 +87,7 @@ RUN set -eux \
         -e '/taskmanager.host: localhost/d' \
         -i ${FLINK_HOME}/conf/config.yaml \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-        'polars[all]' Numpy Pandas numba Scikit-learn \
+        Numpy Pandas numba Scikit-learn \
         apache-flink \
         apache-flink-libraries \
         #apache-flink-statefun \
