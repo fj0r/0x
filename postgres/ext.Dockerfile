@@ -8,18 +8,9 @@ WORKDIR /tmp/paradedb
 RUN set -eux \
   ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/paradedb/paradedb/tags | jq -r '.[0].name') \
   ; curl --retry 3 -sSL https://github.com/paradedb/paradedb/archive/refs/tags/${ver}.tar.gz \
-  | tar zxf - -C . --strip-components=1
+  | tar zxf - -C . --strip-components=1 \
+  ;
 
-RUN set -eux \
-  ; cd /tmp/paradedb/pg_lakehouse \
-  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
-  \
-  ; mkdir -p /out/pg_lakehouse/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp ../target/release/pg_lakehouse-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_lakehouse/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/pg_lakehouse/share/postgresql/${PG_MAJOR}/extension \
-  ; cp ../target/release/pg_lakehouse-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_lakehouse/share/postgresql/${PG_MAJOR}/extension \
-  ; cd /out/pg_lakehouse \
-  ; tar zcvf /tmp/paradedb/pg_lakehouse.tar.gz *
 
 RUN set -eux \
   ; cd /tmp/paradedb/pg_search \
@@ -30,7 +21,8 @@ RUN set -eux \
   ; mkdir -p /out/pg_search/share/postgresql/${PG_MAJOR}/extension \
   ; cp ../target/release/pg_search-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_search/share/postgresql/${PG_MAJOR}/extension \
   ; cd /out/pg_search \
-  ; tar zcvf /tmp/paradedb/pg_search.tar.gz *
+  ; tar zcvf /tmp/paradedb/pg_search.tar.gz * \
+  ;
 
 
 ######################
@@ -51,7 +43,8 @@ RUN set -eux \
   ; mkdir -p /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
   ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
   ; cd /out/pg_jsonschema \
-  ; tar zcvf /tmp/pg_jsonschema.tar.gz *
+  ; tar zcvf /tmp/pg_jsonschema.tar.gz * \
+  ;
 
 ######################
 # pg_graphql
@@ -70,7 +63,8 @@ RUN set -eux \
   ; mkdir -p /out/pg_graphql/share/postgresql/${PG_MAJOR}/extension \
   ; cp target/release/pg_graphql-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_graphql/share/postgresql/${PG_MAJOR}/extension \
   ; cd /out/pg_graphql \
-  ; tar zcvf /tmp/pg_graphql.tar.gz *
+  ; tar zcvf /tmp/pg_graphql.tar.gz * \
+  ;
 
 ######################
 # pgvector
@@ -94,7 +88,24 @@ RUN set -eux \
   ; cp *.control /out/share/postgresql/${PG_MAJOR}/extension \
   ; cp sql/*.sql /out/share/postgresql/${PG_MAJOR}/extension \
   ; cd /out \
-  ; tar zcvf /tmp/pg_vector.tar.gz *
+  ; tar zcvf /tmp/pg_vector.tar.gz * \
+  ;
+
+
+FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_vectorscale
+WORKDIR /tmp/pgvectorscale
+RUN set -eux \
+  ; git clone --depth=1 https://github.com/timescale/pgvectorscale.git /tmp/pgvectorscale \
+  ; cd /tmp/pgvectorscale/pgvectorscale \
+  ; RUSTFLAGS="-C target-feature=+avx2,+fma" \
+    cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib/ \
+  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/lib/postgresql/${PG_MAJOR}/lib/ \
+  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension/ \
+  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/share/postgresql/${PG_MAJOR}/extension/ \
+  ; cd /out \
+  ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
+  ;
 
 ######################
 # pg_cron
@@ -117,22 +128,25 @@ RUN set -eux \
   ; cp *.control /out/share/postgresql/${PG_MAJOR}/extension \
   ; cp sql/*.sql /out/share/postgresql/${PG_MAJOR}/extension \
   ; cd /out \
-  ; tar zcvf /tmp/pg_cron.tar.gz *
+  ; tar zcvf /tmp/pg_cron.tar.gz * \
+  ;
 
 FROM alpine as filer
 
-RUN mkdir -p /out
+RUN mkdir -p /out \
+  ;
 
 COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
+COPY --from=builder-pg_vectorscale /tmp/pg_vectorscale.tar.gz /tmp
 COPY --from=builder-pg_cron /tmp/pg_cron.tar.gz /tmp
 
 # Copy the ParadeDB extensions from their builder stages
-COPY --from=builder-paradedb /tmp/paradedb/pg_lakehouse.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/paradedb/pg_search.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/pg_jsonschema.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector cron lakehouse search jsonschema graphql \
+  ; for x in vector vectorscale cron search jsonschema graphql \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
-  ; done
+  ; done \
+  ;

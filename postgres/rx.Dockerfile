@@ -18,7 +18,11 @@ RUN set -eux \
     git \
     make \
     gcc \
+    g++ \
+    cmake \
     clang \
+    ninja-build \
+    libssl-dev \
     pkg-config \
     postgresql-server-dev-${PG_MAJOR} \
     tree \
