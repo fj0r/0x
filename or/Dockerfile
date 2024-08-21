@@ -21,6 +21,7 @@ RUN set -eux \
         shadow \
         sudo \
         openssl \
+        quickjs \
   ; adduser -SDH www-data -G www-data -h /srv \
   ; ln -fs /usr/local/openresty/nginx/conf /etc/openresty
 

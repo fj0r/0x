@@ -35,5 +35,9 @@ if [ -n "$ROUTEFILE" ] || [ -n "$SITEFILE" ]; then
 fi
 
 
+if [ -n "${QNGCONFIG}" ]; then
+    qjs --std /etc/openresty/qng.js > /etc/openresty/nginx.conf
+fi
+
 /usr/local/openresty/bin/openresty 2>&1 &
 echo -n "$! " >> /var/run/services
