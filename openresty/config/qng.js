@@ -154,7 +154,7 @@ const modules = {
                     , `log_not_found off;`
                     , `access_log off;`
                 )
-                _`error_page      500 502 503 504 / 50x.html;`
+                _`error_page      500 502 503 504 /50x.html;`
                 $(`location = /50x.html`
                     , `root   /usr/share/nginx/html;`
                 )
@@ -728,9 +728,11 @@ const gen = (prefix = "QNG") => {
     for (let f of mod.http) {
         f(o, x => _`${s_indent(x)}`, (...x) => w(...x.map(y => s_indent(y))))
     }
-    _`${INDENT}server {`
-    so.forEach(c => gen_site(c, mod).forEach(i => r.push(s_indent(s_indent(i)))))
-    _`${INDENT}}`
+    so.forEach(c => {
+        _`${INDENT}server {`
+        gen_site(c, mod).forEach(i => r.push(s_indent(s_indent(i))))
+        _`${INDENT}}`
+    })
     _`}`
 
     return r
