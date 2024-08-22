@@ -2,5 +2,5 @@ FROM ollama/ollama
 
 RUN set -eux \
   ; ollama serve & sleep 5 \
-  ; ollama pull phi3:3.8b
+  ; ollama pull phi3.5:3.8b
 
