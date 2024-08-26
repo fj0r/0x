@@ -24,50 +24,6 @@ RUN set -eux \
   ; tar zcvf /tmp/paradedb/pg_search.tar.gz * \
   ;
 
-
-######################
-# pgvector
-######################
-
-FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_vector
-
-WORKDIR /tmp/pg_vector
-RUN set -eux \
-  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
-  ; curl --retry 3 -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${ver}.tar.gz \
-    | tar zxf - -C . --strip-components=1 \
-  ; export PG_CFLAGS="-Wall -Wextra -Werror -Wno-unused-parameter -Wno-sign-compare" \
-  ; echo "trusted = true" >> vector.control \
-  ; make clean -j \
-  ; make USE_PGXS=1 OPTFLAGS="" -j \
-  \
-  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp *.so /out/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cp *.control /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cp sql/*.sql /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cd /out \
-  ; tar zcvf /tmp/pg_vector.tar.gz * \
-  ;
-
-
-FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_vectorscale
-WORKDIR /tmp/pgvectorscale
-RUN set -eux \
-  ; git clone --depth=1 https://github.com/timescale/pgvectorscale.git /tmp/pgvectorscale \
-  ; cd /tmp/pgvectorscale/pgvectorscale \
-  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
-  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
-  ; RUSTFLAGS="-C target-feature=+avx2,+fma" \
-    cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
-  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib/ \
-  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/lib/postgresql/${PG_MAJOR}/lib/ \
-  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension/ \
-  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/share/postgresql/${PG_MAJOR}/extension/ \
-  ; cd /out \
-  ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
-  ;
-
 ######################
 # pg_jsonschema
 ######################
@@ -111,6 +67,49 @@ RUN set -eux \
   ; tar zcvf /tmp/pg_graphql.tar.gz * \
   ;
 
+
+######################
+# pgvector
+######################
+
+FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_vector
+
+WORKDIR /tmp/pg_vector
+RUN set -eux \
+  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
+  ; curl --retry 3 -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${ver}.tar.gz \
+    | tar zxf - -C . --strip-components=1 \
+  ; export PG_CFLAGS="-Wall -Wextra -Werror -Wno-unused-parameter -Wno-sign-compare" \
+  ; echo "trusted = true" >> vector.control \
+  ; make clean -j \
+  ; make USE_PGXS=1 OPTFLAGS="" -j \
+  \
+  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib \
+  ; cp *.so /out/lib/postgresql/${PG_MAJOR}/lib \
+  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension \
+  ; cp *.control /out/share/postgresql/${PG_MAJOR}/extension \
+  ; cp sql/*.sql /out/share/postgresql/${PG_MAJOR}/extension \
+  ; cd /out \
+  ; tar zcvf /tmp/pg_vector.tar.gz * \
+  ;
+
+
+WORKDIR /tmp/pgvectorscale
+RUN set -eux \
+  ; git clone --depth=1 https://github.com/timescale/pgvectorscale.git /tmp/pgvectorscale \
+  ; cd /tmp/pgvectorscale/pgvectorscale \
+  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
+  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
+  ; RUSTFLAGS="-C target-feature=+avx2,+fma" \
+    cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib/ \
+  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/lib/postgresql/${PG_MAJOR}/lib/ \
+  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension/ \
+  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/share/postgresql/${PG_MAJOR}/extension/ \
+  ; cd /out \
+  ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
+  ;
+
 ######################
 # pg_cron
 ######################
@@ -141,7 +140,7 @@ RUN mkdir -p /out \
   ;
 
 COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
-COPY --from=builder-pg_vectorscale /tmp/pg_vectorscale.tar.gz /tmp
+COPY --from=builder-pg_vector /tmp/pg_vectorscale.tar.gz /tmp
 COPY --from=builder-pg_cron /tmp/pg_cron.tar.gz /tmp
 
 # Copy the ParadeDB extensions from their builder stages
