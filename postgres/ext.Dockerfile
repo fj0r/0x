@@ -26,27 +26,6 @@ RUN set -eux \
 
 
 ######################
-# pg_jsonschema
-######################
-
-RUN set -eux \
-  ; mkdir -p /tmp/pg_jsonschema \
-  ; cd /tmp/pg_jsonschema \
-  \
-  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/supabase/pg_jsonschema/releases | jq -r '.[0].name') \
-  ; curl --retry 3 -sSL https://github.com/supabase/pg_jsonschema/archive/refs/tags/${ver}.tar.gz \
-  | tar zxf - -C . --strip-components=1 \
-  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
-  \
-  ; mkdir -p /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
-  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
-  ; cd /out/pg_jsonschema \
-  ; tar zcvf /tmp/pg_jsonschema.tar.gz * \
-  ;
-
-######################
 # pgvector
 ######################
 
@@ -87,6 +66,29 @@ RUN set -eux \
   ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/share/postgresql/${PG_MAJOR}/extension/ \
   ; cd /out \
   ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
+  ;
+
+######################
+# pg_jsonschema
+######################
+
+RUN set -eux \
+  ; mkdir -p /tmp/pg_jsonschema \
+  ; cd /tmp/pg_jsonschema \
+  \
+  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/supabase/pg_jsonschema/releases | jq -r '.[0].name') \
+  ; curl --retry 3 -sSL https://github.com/supabase/pg_jsonschema/archive/refs/tags/${ver}.tar.gz \
+  | tar zxf - -C . --strip-components=1 \
+  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
+  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
+  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+  \
+  ; mkdir -p /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
+  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
+  ; mkdir -p /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
+  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
+  ; cd /out/pg_jsonschema \
+  ; tar zcvf /tmp/pg_jsonschema.tar.gz * \
   ;
 
 ######################
