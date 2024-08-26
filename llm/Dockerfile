@@ -1,10 +1,14 @@
-ARG BASEIMAGE=ghcr.io/fj0r/io:latest
-FROM ${BASEIMAGE}
-
-ARG PIP_FLAGS="--break-system-packages"
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
-ENV PYTHONUNBUFFERED=x
+FROM ollama/ollama
 
 RUN set -eux \
-  ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-        vllm "fschat[model_worker,webui]"
+  ; ollama serve & sleep 5 \
+  ; for o in \
+        mxbai-embed-large \
+        #llama3.1:8b \
+        phi3.5:3.8b \
+        qwen2:1.5b \
+        qwen2:7b \
+  ; do \
+        ollama pull ${o}; \
+    done \
+  ;

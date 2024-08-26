@@ -24,7 +24,6 @@ RUN set -eux \
   ; tar zcvf /tmp/paradedb/pg_search.tar.gz * \
   ;
 
-
 ######################
 # pg_jsonschema
 ######################
@@ -36,6 +35,8 @@ RUN set -eux \
   ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/supabase/pg_jsonschema/releases | jq -r '.[0].name') \
   ; curl --retry 3 -sSL https://github.com/supabase/pg_jsonschema/archive/refs/tags/${ver}.tar.gz \
   | tar zxf - -C . --strip-components=1 \
+  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
+  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
   ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
   \
   ; mkdir -p /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
@@ -66,6 +67,7 @@ RUN set -eux \
   ; tar zcvf /tmp/pg_graphql.tar.gz * \
   ;
 
+
 ######################
 # pgvector
 ######################
@@ -92,11 +94,12 @@ RUN set -eux \
   ;
 
 
-FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_vectorscale
 WORKDIR /tmp/pgvectorscale
 RUN set -eux \
   ; git clone --depth=1 https://github.com/timescale/pgvectorscale.git /tmp/pgvectorscale \
   ; cd /tmp/pgvectorscale/pgvectorscale \
+  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
+  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
   ; RUSTFLAGS="-C target-feature=+avx2,+fma" \
     cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
   ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib/ \
@@ -137,7 +140,7 @@ RUN mkdir -p /out \
   ;
 
 COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
-COPY --from=builder-pg_vectorscale /tmp/pg_vectorscale.tar.gz /tmp
+COPY --from=builder-pg_vector /tmp/pg_vectorscale.tar.gz /tmp
 COPY --from=builder-pg_cron /tmp/pg_cron.tar.gz /tmp
 
 # Copy the ParadeDB extensions from their builder stages
