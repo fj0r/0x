@@ -506,7 +506,7 @@ const modules = {
     }
 }
 
-const INDENT = '  '
+const INDENT = '    '
 
 const default_config = {
     run_as: 'www-data',

@@ -1,0 +1,29 @@
+[
+    {
+        "server": {
+            "root": "/www"
+        },
+        "fastcgi": {
+            "type": "php"
+        },
+        "upload": {
+            "prefix": "up"
+        },
+        "location": [
+            {
+                "path": "= asf",
+                "root": "/ss",
+                "autoindex": "0",
+                "rewrite": {
+                    "from": "adsf",
+                    "to": "ff"
+                }
+            }
+        ]
+    },
+    {
+        "server": {
+            "port": 8080
+        }
+    }
+]

@@ -7,6 +7,5 @@ RUN set -eux \
   ; chmod +x /opt/CloudflareST/CloudflareST
 
 COPY cloudflare.sh /
-COPY cloudflare.cron.tmpl /
 COPY entrypoint/cloudflare.sh /entrypoint/
 ENV CONFIG_CLOUDFLARE="/data/proxies/cloudflare.yaml|.proxies[0].server"

@@ -9,32 +9,6 @@ if [ -n "${UPLOAD_ROOT}" ]; then
     chown www-data:www-data $UPLOADDIR
 fi
 
-merge_config () {
-    local cfg=$(cat /etc/openresty/default.json)
-
-    if [ -n "${ROUTEFILE}" ]; then
-        cfg=$(echo $cfg | jq -s '.[0].LOCATION = .[1] | .[0]' - $ROUTEFILE)
-    fi
-
-    if [ -n "${SITEFILE}" ]; then
-        cfg=$(echo $cfg | jq -s '.[0].SITE = .[1] | .[0]' - $SITEFILE)
-    fi
-
-    echo -n $cfg
-}
-
-if [ -n "$ROUTEFILE" ] || [ -n "$SITEFILE" ]; then
-    config=$(merge_config)
-
-    dest=/etc/openresty
-    echo $config | tera -t $dest/nginx.conf.tmpl -e -i -s -o $dest/nginx.conf
-
-    for t in $(find $dest/ext -name '*.tmpl'); do
-        echo $config | tera -t $t -e -i -s -o ${t%.tmpl}
-    done
-fi
-
-
 if [ -n "${QNGCONFIG}" ]; then
     qjs --std /etc/openresty/qng.js > /etc/openresty/nginx.conf
 fi
