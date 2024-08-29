@@ -1,5 +1,4 @@
 FROM ghcr.io/fj0r/scratch:dropbear-alpine as dropbear
-FROM ghcr.io/fj0r/scratch:tera-cli as tera
 
 FROM openresty/openresty:alpine-amd64
 
@@ -7,7 +6,6 @@ FROM openresty/openresty:alpine-amd64
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 
 COPY --from=dropbear / /
-COPY --from=tera / /
 
 RUN set -eux \
   ; apk add --no-cache \
