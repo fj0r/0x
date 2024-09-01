@@ -34,7 +34,7 @@ $env.comma = {|_|{}}
     if 'pass' in $a { $args ++= [[-e HTPASSWD=admin:123]] }
     if 'route' in $a { $args ++= [[-e ROUTEFILE=/etc/openresty/test.location.json]] }
     if 'site' in $a { $args ++= [[-e SITEFILE=/etc/openresty/test.site.json]] }
-    if 'qng' in $a { $args ++= [[-e QNGCONFIG=/etc/openresty/qng.json]] }
+    if 'qng' in $a { $args ++= [[-e QNGCONFIG=/etc/openresty/qng.example.json]] }
     pp $env.docker-cli run ...$args localhost/0x:openresty bash
 } {
     cmp: {[
