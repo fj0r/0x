@@ -35,7 +35,7 @@ $env.comma = {|_|{}}
     if 'route' in $a { $args ++= [[-e ROUTEFILE=/etc/openresty/test.location.json]] }
     if 'site' in $a { $args ++= [[-e SITEFILE=/etc/openresty/test.site.json]] }
     if 'qng' in $a { $args ++= [[-e QNGCONFIG=/etc/openresty/qng.example.json]] }
-    pp $env.docker-cli run ...$args localhost/0x:openresty bash
+    pp $env.CONTCTL run ...$args localhost/0x:openresty bash
 } {
     cmp: {[
         qng

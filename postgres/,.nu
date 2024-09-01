@@ -112,7 +112,7 @@ $env.comma = {}
             $args ++= [-e "POSTGRES_MAX_MEMORY_USAGE=16000,32"]
         }
     }
-    pp $env.docker-cli run ...$args '0x:pg'
+    pp $env.CONTCTL run ...$args '0x:pg'
 } {
     cmp: {[
         base
@@ -128,7 +128,7 @@ $env.comma = {}
 
 'backup'
 | comma fun {|a,s|
-    sudo $env.docker-cli ...[
+    sudo $env.CONTCTL ...[
         exec $s.rt.container
         bash -c
         $'pg_dumpall -U ($s.pg.user) > /backup/($s.pg.db).pg.sql'
@@ -138,10 +138,10 @@ $env.comma = {}
 
 'restore'
 | comma fun {|a,s,_|
-    pp $env.docker-cli rm -f $s.rt.container
+    pp $env.CONTCTL rm -f $s.rt.container
     sudo rm -rf $"($s.rt.dir)/"
     mkdir $s.rt.dir
-    pp $env.docker-cli run ...[
+    pp $env.CONTCTL run ...[
         -d --restart=always
         -v $"($_.wd)/($s.rt.dir):/var/lib/postgresql/data"
         -v $"($_.wd)/backup:/backup"
@@ -153,13 +153,13 @@ $env.comma = {}
         postgres:16
     ]
     wait-cmd -t 'wait postgresql' {
-        sudo $env.docker-cli ...[
+        sudo $env.CONTCTL ...[
             exec $s.rt.container
             bash -c
             $'pg_isready -U ($s.pg.user)'
         ]
     }
-    sudo $env.docker-cli ...[
+    sudo $env.CONTCTL ...[
         exec $s.rt.container
         bash -c
         $'cat /backup/($s.pg.db).pg.sql | psql -U ($s.pg.user)'
@@ -191,7 +191,7 @@ $env.comma = {}
 
 'pgcat'
 | comma fun {|a,s,_|
-    pp $env.docker-cli run ...[
+    pp $env.CONTCTL run ...[
         -d --name pgcat
         --restart=always
         --privileged
@@ -204,7 +204,7 @@ $env.comma = {}
 
 'docker file'
 | comma fun {|a,s|
-    ^$env.docker-cli exec test-pg cat $a.0
+    ^$env.CONTCTL exec test-pg cat $a.0
 } {
     c: {
         [

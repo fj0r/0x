@@ -36,7 +36,7 @@ $env.comma = {|_|{}}
 
 'gen'
 | comma fun {|a,s,_|
-    pp $env.docker-cli run ...[
+    pp $env.CONTCTL run ...[
         --name typst
         --rm
         --workdir '/world'

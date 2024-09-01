@@ -40,7 +40,7 @@ for e in [nuon toml yaml json] {
         port: $port, pubkey: $s.dev.pubkey
     } start
 
-    pp $env.docker-cli network create $s.dev.id
+    pp $env.CONTCTL network create $s.dev.id
 
     mut args = []
 
@@ -91,7 +91,7 @@ for e in [nuon toml yaml json] {
     | items {|k,v| [-e $"($k)=($v)"]}
     | flatten)
 
-    pp $env.docker-cli run --name $s.dev.id -d ...$args ...$s.dev.container
+    pp $env.CONTCTL run --name $s.dev.id -d ...$args ...$s.dev.container
 } {
     cmp: {|a,s|
         match ($a | length) {
@@ -103,11 +103,11 @@ for e in [nuon toml yaml json] {
 
 'dev container down'
 | comma fun {|a,s|
-    let ns = ^$env.docker-cli network ls | from ssv -a | get NAME
+    let ns = ^$env.CONTCTL network ls | from ssv -a | get NAME
     if $s.dev.id in $ns {
         lg level 2 { container: $s.dev.id } 'stop'
-        pp $env.docker-cli rm -f $s.dev.id
-        pp $env.docker-cli network rm $s.dev.id
+        pp $env.CONTCTL rm -f $s.dev.id
+        pp $env.CONTCTL network rm $s.dev.id
     } else {
         lg level 3 { container: $s.dev.id } 'not running'
     }
