@@ -10,6 +10,9 @@ if [ -n "${UPLOAD_ROOT}" ]; then
 fi
 
 if [ -n "${QNGCONFIG}" ]; then
+    if [ ! -e "${QNGCONFIG}" ]; then
+        echo "{}" > ${QNGCONFIG}
+    fi
     qjs --std /etc/openresty/qng.js > /etc/openresty/nginx.conf
 fi
 
