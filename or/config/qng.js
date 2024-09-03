@@ -414,8 +414,8 @@ const modules = {
                 _`load_module modules/ngx_nchan_module.so;`
             }
         },
-        http(o, _, $) {
-            if (o.nchan.enable) {
+        http(o, _, $, s) {
+            if (o.nchan.enable || any(s, ['nchan', 'enable'])) {
                 _`variables_hash_max_size 4096;`
                 _`variables_hash_bucket_size 256;`
             }
@@ -724,9 +724,10 @@ const gen = (prefix = "QNG") => {
     for (let f of mod.global) {
         f(o, _, w, so)
     }
+    sort_module(r)
     _`http {`
     for (let f of mod.http) {
-        f(o, x => _`${s_indent(x)}`, (...x) => w(...x.map(y => s_indent(y))))
+        f(o, x => _`${s_indent(x)}`, (...x) => w(...x.map(y => s_indent(y))), so)
     }
     so.forEach(c => {
         _`${INDENT}server {`
@@ -736,6 +737,24 @@ const gen = (prefix = "QNG") => {
     _`}`
 
     return r
+}
+
+const sort_module = (g) => {
+    let mi = []
+    let mo = []
+    for (let i of g) {
+        if (i.trimLeft().startsWith('load_module')) {
+            mi.push(i)
+        } else {
+            mo.push(i)
+        }
+    }
+    for (let i = 0; i < mi.length; i++) {
+        g[i] = mi[i]
+    }
+    for (let i = 0; i < mo.length; i++) {
+        g[mi.length + i] = mo[i]
+    }
 }
 
 const gen_site = (conf, mod) => {

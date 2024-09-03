@@ -9,6 +9,9 @@
         "upload": {
             "prefix": "up"
         },
+        "nchan": {
+            "enable": 1
+        },
         "location": [
             {
                 "path": "= asf",
