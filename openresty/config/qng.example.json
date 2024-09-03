@@ -4,7 +4,9 @@
             "root": "/www"
         },
         "fastcgi": {
-            "type": "php"
+            "type": "php",
+            "ignore_index": "1",
+            "pathinfo": "1"
         },
         "upload": {
             "prefix": "up"

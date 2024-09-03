@@ -137,7 +137,7 @@ const modules = {
                     , `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;`
                     , ...(
                         cond(o.fastcgi.pathinfo)
-                        && [`fastcgi_split_path_info ^((?U).+\.php)(/?.+)$;`
+                        && [`fastcgi_split_path_info ^((?U).+\\.php)(/?.+)$;`
                             , `fastcgi_param PATH_INFO $fastcgi_path_info;`
                             , `fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;`
                         ]
@@ -161,21 +161,6 @@ const modules = {
             }
         }
     },
-    real_remote: {
-        location(o, _, $) {
-            if (o.real_remote) {
-                $(`set_by_lua_block $real_remote`
-                    , `if ngx.var.http_x_forwarded_for then`
-                    , `${INDENT}for r in ngx.var.http_x_forwarded_for:gmatch('([^,]+)') do`
-                    , `${INDENT}${INDENT}return r`
-                    , `${INDENT}end`
-                    , `end`
-                    , `return ngx.var.remote_addr`
-                )
-            }
-
-        }
-    },
     about: {
         global(o, _, $, s) {
             if (o.about.enable || any(s, ['about', 'enable'])) {
@@ -188,7 +173,7 @@ const modules = {
         },
         location(o, _, $) {
             if (o.about.enable) {
-                $(`location = /about`
+                $(`location = /${o.about.path || 'about'}`
                     , `default_type application/json;`
                     , `content_by_lua_block {`
                     , `    local json = require('cjson')`
@@ -199,8 +184,16 @@ const modules = {
                     , `        data = json.decode(txt)`
                     , `        io.close(file)`
                     , `    end`
+                    , `    local real_remote = function ()`
+                    , `        if ngx.var.http_x_forwarded_for then`
+                    , `            for r in ngx.var.http_x_forwarded_for:gmatch('([^,]+)') do`
+                    , `                return r`
+                    , `            end`
+                    , `        end`
+                    , `        return ngx.var.remote_addr`
+                    , `    end`
                     , `    data.host = ngx.var.http_host`
-                    , `    data.useraddr = ngx.var.real_remote`
+                    , `    data.useraddr = real_remote()`
                     , `    data.timezone = os.getenv("TIMEZONE")`
                     , `    data.hostname = os.getenv("HOSTNAME")`
                     , `    data.useragent = ngx.req.get_headers()['user-agent']`
@@ -282,20 +275,6 @@ const modules = {
         location(o, _, $) {
             let prefix = o.http_bin.prefix
             if (prefix) {
-                $(`location = /${prefix}/ip`
-                    , `default_type 'text';`
-                    , `content_by_lua_block {`
-                    , `    ngx.print(ngx.var.real_remote)`
-                    , `    ngx.exit(200)`
-                    , `}`
-                )
-                $(`location = /${prefix}/ua`
-                    , `default_type 'text';`
-                    , `content_by_lua_block {`
-                    , `    ngx.print(ngx.req.get_headers()['user-agent'])`
-                    , `    ngx.exit(200)`
-                    , `}`
-                )
                 $(`location = /${prefix}/redirect`
                     , `default_type 'text';`
                     , `content_by_lua_block {`
@@ -519,7 +498,6 @@ const default_config = {
             "CI_PIPELINE_ID"
         ]
     },
-    real_remote: 1,
     nchan: {
         enable: 0
     },
@@ -541,7 +519,7 @@ const default_config = {
         user_file: "/etc/openresty/htpasswd"
     },
     worker: {
-        processes: null,
+        processes: 1,
         connections: 1024,
     },
     server: {
@@ -657,20 +635,29 @@ const detected = (() => {
             // quickjs
             return {
                 env(n) { return std.getenv(n) },
-                load(f) { return std.loadFile(f) }
+                load(f) { return std.loadFile(f) },
+                args(n) { return scriptArgs[n] },
+                print(s) { print(s) }
             }
         } else {
             // browser
             return {
                 env(n) { },
-                load(f) { }
+                load(f) { },
+                args(n) { return '' },
+                print(s) { console.log(s) }
             }
         }
     } else {
         // nodejs
         return {
             env(n) { return process.env[n] },
-            load(f) { return fs.readFileSync(f) }
+            load(f) {
+                let fs = require('fs')
+                return fs.readFileSync(f)
+            },
+            args(n) { return process.argv[n] },
+            print(s) { console.log(s) }
         }
     }
 })()
@@ -696,7 +683,7 @@ const conf_env = (prefix, stub) => {
 }
 
 const conf_file = (prefix) => {
-    var conf = JSON.parse(std.loadFile(std.getenv(`${prefix}CONFIG`) || 'config.json'))
+    var conf = JSON.parse(detected.load(detected.env(`${prefix}CONFIG`) || 'config.json'))
     conf = conf instanceof Array && conf || [conf]
     if (conf.length == 0) {
         conf = [{}]
@@ -785,15 +772,15 @@ const gen_site = (conf, mod) => {
 
     ;
 (() => {
-    switch (scriptArgs[1]) {
+    switch (detected.args(1)) {
         case 'help':
-            print(`help | config`)
+            detected.print(`help | config`)
             break;
         case 'config':
-            print(JSON.stringify(default_config, null, 2))
+            detected.print(JSON.stringify(default_config, null, 2))
             break;
         default:
-            print(gen().join("\n"))
+            detected.print(gen().join("\n"))
             break;
     }
 })()
