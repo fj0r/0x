@@ -1,10 +1,13 @@
-python -m fastchat.serve.controller 2>&1 &
-echo -n "$! " >> /var/run/services
+#!/usr/bin/env bash
 
-ext_args=${EXT_ARGS:---dtype half}
-python -m fastchat.serve.vllm_worker --model-path $MODEL_PATH --trust-remote-code $ext_args 2>&1 &
-echo -n "$! " >> /var/run/services
+if [ -n "${MODEL_PATH}" ]; then
+    pushd ${MODEL_PATH}
+    for i in $(fd --full-path . -t d); do
+        pushd $i;
+        ollama create $(cat source.txt)
+        popd;
+    done
+    popd;
+fi
 
-python -m fastchat.serve.openai_api_server --host localhost --port 8888 2>&1 &
-echo -n "$! " >> /var/run/services
-
+/bin/ollama $1
