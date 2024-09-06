@@ -50,14 +50,14 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
 
-      - name: Build nebula
-        uses: docker/build-push-action@v4
-        with:
-          context: nebula
-          file: nebula/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nebula
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build nebula
+      #  uses: docker/build-push-action@v4
+      #  with:
+      #    context: nebula
+      #    file: nebula/Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:nebula
+      #    labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build wireguard
         uses: docker/build-push-action@v4
@@ -75,11 +75,11 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:warpgate
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build wg-gen-web
-        uses: docker/build-push-action@v4
-        with:
-          context: wg
-          file: wg/web.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg-web
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build wg-gen-web
+      #  uses: docker/build-push-action@v4
+      #  with:
+      #    context: wg
+      #    file: wg/web.Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:wg-web
+      #    labels: ${{ steps.meta.outputs.labels }}
