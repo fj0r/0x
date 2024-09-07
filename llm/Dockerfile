@@ -25,8 +25,8 @@ RUN set -eux \
   ; curl --retry 3 -sSL ${dust_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/dust' \
   \
   ; echo '/usr/local/bin/nu' >> /etc/shells \
-  ; git clone --depth=3 https://github.com/fj0r/nushell.git /etc/nushell \
-  ; opwd=$PWD; cd /etc/nushell; git log -1 --date=iso; cd $opwd \
+  ; git clone --depth=3 https://github.com/fj0r/nushell.git /root/.config/nushell \
+  ; opwd=$PWD; cd /root/.config/nushell; git log -1 --date=iso; cd $opwd \
   \
   ;
 
