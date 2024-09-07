@@ -30,5 +30,3 @@ RUN set -eux \
   \
   ;
 
-COPY entrypoint/llm.sh /llm.sh
-ENTRYPOINT [ "llm.sh" ]

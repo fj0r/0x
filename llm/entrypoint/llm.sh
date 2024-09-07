@@ -10,4 +10,4 @@ if [ -n "${MODEL_PATH}" ]; then
     popd;
 fi
 
-/bin/ollama $1
+/bin/ollama ${1:-serve}
