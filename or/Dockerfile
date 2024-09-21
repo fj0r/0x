@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/scratch:dropbear-alpine as dropbear
+FROM ghcr.io/fj0r/io:__dropbear__ as dropbear
 
 FROM openresty/openresty:alpine-amd64
 
