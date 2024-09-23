@@ -14,6 +14,7 @@ ENV SURREAL_USER=foo
 ENV SURREAL_PASS=foo
 ENV SURREAL_BIND='0.0.0.0:8000'
 EXPOSE 8000
+
 COPY entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint/init.sh"]
 CMD ["srv"]
