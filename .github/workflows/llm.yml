@@ -65,14 +65,14 @@ jobs:
       #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:llama3
       #    labels: ${{ steps.meta.outputs.labels }}
 
-      #- name: Build ollama
-      #  uses: docker/build-push-action@v4
-      #  with:
-      #    context: llm
-      #    file: llm/Dockerfile
-      #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:llm
-      #    labels: ${{ steps.meta.outputs.labels }}
+      - name: Build ollama
+        uses: docker/build-push-action@v4
+        with:
+          context: llm
+          file: llm/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ollama
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build vllm
         uses: docker/build-push-action@v4
