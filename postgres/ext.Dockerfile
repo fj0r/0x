@@ -1,7 +1,8 @@
 ######################
 # paradedb
 ######################
-FROM ghcr.io/fj0r/0x:pg_rx as builder-paradedb
+ARG BASEIMAGE=ghcr.io/fj0r/0x:pg_rx
+FROM ${BASEIMAGE} as builder-paradedb
 
 WORKDIR /tmp/paradedb
 

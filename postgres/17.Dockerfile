@@ -1,16 +1,16 @@
-ARG PG_VERSION_MAJOR=16
-ARG BASEIMAGE=ghcr.io/fj0r/0x:pg_ext
+ARG PG_VERSION_MAJOR=17
+#ARG BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
 
-FROM ${BASEIMAGE} as pg_ext
+#FROM ${BASEIMAGE} as pg_ext
 FROM readysettech/readyset:latest as readyset
 
 FROM postgres:${PG_VERSION_MAJOR}
 
 COPY --from=readyset /usr/local/bin/readyset /usr/local/bin
 
-COPY --from=pg_ext /out/lib/postgresql/${PG_MAJOR}/lib/* /usr/lib/postgresql/${PG_MAJOR}/lib
-COPY --from=pg_ext /out/share/postgresql/${PG_MAJOR}/extension/* /usr/share/postgresql/${PG_MAJOR}/extension
 
+#COPY --from=pg_ext /out/lib/postgresql/${PG_MAJOR}/lib/* /usr/lib/postgresql/${PG_MAJOR}/lib
+#COPY --from=pg_ext /out/share/postgresql/${PG_MAJOR}/extension/* /usr/share/postgresql/${PG_MAJOR}/extension
 
 ARG PIP_FLAGS="--break-system-packages"
 
@@ -116,16 +116,6 @@ RUN set -eux \
   #; make && make install \
   \
   #; cd $build_dir \
-  #; git clone --depth=1 https://github.com/jaiminpan/pg_jieba \
-  #; cd pg_jieba \
-  #; git submodule update --init --recursive  \
-  #; mkdir build \
-  #; cd build \
-  #; cmake .. -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/postgresql/${PG_MAJOR}/server \
-  #; make \
-  #; make install \
-  \
-  #; cd $build_dir \
   #; git clone --depth=1 https://github.com/timescale/timescaledb.git \
   #; cd timescaledb \
   #; git checkout main \
@@ -170,9 +160,6 @@ COPY .psqlrc /root
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN ln -sf usr/local/bin/docker-entrypoint.sh / # backwards compat
 
-#ENV PGCONF_PG_JIEBA__HMM_MODEL=
-#ENV PGCONF_PG_JIEBA__BASE_DICT=
-#ENV PGCONF_PG_JIEBA__USER_DICT=
 ENV PGCONF_EFFECTIVE_CACHE_SIZE=8GB
 ENV PGCONF_EFFECTIVE_IO_CONCURRENCY=200
 ENV PGCONF_RANDOM_PAGE_COST=1.1

@@ -54,10 +54,10 @@ jobs:
           context: postgres
           file: postgres/rx.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg_rx
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17_rx
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            PG_VERSION_MAJOR=17rc1
+            PG_VERSION_MAJOR=17
 
       - name: Build pg_ext
         if: ${{ !contains(github.event.head_commit.message, '-pg_ext') }}
@@ -66,21 +66,23 @@ jobs:
           context: postgres
           file: postgres/ext.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg_ext
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17_ext
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            PG_VERSION_MAJOR=17rc1
+            PG_VERSION_MAJOR=17
+            BASEIMAGE=ghcr.io/fj0r/0x:pg17_rx
 
       - name: Build pg 17
         uses: docker/build-push-action@v4
         with:
           context: postgres
-          file: postgres/Dockerfile
+          file: postgres/17.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            PG_VERSION_MAJOR=17rc1
+            PG_VERSION_MAJOR=17
+            BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
 
       - name: Build pgis
         uses: docker/build-push-action@v4
@@ -91,5 +93,5 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pgis17
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BASEIMAGE=ghcr.io/fj0r/0x:pg
+            BASEIMAGE=ghcr.io/fj0r/0x:pg17
 
