@@ -71,7 +71,7 @@ RUN set -eux \
 # pgvector
 ######################
 
-FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_vector
+FROM ${BASEIMAGE} as builder-pg_vector
 
 WORKDIR /tmp/pg_vector
 RUN set -eux \
