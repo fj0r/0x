@@ -116,7 +116,7 @@ RUN mkdir -p /out \
   ;
 
 COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
-COPY --from=builder-pg_vector /tmp/pg_vectorscale.tar.gz /tmp
+#COPY --from=builder-pg_vector /tmp/pg_vectorscale.tar.gz /tmp
 
 # Copy the ParadeDB extensions from their builder stages
 COPY --from=builder-paradedb /tmp/paradedb/pg_search.tar.gz /tmp
@@ -124,7 +124,7 @@ COPY --from=builder-paradedb /tmp/pg_jsonschema.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector vectorscale search jsonschema graphql \
+  ; for x in vector search jsonschema graphql \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done \
   ;
