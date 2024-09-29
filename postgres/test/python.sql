@@ -5,11 +5,8 @@ import sys
 import httpx
 import yaml
 import functools
-import more_itertools as mi
 import pyparsing
 import numpy as np
-import pandas as pd
-import cachetools
 import subprocess as subp
 m = sys.modules
 yield sys.version

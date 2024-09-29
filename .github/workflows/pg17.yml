@@ -7,7 +7,7 @@ name: postgres 17
 
 on:
   push:
-    branches: [ pg17 ]
+    branches: [ main, pg17 ]
   workflow_dispatch:
     inputs: {}
 
@@ -85,13 +85,13 @@ jobs:
             PG_VERSION_MAJOR=17
             BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
 
-      - name: Build pgis
+      - name: Build pg gis
         uses: docker/build-push-action@v4
         with:
           context: postgres
           file: postgres/gis.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pgis17
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17gis
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             BASEIMAGE=ghcr.io/fj0r/0x:pg17

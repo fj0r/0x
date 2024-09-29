@@ -112,7 +112,7 @@ $env.comma = {}
             $args ++= [-e "POSTGRES_MAX_MEMORY_USAGE=16000,32"]
         }
     }
-    pp $env.CONTCTL run ...$args '0x:pg'
+    pp $env.CONTCTL run ...$args 'ghcr.lizzie.fun/fj0r/0x:pg17'
 } {
     cmp: {[
         base

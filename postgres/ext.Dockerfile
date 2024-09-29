@@ -109,29 +109,6 @@ RUN set -eux \
   ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
   ;
 
-######################
-# pg_cron
-######################
-
-FROM ghcr.io/fj0r/0x:pg_rx as builder-pg_cron
-
-WORKDIR /tmp/pg_cron
-RUN set -eux \
-  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/citusdata/pg_cron/tags | jq -r '.[0].name') \
-  ; curl --retry 3 -sSL https://github.com/citusdata/pg_cron/archive/refs/tags/${ver}.tar.gz \
-    | tar zxf - -C . --strip-components=1 \
-  ; echo "trusted = true" >> pg_cron.control \
-  ; make clean -j \
-  ; make USE_PGXS=1 -j \
-  \
-  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp *.so /out/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cp *.control /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cp sql/*.sql /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cd /out \
-  ; tar zcvf /tmp/pg_cron.tar.gz * \
-  ;
 
 FROM alpine as filer
 
@@ -140,7 +117,6 @@ RUN mkdir -p /out \
 
 COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
 COPY --from=builder-pg_vector /tmp/pg_vectorscale.tar.gz /tmp
-COPY --from=builder-pg_cron /tmp/pg_cron.tar.gz /tmp
 
 # Copy the ParadeDB extensions from their builder stages
 COPY --from=builder-paradedb /tmp/paradedb/pg_search.tar.gz /tmp
@@ -148,7 +124,7 @@ COPY --from=builder-paradedb /tmp/pg_jsonschema.tar.gz /tmp
 COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector vectorscale cron search jsonschema graphql \
+  ; for x in vector vectorscale search jsonschema graphql \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done \
   ;
