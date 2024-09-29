@@ -1,7 +1,7 @@
 ARG PG_VERSION_MAJOR=17
-#ARG BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
+ARG BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
 
-#FROM ${BASEIMAGE} as pg_ext
+FROM ${BASEIMAGE} as pg_ext
 FROM readysettech/readyset:latest as readyset
 
 FROM postgres:${PG_VERSION_MAJOR}
@@ -9,8 +9,8 @@ FROM postgres:${PG_VERSION_MAJOR}
 COPY --from=readyset /usr/local/bin/readyset /usr/local/bin
 
 
-#COPY --from=pg_ext /out/lib/postgresql/${PG_MAJOR}/lib/* /usr/lib/postgresql/${PG_MAJOR}/lib
-#COPY --from=pg_ext /out/share/postgresql/${PG_MAJOR}/extension/* /usr/share/postgresql/${PG_MAJOR}/extension
+COPY --from=pg_ext /out/lib/postgresql/${PG_MAJOR}/lib/* /usr/lib/postgresql/${PG_MAJOR}/lib
+COPY --from=pg_ext /out/share/postgresql/${PG_MAJOR}/extension/* /usr/share/postgresql/${PG_MAJOR}/extension
 
 ARG PIP_FLAGS="--break-system-packages"
 
@@ -74,7 +74,6 @@ RUN set -eux \
       pydantic PyParsing \
       boltons decorator deepmerge \
       numpy httpx pyyaml \
-      pyiceberg[s3fs,pyarrow,pandas] \
   \
   ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
   ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \

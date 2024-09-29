@@ -58,6 +58,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             PG_VERSION_MAJOR=17
+            PGRX_VERSION=0.12.5
 
       - name: Build pg_ext
         if: ${{ !contains(github.event.head_commit.message, '-pg_ext') }}

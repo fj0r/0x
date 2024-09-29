@@ -4,14 +4,16 @@
 ARG BASEIMAGE=ghcr.io/fj0r/0x:pg_rx
 FROM ${BASEIMAGE} as builder-paradedb
 
-WORKDIR /tmp/paradedb
+# RUN set -eux \
+#   ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/paradedb/paradedb/tags | jq -r '.[0].name') \
+#   ; curl --retry 3 -sSL https://github.com/paradedb/paradedb/archive/refs/tags/${ver}.tar.gz \
+#   | tar zxf - -C . --strip-components=1 \
+#   ;
 
 RUN set -eux \
-  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/paradedb/paradedb/tags | jq -r '.[0].name') \
-  ; curl --retry 3 -sSL https://github.com/paradedb/paradedb/archive/refs/tags/${ver}.tar.gz \
-  | tar zxf - -C . --strip-components=1 \
+  ; git clone --depth=1 https://github.com/paradedb/paradedb.git /tmp/paradedb \
+  ; cd /tmp/paradedb \
   ;
-
 
 RUN set -eux \
   ; cd /tmp/paradedb/pg_search \
@@ -30,12 +32,8 @@ RUN set -eux \
 ######################
 
 RUN set -eux \
-  ; mkdir -p /tmp/pg_jsonschema \
+  ; git clone --depth=1 https://github.com/supabase/pg_jsonschema.git /tmp/pg_jsonschema \
   ; cd /tmp/pg_jsonschema \
-  \
-  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/supabase/pg_jsonschema/releases | jq -r '.[0].name') \
-  ; curl --retry 3 -sSL https://github.com/supabase/pg_jsonschema/archive/refs/tags/${ver}.tar.gz \
-  | tar zxf - -C . --strip-components=1 \
   ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
   ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
   ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
