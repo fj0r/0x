@@ -93,21 +93,21 @@ RUN set -eux \
   ;
 
 
-WORKDIR /tmp/pgvectorscale
-RUN set -eux \
-  ; git clone --depth=1 https://github.com/timescale/pgvectorscale.git /tmp/pgvectorscale \
-  ; cd /tmp/pgvectorscale/pgvectorscale \
-  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
-  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
-  ; RUSTFLAGS="-C target-feature=+avx2,+fma" \
-    cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
-  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib/ \
-  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/lib/postgresql/${PG_MAJOR}/lib/ \
-  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension/ \
-  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/share/postgresql/${PG_MAJOR}/extension/ \
-  ; cd /out \
-  ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
-  ;
+#WORKDIR /tmp/pgvectorscale
+#RUN set -eux \
+#  ; git clone --depth=1 https://github.com/timescale/pgvectorscale.git /tmp/pgvectorscale \
+#  ; cd /tmp/pgvectorscale/pgvectorscale \
+#  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
+#  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
+#  ; RUSTFLAGS="-C target-feature=+avx2,+fma" \
+#    cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+#  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib/ \
+#  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/lib/postgresql/${PG_MAJOR}/lib/ \
+#  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension/ \
+#  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/share/postgresql/${PG_MAJOR}/extension/ \
+#  ; cd /out \
+#  ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
+#  ;
 
 
 FROM alpine as filer
