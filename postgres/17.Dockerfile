@@ -82,10 +82,10 @@ RUN set -eux \
   ; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
   ; timescale_pkg=$(apt search timescaledb-[0-9]+-postgresql-${PG_MAJOR} 2>&1 | grep '/' | tail -n 1 | awk -F'/' '{print $1}') \
   \
-  ; curl --retry 3 -sSL https://install.citusdata.com/community/deb.sh | bash \
-  ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus 2>&1 | grep '/' | grep -v dbgsym | tail -n 1 | awk -F'/' '{print $1}') \
+  #; curl --retry 3 -sSL https://install.citusdata.com/community/deb.sh | bash \
+  #; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus 2>&1 | grep '/' | grep -v dbgsym | tail -n 1 | awk -F'/' '{print $1}') \
   \
-  ; apt-get install -y --no-install-recommends ${timescale_pkg} ${citus_pkg} \
+  ; apt-get install -y --no-install-recommends ${timescale_pkg} \
   \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \

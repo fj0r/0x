@@ -18,7 +18,7 @@ $env.comma = {}
 
 'docker-entrypoint fetch'
 | comma fun {
-    curl -sSLo docker-entrypoint.sh.origin https://raw.githubusercontent.com/docker-library/postgres/master/16/bookworm/docker-entrypoint.sh
+    curl -sSLo docker-entrypoint.sh.origin https://raw.githubusercontent.com/docker-library/postgres/master/17/bookworm/docker-entrypoint.sh
 }
 
 'docker-entrypoint patch'
@@ -93,7 +93,7 @@ $env.comma = {}
     ]
     if 'readyset' in $a { $args ++= [-e READYSET_MEMORY_LIMIT=0 ] }
     if 'cron' in $a { $args ++= [-e $"PGCONF_CRON__DATABASE_NAME='($s.pg.db)'"] }
-    if 'base' in $a { $args ++= [-e "PGCONF_SHARED_PRELOAD_LIBRARIES='pg_stat_statements,pg_cron,pg_search,pg_lakehouse'"] }
+    if 'base' in $a { $args ++= [-e "PGCONF_SHARED_PRELOAD_LIBRARIES='pg_stat_statements,pg_cron,pg_search,citus,timescaledb'"] }
     if 'ferret' in $a { $args ++= [-e FERRET_PORT=5000 -p 5000:5000] }
     if 'tweak' in $a { $args ++= [
         -e PGCONF_SHARED_BUFFERS=4GB
