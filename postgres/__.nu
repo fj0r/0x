@@ -1,28 +1,21 @@
-$env.comma_scope = {|_|{
-    created: '2024-02-20{2}13:21:43'
-    computed: {$_.computed:{|a, s| $'($s.created)($a)' }}
-}}
-
-$env.comma = {}
-
-'pg' | comma val null {
-    db: foo
-    user: foo
-    passwd: foo
+const s = {
+    pg: {
+        db: foo
+        user: foo
+        passwd: foo
+    }
+    rt: {
+        container: test-pg
+        dir: pg16
+    }
 }
 
-'rt' | comma val null {
-    container: test-pg
-    dir: pg16
-}
 
-'docker-entrypoint fetch'
-| comma fun {
+export def 'docker-entrypoint fetch' [] {
     curl -sSLo docker-entrypoint.sh.origin https://raw.githubusercontent.com/docker-library/postgres/master/17/bookworm/docker-entrypoint.sh
 }
 
-'docker-entrypoint patch'
-| comma fun {
+export def 'docker-entrypoint patch' [] {
     let o = open docker-entrypoint.sh.origin | lines | enumerate
     let m = {
         main: {
@@ -71,8 +64,7 @@ $env.comma = {}
     chmod +x docker-entrypoint.sh
 }
 
-'docker-entrypoint diff'
-| comma fun {
+export def 'docker-entrypoint diff' [] {
     diff ...[
         -u
         docker-entrypoint.sh.origin
@@ -80,8 +72,20 @@ $env.comma = {}
     ] | save -f docker-entrypoint.sh.diff
 }
 
-'test'
-| comma fun {|a,s,_|
+def cmpl-test [] {
+    [
+        base
+        readyset
+        cron
+        ferret
+        tweak
+        mem
+        pgcat
+        temp
+    ]
+}
+
+export def 'test' [...a:string@cmpl-test] {
     mut args = [
         --rm $"--name=($s.rt.container)"
         -e $"POSTGRES_USER=($s.pg.user)"
@@ -89,7 +93,7 @@ $env.comma = {}
         -e $"POSTGRES_PASSWORD=($s.pg.passwd)"
         -p 15432:5432
         -p 5433:5433
-        -v $"($_.wd)/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
+        -v $"($env.PWD)/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
     ]
     if 'readyset' in $a { $args ++= [-e READYSET_MEMORY_LIMIT=0 ] }
     if 'cron' in $a { $args ++= [-e $"PGCONF_CRON__DATABASE_NAME='($s.pg.db)'"] }
@@ -102,7 +106,7 @@ $env.comma = {}
    ] }
     if 'pgcat' in $a { $args ++= [
         -e 'PGCAT_CONF=/pgcat.toml'
-        -v $"($_.wd)/pgcat.toml:/pgcat.toml"
+        -v $"($env.PWD)/pgcat.toml:/pgcat.toml"
         -p 6432:6432
    ] }
     if 'mem' in $a {
@@ -113,21 +117,9 @@ $env.comma = {}
         }
     }
     pp $env.CONTCTL run ...$args 'ghcr.lizzie.fun/fj0r/0x:pg17'
-} {
-    cmp: {[
-        base
-        readyset
-        cron
-        ferret
-        tweak
-        mem
-        pgcat
-        temp
-    ]}
 }
 
-'backup'
-| comma fun {|a,s|
+export def 'backup' [] {
     sudo $env.CONTCTL ...[
         exec $s.rt.container
         bash -c
@@ -136,15 +128,14 @@ $env.comma = {}
     sudo chown $env.USER -R backup/
 }
 
-'restore'
-| comma fun {|a,s,_|
+export def 'restore' [] {
     pp $env.CONTCTL rm -f $s.rt.container
     sudo rm -rf $"($s.rt.dir)/"
     mkdir $s.rt.dir
     pp $env.CONTCTL run ...[
         -d --restart=always
-        -v $"($_.wd)/($s.rt.dir):/var/lib/postgresql/data"
-        -v $"($_.wd)/backup:/backup"
+        -v $"($env.PWD)/($s.rt.dir):/var/lib/postgresql/data"
+        -v $"($env.PWD)/backup:/backup"
         -e $"POSTGRES_DB=($s.pg.db)"
         -e $"POSTGRES_USER=($s.pg.user)"
         -e $"POSTGRES_PASSWORD=($s.pg.passwd)"
@@ -166,13 +157,12 @@ $env.comma = {}
     ]
 }
 
-'calc_mem'
-| comma fun {|a,s,_|
+export def 'calc_mem' [a] {
     let fn = 'pg_calc_mem'
     let f = $'/tmp/pg_calc_mem.bash'
     mut st = false
     mut bd = []
-    for i in (cat $"($_.wd)/docker-entrypoint.sh" | lines) {
+    for i in (cat $"($env.PWD)/docker-entrypoint.sh" | lines) {
         if ($i | str starts-with $fn) {
             $st = true
         }
@@ -186,55 +176,18 @@ $env.comma = {}
     $bd
     | append "pg_calc_mem $1"
     | str join (char newline) | save -f $f
-    bash $f $a.0
+    bash $f $a
 }
 
-'pgcat'
-| comma fun {|a,s,_|
+export def 'pgcat' [] {
     pp $env.CONTCTL run ...[
         -d --name pgcat
         --restart=always
         --privileged
         --security-opt apparmor=unconfined
         -p 6432:6432
-        -v $"($_.wd)/pgcat.toml:/etc/pgcat/pgcat.toml"
+        -v $"($env.PWD)/pgcat.toml:/etc/pgcat/pgcat.toml"
         ghcr.io/postgresml/pgcat:latest
     ]
 }
-
-'docker file'
-| comma fun {|a,s|
-    ^$env.CONTCTL exec test-pg cat $a.0
-} {
-    c: {
-        [
-            '/var/lib/postgresql/data/usr.conf'
-            '/var/log/postgresql/pgcat.log'
-        ]
-    }
-}
-
-'dev reload'
-| comma fun {|a,s|
-    let act = $a | str join ' '
-    $', ($act)' | batch ',.nu'
-} {
-    watch: { glob: ",.nu", clear: true }
-    completion: {|a,s|
-        , -c ...$a
-    }
-    desc: "reload ,.nu"
-}
-
-'dev vscode-tasks'
-| comma fun {
-    mkdir .vscode
-    ', --vscode -j' | batch ',.nu' | save -f .vscode/tasks.json
-} {
-    desc: "generate .vscode/tasks.json"
-    watch: { glob: ',.nu' }
-}
-
-'dev inspect'
-| comma fun {|a,s,_| {index: $_, scope: $s, args: $a} | table -e }
 

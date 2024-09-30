@@ -1,40 +1,26 @@
-### {{{ base.nu
-$env.comma_scope = {|_|{ created: '2024-06-04{2}15:22:07' }}
-$env.comma = {|_|{}}
-### }}}
-
-### {{{ 01_env.nu
-for e in [nuon toml yaml json] {
-    if ($".env.($e)" |  path exists) {
-        open $".env.($e)" | load-env
+const s = {
+    dev: {
+        container: ['0x:php7']
+        id: 'test-php'
+        wd: '/world'
+        pubkey: 'id_ed25519.pub'
+        user: root
+        privileged: false
+        #proxy: $"http://(ip route | lines | get 0 | parse -r 'default via (?<gateway>[0-9\.]+) dev (?<dev>\w+)( proto dhcp src (?<lan>[0-9\.]+))?' | get 0.lan):7890"
+        env: {
+            PREFER_ALT: 1
+            NEOVIM_LINE_SPACE: 2
+            NEOVIDE_SCALE_FACTOR: 0.7
+        }
     }
 }
-### }}}
 
-### {{{ 07_dev_container.nu
-'dev'
-| comma val null {
-    container: ['0x:php7']
-    id: 'test-php'
-    wd: '/world'
-    pubkey: 'id_ed25519.pub'
-    user: root
-    privileged: false
-    proxy: $"http://(ip route | lines | get 0 | parse -r 'default via (?<gateway>[0-9\.]+) dev (?<dev>\w+)( proto dhcp src (?<lan>[0-9\.]+))?' | get 0.lan):7890"
+def cmpl-port [] {
+    port 9992
 }
 
-'dev env'
-| comma val null {
-    PREFER_ALT: 1
-    NEOVIM_LINE_SPACE: 2
-    NEOVIDE_SCALE_FACTOR: 0.7
-}
-
-
-'dev container up'
-| comma fun {|a,s,_|
+export def 'dev container up' [port:int@cmpl-port] {
     , dev container down
-    let port = $a.0
     lg level 3 {
         container: $s.dev.id, workdir: $s.dev.wd
         port: $port, pubkey: $s.dev.pubkey
@@ -66,7 +52,7 @@ for e in [nuon toml yaml json] {
 
     let sshkey = cat ([$env.HOME .ssh $s.dev.pubkey] | path join) | split row ' ' | get 1
     let dev = [
-        -v $"($_.wd):($s.dev.wd)"
+        -v $"($env.PWD):($s.dev.wd)"
         -w $s.dev.wd
         -p $"($port):80"
         -e $"ed25519_($s.dev.user)=($sshkey)"
@@ -92,17 +78,9 @@ for e in [nuon toml yaml json] {
     | flatten)
 
     pp $env.CONTCTL run --name $s.dev.id -d ...$args ...$s.dev.container
-} {
-    cmp: {|a,s|
-        match ($a | length) {
-            1 => [(port 9992)]
-            _ => {}
-        }
-    }
 }
 
-'dev container down'
-| comma fun {|a,s|
+export def 'dev container down' [] {
     let ns = ^$env.CONTCTL network ls | from ssv -a | get NAME
     if $s.dev.id in $ns {
         lg level 2 { container: $s.dev.id } 'stop'
@@ -112,5 +90,4 @@ for e in [nuon toml yaml json] {
         lg level 3 { container: $s.dev.id } 'not running'
     }
 }
-### }}}
 

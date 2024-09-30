@@ -1,11 +1,14 @@
-$env.comma_scope = {|_|{
-    created: '2023-12-28{4}09:51:01'
-    computed: {$_.computed:{|a, s| $'($s.created)($a)' }}
-}}
+def cmpl [] {
+    [
+        qng
+        upload
+        pass
+        route
+        site
+    ]
+}
 
-$env.comma = {|_|{}}
-
-'srv' | comma fun {|a,s,_|
+export def 'srv' [...a:string@cmpl] {
     let cfgs = [
         default.json
         nginx.conf.tmpl
@@ -16,11 +19,11 @@ $env.comma = {|_|{}}
     let config = ls config/**/*
         | where type == file
         | each { $in.name |path relative-to config }
-        | each { [-v $"($_.wd)/config/($in):/etc/openresty/($in)"] }
+        | each { [-v $"($env.PWD)/config/($in):/etc/openresty/($in)"] }
     mut args = [
         --rm -it --name=test
         -p 8020:80
-        -v $"($_.wd)/entrypoint/openresty.sh:/entrypoint/openresty.sh"
+        -v $"($env.PWD)/entrypoint/openresty.sh:/entrypoint/openresty.sh"
         $config
         -e ed25519_root=123
         -e FASTCGI=php
@@ -36,12 +39,4 @@ $env.comma = {|_|{}}
     if 'site' in $a { $args ++= [[-e SITEFILE=/etc/openresty/test.site.json]] }
     if 'qng' in $a { $args ++= [[-e QNGCONFIG=/etc/openresty/qng.example.json]] }
     pp $env.CONTCTL run ...$args localhost/0x:openresty bash
-} {
-    cmp: {[
-        qng
-        upload
-        pass
-        route
-        site
-    ]}
 }
