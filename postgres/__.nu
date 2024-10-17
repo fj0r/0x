@@ -1,16 +1,3 @@
-const s = {
-    pg: {
-        db: foo
-        user: foo
-        passwd: foo
-    }
-    rt: {
-        container: test-pg
-        dir: pg16
-    }
-}
-
-
 export def 'docker-entrypoint fetch' [] {
     curl -sSLo docker-entrypoint.sh.origin https://raw.githubusercontent.com/docker-library/postgres/master/17/bookworm/docker-entrypoint.sh
 }
@@ -87,16 +74,16 @@ def cmpl-test [] {
 
 export def 'test' [...a:string@cmpl-test] {
     mut args = [
-        --rm $"--name=($s.rt.container)"
-        -e $"POSTGRES_USER=($s.pg.user)"
-        -e $"POSTGRES_DB=($s.pg.db)"
-        -e $"POSTGRES_PASSWORD=($s.pg.passwd)"
+        --rm $"--name=($env.rt.container)"
+        -e $"POSTGRES_USER=($env.pg.user)"
+        -e $"POSTGRES_DB=($env.pg.db)"
+        -e $"POSTGRES_PASSWORD=($env.pg.passwd)"
         -p 15432:5432
         -p 5433:5433
         -v $"($env.PWD)/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh"
     ]
     if 'readyset' in $a { $args ++= [-e READYSET_MEMORY_LIMIT=0 ] }
-    if 'cron' in $a { $args ++= [-e $"PGCONF_CRON__DATABASE_NAME='($s.pg.db)'"] }
+    if 'cron' in $a { $args ++= [-e $"PGCONF_CRON__DATABASE_NAME='($env.pg.db)'"] }
     if 'base' in $a { $args ++= [-e "PGCONF_SHARED_PRELOAD_LIBRARIES='pg_stat_statements,pg_cron,pg_search,citus,timescaledb'"] }
     if 'ferret' in $a { $args ++= [-e FERRET_PORT=5000 -p 5000:5000] }
     if 'tweak' in $a { $args ++= [
@@ -121,39 +108,39 @@ export def 'test' [...a:string@cmpl-test] {
 
 export def 'backup' [] {
     sudo $env.CONTCTL ...[
-        exec $s.rt.container
+        exec $env.rt.container
         bash -c
-        $'pg_dumpall -U ($s.pg.user) > /backup/($s.pg.db).pg.sql'
+        $'pg_dumpall -U ($env.pg.user) > /backup/($env.pg.db).pg.sql'
     ]
     sudo chown $env.USER -R backup/
 }
 
 export def 'restore' [] {
-    pp $env.CONTCTL rm -f $s.rt.container
-    sudo rm -rf $"($s.rt.dir)/"
-    mkdir $s.rt.dir
+    pp $env.CONTCTL rm -f $env.rt.container
+    sudo rm -rf $"($env.rt.dir)/"
+    mkdir $env.rt.dir
     pp $env.CONTCTL run ...[
         -d --restart=always
-        -v $"($env.PWD)/($s.rt.dir):/var/lib/postgresql/data"
+        -v $"($env.PWD)/($env.rt.dir):/var/lib/postgresql/data"
         -v $"($env.PWD)/backup:/backup"
-        -e $"POSTGRES_DB=($s.pg.db)"
-        -e $"POSTGRES_USER=($s.pg.user)"
-        -e $"POSTGRES_PASSWORD=($s.pg.passwd)"
+        -e $"POSTGRES_DB=($env.pg.db)"
+        -e $"POSTGRES_USER=($env.pg.user)"
+        -e $"POSTGRES_PASSWORD=($env.pg.passwd)"
         --security-opt apparmor=unconfined
-        --name $s.rt.container
+        --name $env.rt.container
         postgres:16
     ]
     wait-cmd -t 'wait postgresql' {
         sudo $env.CONTCTL ...[
-            exec $s.rt.container
+            exec $env.rt.container
             bash -c
-            $'pg_isready -U ($s.pg.user)'
+            $'pg_isready -U ($env.pg.user)'
         ]
     }
     sudo $env.CONTCTL ...[
-        exec $s.rt.container
+        exec $env.rt.container
         bash -c
-        $'cat /backup/($s.pg.db).pg.sql | psql -U ($s.pg.user)'
+        $'cat /backup/($env.pg.db).pg.sql | psql -U ($env.pg.user)'
     ]
 }
 

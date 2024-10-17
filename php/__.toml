@@ -1,0 +1,12 @@
+[dev]
+container = ["0x:php7"]
+id = "test-php"
+wd = "/world"
+pubkey = "id_ed25519.pub"
+user = "root"
+privileged = false
+
+[dev.env]
+PREFER_ALT = 1
+NEOVIM_LINE_SPACE = 2
+NEOVIDE_SCALE_FACTOR = 0.7

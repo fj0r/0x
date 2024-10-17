@@ -1,12 +1,13 @@
-ARG PG_VERSION_MAJOR=16
+ARG PG_VERSION_MAJOR=17
 FROM postgres:${PG_VERSION_MAJOR}
 
+ARG PG_VERSION_MAJOR=17
 ARG RUST_CHANNEL=stable
-ARG PGRX_VERSION=0.12.1
+ARG PGRX_VERSION=0.12.6
 ENV PGRX_VERSION=${PGRX_VERSION}
 
 ENV PATH="/root/.cargo/bin:$PATH"
-ENV PGX_HOME=/usr/lib/postgresql/${PG_MAJOR}
+ENV PGX_HOME=/usr/lib/postgresql/${PG_VERSION_MAJOR}
 RUN set -eux \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends \
@@ -25,7 +26,7 @@ RUN set -eux \
     ninja-build \
     libssl-dev \
     pkg-config \
-    postgresql-server-dev-${PG_MAJOR} \
+    postgresql-server-dev-${PG_VERSION_MAJOR} \
     tree \
   \
   ; rg_ver=$(curl --retry 3 -sSL https://api.github.com/repos/BurntSushi/ripgrep/releases/latest | jq -r '.tag_name') \
@@ -47,4 +48,4 @@ RUN set -eux \
 RUN set -eux \
   ; cargo install cargo-get \
   ; cargo install --locked cargo-pgrx --version "${PGRX_VERSION}" \
-  ; cargo pgrx init "--pg${PG_MAJOR}=/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config"
+  ; cargo pgrx init "--pg${PG_VERSION_MAJOR}=/usr/lib/postgresql/${PG_VERSION_MAJOR}/bin/pg_config"

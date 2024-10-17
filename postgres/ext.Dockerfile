@@ -3,6 +3,7 @@
 ######################
 ARG BASEIMAGE=ghcr.io/fj0r/0x:pg_rx
 FROM ${BASEIMAGE} as builder-paradedb
+ARG PG_VERSION_MAJOR=17
 
 # RUN set -eux \
 #   ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/paradedb/paradedb/tags | jq -r '.[0].name') \
@@ -12,36 +13,50 @@ FROM ${BASEIMAGE} as builder-paradedb
 
 RUN set -eux \
   ; git clone --depth=1 https://github.com/paradedb/paradedb.git /tmp/paradedb \
-  ; cd /tmp/paradedb \
-  ;
-
-RUN set -eux \
   ; cd /tmp/paradedb/pg_search \
-  ; cargo pgrx package --features icu --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+  ; cargo pgrx package --features icu --pg-config "/usr/lib/postgresql/${PG_VERSION_MAJOR}/bin/pg_config" \
   \
-  ; mkdir -p /out/pg_search/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp ../target/release/pg_search-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_search/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/pg_search/share/postgresql/${PG_MAJOR}/extension \
-  ; cp ../target/release/pg_search-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_search/share/postgresql/${PG_MAJOR}/extension \
+  ; mkdir -p /out/pg_search/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; cp ../target/release/pg_search-pg${PG_VERSION_MAJOR}/usr/lib/postgresql/${PG_VERSION_MAJOR}/lib/* /out/pg_search/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; mkdir -p /out/pg_search/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cp ../target/release/pg_search-pg${PG_VERSION_MAJOR}/usr/share/postgresql/${PG_VERSION_MAJOR}/extension/* /out/pg_search/share/postgresql/${PG_VERSION_MAJOR}/extension \
   ; cd /out/pg_search \
   ; tar zcvf /tmp/paradedb/pg_search.tar.gz * \
   ;
+
+FROM ${BASEIMAGE} as builder-analytics
+ARG PG_VERSION_MAJOR=17
+RUN set -eux \
+  ; git clone --depth=1 https://github.com/paradedb/pg_analytics.git /tmp/pg_analytics \
+  ; cd /tmp/pg_analytics \
+  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_VERSION_MAJOR}/bin/pg_config" \
+  \
+  ; mkdir -p /out/pg_analytics/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; cp ./target/release/pg_analytics-pg${PG_VERSION_MAJOR}/usr/lib/postgresql/${PG_VERSION_MAJOR}/lib/* /out/pg_analytics/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; mkdir -p /out/pg_analytics/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cp ./target/release/pg_analytics-pg${PG_VERSION_MAJOR}/usr/share/postgresql/${PG_VERSION_MAJOR}/extension/* /out/pg_analytics/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cd /out/pg_analytics \
+  ; tar zcvf /tmp/pg_analytics.tar.gz * \
+  ;
+
 
 ######################
 # pg_jsonschema
 ######################
 
+FROM ${BASEIMAGE} as builder-jsonschema
+ARG PG_VERSION_MAJOR=17
 RUN set -eux \
   ; git clone --depth=1 https://github.com/supabase/pg_jsonschema.git /tmp/pg_jsonschema \
   ; cd /tmp/pg_jsonschema \
   ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
   ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
-  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
+  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_VERSION_MAJOR}/bin/pg_config" \
   \
-  ; mkdir -p /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_jsonschema/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
-  ; cp target/release/pg_jsonschema-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_jsonschema/share/postgresql/${PG_MAJOR}/extension \
+  ; mkdir -p /out/pg_jsonschema/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; cp target/release/pg_jsonschema-pg${PG_VERSION_MAJOR}/usr/lib/postgresql/${PG_VERSION_MAJOR}/lib/* /out/pg_jsonschema/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; mkdir -p /out/pg_jsonschema/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cp target/release/pg_jsonschema-pg${PG_VERSION_MAJOR}/usr/share/postgresql/${PG_VERSION_MAJOR}/extension/* /out/pg_jsonschema/share/postgresql/${PG_VERSION_MAJOR}/extension \
   ; cd /out/pg_jsonschema \
   ; tar zcvf /tmp/pg_jsonschema.tar.gz * \
   ;
@@ -49,22 +64,22 @@ RUN set -eux \
 ######################
 # pg_graphql
 ######################
-RUN set -eux \
-  ; git clone --depth=1 https://github.com/supabase/pg_graphql.git /tmp/pg_graphql \
-  ; cd /tmp/pg_graphql \
-  ; rustup update nightly \
-  ; rustup override set nightly \
-  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
-  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
-  ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
-  \
-  ; mkdir -p /out/pg_graphql/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp target/release/pg_graphql-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/pg_graphql/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/pg_graphql/share/postgresql/${PG_MAJOR}/extension \
-  ; cp target/release/pg_graphql-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/pg_graphql/share/postgresql/${PG_MAJOR}/extension \
-  ; cd /out/pg_graphql \
-  ; tar zcvf /tmp/pg_graphql.tar.gz * \
-  ;
+# RUN set -eux \
+#   ; git clone --depth=1 https://github.com/supabase/pg_graphql.git /tmp/pg_graphql \
+#   ; cd /tmp/pg_graphql \
+#   ; rustup update nightly \
+#   ; rustup override set nightly \
+#   ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
+#   ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
+#   ; cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_VERSION_MAJOR}/bin/pg_config" \
+#   \
+#   ; mkdir -p /out/pg_graphql/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+#   ; cp target/release/pg_graphql-pg${PG_VERSION_MAJOR}/usr/lib/postgresql/${PG_VERSION_MAJOR}/lib/* /out/pg_graphql/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+#   ; mkdir -p /out/pg_graphql/share/postgresql/${PG_VERSION_MAJOR}/extension \
+#   ; cp target/release/pg_graphql-pg${PG_VERSION_MAJOR}/usr/share/postgresql/${PG_VERSION_MAJOR}/extension/* /out/pg_graphql/share/postgresql/${PG_VERSION_MAJOR}/extension \
+#   ; cd /out/pg_graphql \
+#   ; tar zcvf /tmp/pg_graphql.tar.gz * \
+#   ;
 
 
 ######################
@@ -72,6 +87,7 @@ RUN set -eux \
 ######################
 
 FROM ${BASEIMAGE} as builder-pg_vector
+ARG PG_VERSION_MAJOR=17
 
 WORKDIR /tmp/pg_vector
 RUN set -eux \
@@ -83,11 +99,11 @@ RUN set -eux \
   ; make clean -j \
   ; make USE_PGXS=1 OPTFLAGS="" -j \
   \
-  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib \
-  ; cp *.so /out/lib/postgresql/${PG_MAJOR}/lib \
-  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cp *.control /out/share/postgresql/${PG_MAJOR}/extension \
-  ; cp sql/*.sql /out/share/postgresql/${PG_MAJOR}/extension \
+  ; mkdir -p /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; cp *.so /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; mkdir -p /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cp *.control /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cp sql/*.sql /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
   ; cd /out \
   ; tar zcvf /tmp/pg_vector.tar.gz * \
   ;
@@ -100,11 +116,11 @@ RUN set -eux \
 #  ; pgrx_ver=$(cat Cargo.toml | rg 'pgrx\s*=\s*"=*([0-9\.]+)"' -or '$1') \
 #  ; cargo install --locked cargo-pgrx --version "${pgrx_ver}" --force \
 #  ; RUSTFLAGS="-C target-feature=+avx2,+fma" \
-#    cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_config" \
-#  ; mkdir -p /out/lib/postgresql/${PG_MAJOR}/lib/ \
-#  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/lib/postgresql/${PG_MAJOR}/lib/* /out/lib/postgresql/${PG_MAJOR}/lib/ \
-#  ; mkdir -p /out/share/postgresql/${PG_MAJOR}/extension/ \
-#  ; cp target/release/vectorscale-pg${PG_MAJOR}/usr/share/postgresql/${PG_MAJOR}/extension/* /out/share/postgresql/${PG_MAJOR}/extension/ \
+#    cargo pgrx package --pg-config "/usr/lib/postgresql/${PG_VERSION_MAJOR}/bin/pg_config" \
+#  ; mkdir -p /out/lib/postgresql/${PG_VERSION_MAJOR}/lib/ \
+#  ; cp target/release/vectorscale-pg${PG_VERSION_MAJOR}/usr/lib/postgresql/${PG_VERSION_MAJOR}/lib/* /out/lib/postgresql/${PG_VERSION_MAJOR}/lib/ \
+#  ; mkdir -p /out/share/postgresql/${PG_VERSION_MAJOR}/extension/ \
+#  ; cp target/release/vectorscale-pg${PG_VERSION_MAJOR}/usr/share/postgresql/${PG_VERSION_MAJOR}/extension/* /out/share/postgresql/${PG_VERSION_MAJOR}/extension/ \
 #  ; cd /out \
 #  ; tar zcvf /tmp/pg_vectorscale.tar.gz * \
 #  ;
@@ -120,11 +136,12 @@ COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
 
 # Copy the ParadeDB extensions from their builder stages
 COPY --from=builder-paradedb /tmp/paradedb/pg_search.tar.gz /tmp
-COPY --from=builder-paradedb /tmp/pg_jsonschema.tar.gz /tmp
-COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
+COPY --from=builder-analytics /tmp/pg_analytics.tar.gz /tmp
+COPY --from=builder-jsonschema /tmp/pg_jsonschema.tar.gz /tmp
+#COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector search jsonschema graphql \
+  ; for x in vector search analytics jsonschema \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done \
   ;

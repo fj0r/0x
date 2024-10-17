@@ -1,0 +1,8 @@
+[pg]
+db = "foo"
+user = "foo"
+passwd = "foo"
+
+[rt]
+container = "test-pg"
+dir = "pg16"

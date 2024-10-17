@@ -1,18 +1,5 @@
-const s = {
-    dev: {
-        container: ['0x:php7']
-        id: 'test-php'
-        wd: '/world'
-        pubkey: 'id_ed25519.pub'
-        user: root
-        privileged: false
-        #proxy: $"http://(ip route | lines | get 0 | parse -r 'default via (?<gateway>[0-9\.]+) dev (?<dev>\w+)( proto dhcp src (?<lan>[0-9\.]+))?' | get 0.lan):7890"
-        env: {
-            PREFER_ALT: 1
-            NEOVIM_LINE_SPACE: 2
-            NEOVIDE_SCALE_FACTOR: 0.7
-        }
-    }
+def _proxy [] {
+    $"http://(ip route | lines | get 0 | parse -r 'default via (?<gateway>[0-9\.]+) dev (?<dev>\w+)( proto dhcp src (?<lan>[0-9\.]+))?' | get 0.lan):7890"
 }
 
 def cmpl-port [] {
@@ -22,17 +9,17 @@ def cmpl-port [] {
 export def 'dev container up' [port:int@cmpl-port] {
     , dev container down
     lg level 3 {
-        container: $s.dev.id, workdir: $s.dev.wd
-        port: $port, pubkey: $s.dev.pubkey
+        container: $env.dev.id, workdir: $env.dev.wd
+        port: $port, pubkey: $env.dev.pubkey
     } start
 
-    pp $env.CONTCTL network create $s.dev.id
+    pp $env.CONTCTL network create $env.dev.id
 
     mut args = []
 
-    $args ++= [--network $s.dev.id]
+    $args ++= [--network $env.dev.id]
 
-    $args ++= if $s.dev.privileged {[
+    $args ++= if $env.dev.privileged {[
         --privileged
     ]} else {[
         --cap-add=SYS_ADMIN
@@ -42,20 +29,20 @@ export def 'dev container up' [port:int@cmpl-port] {
         --device /dev/net/tun
     ]}
 
-    if ($s.dev.proxy? | is-not-empty) {
-        #$args ++= [ -e $"http_proxy=($s.dev.proxy)" -e $"https_proxy=($s.dev.proxy)" ]
+    if ($env.dev.proxy? | is-not-empty) {
+        #$args ++= [ -e $"http_proxy=($env.dev.proxy)" -e $"https_proxy=($env.dev.proxy)" ]
     }
 
     if ($env.DISPLAY? | is-not-empty) {
         $args ++= [ -e $"DISPLAY=($env.DISPLAY)" -v /tmp/.X11-unix:/tmp/.X11-unix ]
     }
 
-    let sshkey = cat ([$env.HOME .ssh $s.dev.pubkey] | path join) | split row ' ' | get 1
+    let sshkey = cat ([$env.HOME .ssh $env.dev.pubkey] | path join) | split row ' ' | get 1
     let dev = [
-        -v $"($env.PWD):($s.dev.wd)"
-        -w $s.dev.wd
+        -v $"($env.PWD):($env.dev.wd)"
+        -w $env.dev.wd
         -p $"($port):80"
-        -e $"ed25519_($s.dev.user)=($sshkey)"
+        -e $"ed25519_($env.dev.user)=($sshkey)"
     ]
     $args ++= $dev
 
@@ -73,21 +60,21 @@ export def 'dev container up' [port:int@cmpl-port] {
         #-e $"SITEFILE=/etc/openresty/webgrind.json"
     ]
 
-    $args ++= ($s.dev.env
+    $args ++= ($env.dev.env
     | items {|k,v| [-e $"($k)=($v)"]}
     | flatten)
 
-    pp $env.CONTCTL run --name $s.dev.id -d ...$args ...$s.dev.container
+    pp $env.CONTCTL run --name $env.dev.id -d ...$args ...$env.dev.container
 }
 
 export def 'dev container down' [] {
     let ns = ^$env.CONTCTL network ls | from ssv -a | get NAME
-    if $s.dev.id in $ns {
-        lg level 2 { container: $s.dev.id } 'stop'
-        pp $env.CONTCTL rm -f $s.dev.id
-        pp $env.CONTCTL network rm $s.dev.id
+    if $env.dev.id in $ns {
+        lg level 2 { container: $env.dev.id } 'stop'
+        pp $env.CONTCTL rm -f $env.dev.id
+        pp $env.CONTCTL network rm $env.dev.id
     } else {
-        lg level 3 { container: $s.dev.id } 'not running'
+        lg level 3 { container: $env.dev.id } 'not running'
     }
 }
 

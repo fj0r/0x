@@ -2,15 +2,13 @@ ARG PG_VERSION_MAJOR=17
 ARG BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
 
 FROM ${BASEIMAGE} as pg_ext
-FROM readysettech/readyset:latest as readyset
 
 FROM postgres:${PG_VERSION_MAJOR}
+ARG PG_VERSION_MAJOR=17
 
-COPY --from=readyset /usr/local/bin/readyset /usr/local/bin
 
-
-COPY --from=pg_ext /out/lib/postgresql/${PG_MAJOR}/lib/* /usr/lib/postgresql/${PG_MAJOR}/lib
-COPY --from=pg_ext /out/share/postgresql/${PG_MAJOR}/extension/* /usr/share/postgresql/${PG_MAJOR}/extension
+COPY --from=pg_ext /out/lib/postgresql/${PG_VERSION_MAJOR}/lib/* /usr/lib/postgresql/${PG_VERSION_MAJOR}/lib
+COPY --from=pg_ext /out/share/postgresql/${PG_VERSION_MAJOR}/extension/* /usr/share/postgresql/${PG_VERSION_MAJOR}/extension
 
 ARG PIP_FLAGS="--break-system-packages"
 
@@ -152,8 +150,16 @@ RUN set -eux \
   \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
-  ; apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ;
 
+## duckdb
+RUN set -eux \
+  ; mkdir .duckdb/ \
+  ; chmod -R a+rwX .duckdb/ \
+  ; mkdir /var/lib/postgresql/.duckdb/ \
+  ; chmod -R a+rwX /var/lib/postgresql/.duckdb/ \
+  ;
 
 COPY .psqlrc /root
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
@@ -168,7 +174,6 @@ ENV PGCONF_MAX_REPLICATION_SLOTS=10
 ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
-ENV READYSET_MEMORY_LIMIT=
 
 ENV POSTGRES_USER=foo
 ENV POSTGRES_DB=foo
