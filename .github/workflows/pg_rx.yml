@@ -1,4 +1,4 @@
-name: postgres 17
+name: pg_rx
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -6,11 +6,8 @@ name: postgres 17
 # documentation.
 
 on:
-  workflow_run:
-    workflows: ["pg_rx"]
-    branches: [ main ]
-    types:
-      - completed
+  push:
+    branches: [ main, pg_rx ]
   workflow_dispatch:
     inputs: {}
 
@@ -50,26 +47,29 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build pg 17
+      - name: Build pg_rx
+        if: ${{ !contains(github.event.head_commit.message, '-pg_rx') }}
         uses: docker/build-push-action@v4
         with:
           context: postgres
-          file: postgres/17.Dockerfile
+          file: postgres/rx.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17_rx
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             PG_VERSION_MAJOR=17
-            BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
+            PGRX_VERSION=0.12.6
 
-      - name: Build pg gis
+      - name: Build pg_ext
+        if: ${{ !contains(github.event.head_commit.message, '-pg_ext') }}
         uses: docker/build-push-action@v4
         with:
           context: postgres
-          file: postgres/gis.Dockerfile
+          file: postgres/ext.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17gis
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17_ext
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BASEIMAGE=ghcr.io/fj0r/0x:pg17
+            PG_VERSION_MAJOR=17
+            BASEIMAGE=ghcr.io/fj0r/0x:pg17_rx
 
