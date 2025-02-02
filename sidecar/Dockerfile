@@ -19,7 +19,8 @@ RUN set -eux \
   ; git config --global user.name "unnamed" \
   ; git config --global user.email "unnamed@container" \
   \
-  ; nvim_url="https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz" \
+  ; nvim_ver=$(curl --retry 3 -sSL https://api.github.com/repos/neovim/neovim/releases/latest | jq -r '.tag_name') \
+  ; nvim_url="https://github.com/neovim/neovim/releases/download/${nvim_ver}/nvim-linux-x86_64.tar.gz" \
   ; curl --retry 3 -sSL ${nvim_url} | tar zxf - -C /usr/local --strip-components=1 \
   ; strip /usr/local/bin/nvim \
   ; git clone --depth=3 https://github.com/fj0r/nvim-lua.git $XDG_CONFIG_HOME/nvim \
