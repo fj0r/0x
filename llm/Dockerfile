@@ -1,6 +1,7 @@
 FROM ollama/ollama
 
 RUN set -eux \
+  ; ollama --version \
   ; apt-get update \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
