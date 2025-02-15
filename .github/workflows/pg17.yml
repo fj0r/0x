@@ -8,7 +8,7 @@ name: postgres 17
 on:
   workflow_run:
     workflows: ["pg_rx"]
-    branches: [ main ]
+    branches: [ main, pg_rx ]
     types:
       - completed
   workflow_dispatch:
