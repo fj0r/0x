@@ -28,6 +28,9 @@ ENV BUILD_DEPS \
     libkrb5-dev \
     postgresql-server-dev-${PG_MAJOR}
 
+ENV RUNTIME_DEPS \
+    libicu74
+
 #ENV BUILD_CITUS_DEPS \
 #    libicu-dev \
 #    liblz4-dev \
@@ -66,6 +69,7 @@ RUN set -eux \
       procps htop net-tools unzip tree \
       python3 python3-pip python3-setuptools \
       libcurl4 curl jq ca-certificates uuid \
+      ${RUNTIME_DEPS:-} \
       ${BUILD_DEPS:-} \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
@@ -159,6 +163,20 @@ RUN set -eux \
   ; chmod -R a+rwX .duckdb/ \
   ; mkdir /var/lib/postgresql/.duckdb/ \
   ; chmod -R a+rwX /var/lib/postgresql/.duckdb/ \
+  ;
+
+### paradedb
+RUN set -eux \
+  ; mkdir /tmp/paradedb \
+  ; cd /tmp/paradedb \
+  ; code_name=$(cat /etc/os-release | grep '^VERSION_CODENAME' | cut -d '=' -f 2) \
+  ; version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paradedb/pg_analytics/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  ; curl -sSL https://github.com/paradedb/pg_analytics/releases/download/v${version}/postgresql-${PG_VERSION_MAJOR}-pg-analytics_${version}-1PARADEDB-${code_name}_amd64.deb -o pg-analytics.deb \
+  ; version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paradedb/paradedb/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  ; curl -sSL https://github.com/paradedb/paradedb/releases/download/v${version}/postgresql-${PG_VERSION_MAJOR}-pg-search_${version}-1PARADEDB-${code_name}_amd64.deb -o pg-search.deb \
+  ; dpkg -i pg-analytics.deb pg-search.deb \
+  ; cd /tmp \
+  ; rm -rf paradedb \
   ;
 
 COPY .psqlrc /root
