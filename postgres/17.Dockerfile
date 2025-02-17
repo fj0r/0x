@@ -28,8 +28,7 @@ ENV BUILD_DEPS \
     libkrb5-dev \
     postgresql-server-dev-${PG_MAJOR}
 
-ENV RUNTIME_DEPS \
-    libicu74
+ENV RUNTIME_DEPS=''
 
 #ENV BUILD_CITUS_DEPS \
 #    libicu-dev \
