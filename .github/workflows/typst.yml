@@ -47,8 +47,16 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'typst/**'
+
       # https://github.com/docker/build-push-action
       - name: Build fonts
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           file: typst/fonts.Dockerfile
@@ -58,6 +66,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build typst
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: typst

@@ -47,7 +47,15 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'nexus/**'
+
       - name: Build nexus
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: nexus

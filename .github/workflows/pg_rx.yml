@@ -47,8 +47,15 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'postgres/**'
+
       - name: Build pg_rx
-        if: ${{ !contains(github.event.head_commit.message, '-pg_rx') }}
+        if:  (steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch') && !contains(github.event.head_commit.message, '-pg_rx')
         uses: docker/build-push-action@v4
         with:
           context: postgres
@@ -61,7 +68,7 @@ jobs:
             PGRX_VERSION=0.12.7
 
       - name: Build pg_ext
-        if: ${{ !contains(github.event.head_commit.message, '-pg_ext') }}
+        if:  (steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch') && !contains(github.event.head_commit.message, '-pg_rx')
         uses: docker/build-push-action@v4
         with:
           context: postgres

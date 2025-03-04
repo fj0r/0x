@@ -47,9 +47,19 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            or:
+              - 'or/**'
+            reproxy:
+              - 'reproxy/**'
+
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build openresty
+        if: steps.changes.outputs.or == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: or
@@ -61,6 +71,7 @@ jobs:
             BASEIMAGE=${{ env.REGISTRY }}/fj0r/scratch
 
       - name: trigger layer
+        if: steps.changes.outputs.or == 'true' || github.event.name == 'workflow_dispatch'
         run: |
           curl -L -X POST https://api.github.com/repos/fj0r/layer/actions/workflows/layer.yml/dispatches \
             -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -68,6 +79,7 @@ jobs:
             -d '{"ref":"main","inputs":{}}'
 
       - name: Build reproxy
+        if: steps.changes.outputs.reproxy == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: reproxy

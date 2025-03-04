@@ -57,7 +57,15 @@ jobs:
       #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mihomo
       #    labels: ${{ steps.meta.outputs.labels }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'mihomo/**'
+
       - name: Build mihomo
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: mihomo
@@ -67,6 +75,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build mihomo.cloudflare
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: mihomo

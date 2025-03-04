@@ -65,7 +65,15 @@ jobs:
       #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:llama3
       #    labels: ${{ steps.meta.outputs.labels }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'llm/**'
+
       - name: Build ollama
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: llm
@@ -75,6 +83,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build vllm
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: llm

@@ -50,7 +50,15 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'postgres/**'
+
       - name: Build pg 17
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: postgres
@@ -63,6 +71,7 @@ jobs:
             BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
 
       - name: Build pg gis
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: postgres
