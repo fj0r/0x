@@ -1,4 +1,4 @@
-name: llm
+name: mattermost
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: llm
 
 on:
   push:
-    branches: [ main, llm ]
+    branches: [ main, mattermost ]
   workflow_dispatch:
     inputs: {}
 
@@ -52,43 +52,15 @@ jobs:
         with:
           filters: |
             src:
-              - 'llm/**'
+              - 'mattermost/**'
 
-      - name: Build ollama
+      - name: Build mattermost
         if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
-          context: llm
-          file: llm/Dockerfile
+          context: mattermost
+          file: mattermost/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ollama
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:mattermost
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build vllm
-        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
-        uses: docker/build-push-action@v4
-        with:
-          context: llm
-          file: llm/vllm.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:vllm
-          labels: ${{ steps.meta.outputs.labels }}
-
-      #- name: Build llava-phi3
-      #  uses: docker/build-push-action@v4
-      #  with:
-      #    context: llm
-      #    file: llm/llava-phi3.Dockerfile
-      #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:llava-phi3
-      #    labels: ${{ steps.meta.outputs.labels }}
-
-      #- name: Build flag_embedding
-      #  uses: docker/build-push-action@v4
-      #  with:
-      #    context: llm
-      #    file: llm/flag_embedding.Dockerfile
-      #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:flag_embedding
-      #    labels: ${{ steps.meta.outputs.labels }}
 
