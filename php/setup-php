@@ -23,12 +23,16 @@ if [ -n "$PHP_FPM_SERVERS" ]; then
 fi
 
 if [ -n "$PHP_PROFILE" ] || [ -n "$PHP_DEBUG" ]; then
-    xdebug_mode='trace'
+    if [ -n "$PHP_TRACE" ]; then
+        xdebug_mode='trace,'
+    else
+        xdebug_mode=''
+    fi
     if [ -n "$PHP_DEBUG" ]; then
-        xdebug_mode="${xdebug_mode},debug"
+        xdebug_mode="${xdebug_mode}debug"
     fi
     if [ -n "$PHP_PROFILE" ]; then
-        xdebug_mode="${xdebug_mode},profile"
+        xdebug_mode="${xdebug_mode}profile"
     fi
 
     mkdir -p /var/log/xdebug
