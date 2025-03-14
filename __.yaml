@@ -1,0 +1,55 @@
+generate:
+    name: build images
+    user: fj0r
+    image: '0x'
+    registry: ghcr.io
+    exclude:
+    - or/Dockerfile
+    - or/full.Dockerfile
+    - openresty/Dockerfile
+    - php/7.Dockerfile
+    - php/8.Dockerfile
+    - postgres/Dockerfile
+    - postgres/dev.Dockerfile
+    - postgres/ext.Dockerfile
+    - postgres/ferret.Dockerfile
+    - postgres/gis.Dockerfile
+    - postgres/ml.Dockerfile
+    - postgres/rx.Dockerfile
+    - ci/common.Dockerfile
+    - flink/scala.Dockerfile
+    - java/es.Dockerfile
+    - java/jdk-11.Dockerfile
+    - java/jdk-8.Dockerfile
+    - java/polynote.Dockerfile
+    - java/pulsar.Dockerfile
+    - java/scala.Dockerfile
+    - java/scala2.Dockerfile
+    - maddy/base.Dockerfile
+    - mail/assets/pg.Dockerfile
+    - mail/assets/sqlite.Dockerfile
+    - mail/base.Dockerfile
+    - ollama/embedding.Dockerfile
+    - ollama/flag_embedding.Dockerfile
+    - ollama/llama3.Dockerfile
+    - ollama/llava-phi3.Dockerfile
+    - ollama/minicpm.Dockerfile
+    - ollama/phi3.Dockerfile
+    - ollama/qwen2.Dockerfile
+    - skipper/Dockerfile
+    - skipper/alpine.Dockerfile
+    - spark/Dockerfile
+    - typst/Dockerfile
+    - typst/fonts.Dockerfile
+    - v2ray/Dockerfile
+    repo:
+      ci:
+        Dockerfile:
+          build-args: |
+            BASEIMAGE=${{ env.REGISTRY }}/fj0r/io:latest
+      java:
+        Dockerfile:
+          file: java/jdk-17.Dockerfile
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:java17
+
+
