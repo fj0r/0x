@@ -1,8 +1,8 @@
 generate:
-    name: build images
     user: fj0r
     image: '0x'
     registry: ghcr.io
+    token_ref: secrets.GHCR_TOKEN
     exclude:
     - or/Dockerfile
     - or/full.Dockerfile

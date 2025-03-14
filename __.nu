@@ -19,14 +19,10 @@ export def generate [
     paths
     ctx: record
 ] {
-    let pf = $paths | reduce -f {} {|i,a|
-        $a | insert $i [ $"($i)/**" ]
-    }
-    | to yaml
-    let bs = $paths
-    | each {|x|
-        cd $x
-        ls *Dockerfile | get name
+    let oldpwd = $env.PWD
+    for x in $paths {
+        cd ([$oldpwd $x] | path join)
+        let bs = ls *Dockerfile | get name
         | each {|i|
             let file = $"($x)/($i)"
             if $file in $ctx.exclude { return }
@@ -51,67 +47,69 @@ export def generate [
                 with: $w
             }
         }
-    }
-    | flatten
-    let wf = {
-      name: $ctx.name
-      on: {
-        push: {
-          branches: [main]
-        }
-        workflow_dispatch: {
-          inputs: {}
-        }
-      }
-      env: {
-        REGISTRY: $ctx.registry
-        IMAGE_NAME: $"($ctx.user)/($ctx.image)"
-      }
-      jobs: {
-        build: {
-          runs-on: ubuntu-latest
-          if: "${{ !endsWith(github.event.head_commit.message, '~') }}"
-          permissions: {
-            contents: read
-            packages: write
+
+        let pf = [ $"($x)/**" ] | to yaml
+
+        {
+          name: $"build ($x)"
+          on: {
+            push: {
+              branches: [main]
+            }
+            workflow_dispatch: {
+              inputs: {}
+            }
           }
-          steps: [
-            {
-              name: "Checkout repository",
-              uses: "actions/checkout@v3"
-            }
-            {
-              name: "Log into registry ${{ env.REGISTRY }}"
-              if: "github.event_name != 'pull_request'"
-              uses: "docker/login-action@v2",
-              with: {
-                registry: "${{ env.REGISTRY }}",
-                username: $ctx.user,
-                password: "${{ secrets.GHCR_TOKEN }}"
+          env: {
+            REGISTRY: $ctx.registry
+            IMAGE_NAME: $"($ctx.user)/($ctx.image)"
+          }
+          jobs: {
+            build: {
+              runs-on: ubuntu-latest
+              if: "${{ !endsWith(github.event.head_commit.message, '~') }}"
+              permissions: {
+                contents: read
+                packages: write
               }
+              steps: [
+                {
+                  name: "Checkout repository",
+                  uses: "actions/checkout@v3"
+                }
+                {
+                  name: "Log into registry ${{ env.REGISTRY }}"
+                  if: "github.event_name != 'pull_request'"
+                  uses: "docker/login-action@v2",
+                  with: {
+                    registry: "${{ env.REGISTRY }}",
+                    username: $ctx.user,
+                    password: $"${{ ($ctx.token_ref) }}"
+                  }
+                }
+                {
+                  name: "Extract Docker metadata"
+                  id: meta
+                  uses: "docker/metadata-action@v4"
+                  with: {
+                    images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+                  }
+                }
+                {
+                  uses: "dorny/paths-filter@v3"
+                  id: changes
+                  with: {
+                    filters: $pf
+                  }
+                }
+                ...$bs
+              ]
             }
-            {
-              name: "Extract Docker metadata"
-              id: meta
-              uses: "docker/metadata-action@v4"
-              with: {
-                images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-              }
-            }
-            {
-              uses: "dorny/paths-filter@v3"
-              id: changes
-              with: {
-                filters: $pf
-              }
-            }
-            ...$bs
-          ]
+          }
         }
-      }
+        | to yaml
+        | save -f $"($oldpwd)/.github/workflows/($x).yaml"
     }
-    | to yaml
-    | save -f .github/workflows/build.yaml
 }
 
 export def list [] {
