@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=x
 
 RUN set -eux \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-        vllm
+        vllm \
+  ;
 
 ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
