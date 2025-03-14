@@ -7,7 +7,7 @@ name: risingwave
 
 on:
   push:
-    branches: [ risingwave ]
+    branches: [ main ]
   workflow_dispatch:
     inputs: {}
 
