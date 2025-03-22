@@ -74,7 +74,7 @@ for i in "${!CONF_FPM_@}"; do
     v=$(eval "echo \"\$$i\"")
     if [ -n "$v" ]; then
         sed -e 's!.*\('"$k"' =\).*$!\1 '"$v"'!' \
-            -i /etc/php/${PHP_VERSION}/fpm/php-fpm.ini
+            -i /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
     fi
 done
 
