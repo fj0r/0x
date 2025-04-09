@@ -25,6 +25,7 @@ RUN set -eux \
     clang \
     ninja-build \
     libssl-dev \
+    liblz4-dev \
     pkg-config \
     postgresql-server-dev-${PG_VERSION_MAJOR} \
     tree \

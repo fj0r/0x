@@ -18,6 +18,28 @@ ARG PG_VERSION_MAJOR=17
 #   ; tar zcvf /tmp/paradedb/pg_search.tar.gz * \
 #   ;
 
+######################
+# pg_mooncake
+######################
+FROM ${BASEIMAGE} as builder-pg_mooncake
+ARG PG_VERSION_MAJOR=17
+
+WORKDIR /tmp
+RUN set -eux \
+  ; git clone --recurse-submodules https://github.com/Mooncake-Labs/pg_mooncake.git \
+  ; cd pg_mooncake \
+  ; make release -j$(nproc) \
+  \
+  ; mkdir -p /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; cp build/release/libduckdb.so /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; cp build/release/pg_mooncake.so /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
+  ; mkdir -p /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cp *.control /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cp sql/*.sql /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
+  ; cd /out \
+  ; tar zcvf /tmp/pg_mooncake.tar.gz * \
+  ;
+
 
 ######################
 # pg_jsonschema
@@ -59,7 +81,6 @@ RUN set -eux \
 #   ; cd /out/pg_graphql \
 #   ; tar zcvf /tmp/pg_graphql.tar.gz * \
 #   ;
-
 
 ######################
 # pgvector
@@ -110,6 +131,7 @@ FROM alpine as filer
 RUN mkdir -p /out \
   ;
 
+COPY --from=builder-pg_mooncake /tmp/pg_mooncake.tar.gz /tmp
 COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
 #COPY --from=builder-pg_vector /tmp/pg_vectorscale.tar.gz /tmp
 
@@ -120,7 +142,7 @@ COPY --from=builder-jsonschema /tmp/pg_jsonschema.tar.gz /tmp
 #COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in vector jsonschema \
+  ; for x in mooncake vector jsonschema \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done \
   ;
