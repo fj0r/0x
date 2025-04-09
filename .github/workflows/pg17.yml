@@ -55,7 +55,7 @@ jobs:
         with:
           filters: |
             src:
-              - 'postgres/**'
+              - 'postgres/17.Dockerfile'
 
       - name: Build pg 17
         if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
