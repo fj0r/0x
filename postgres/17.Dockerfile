@@ -169,11 +169,9 @@ RUN set -eux \
   ; mkdir /tmp/paradedb \
   ; cd /tmp/paradedb \
   ; code_name=$(cat /etc/os-release | grep '^VERSION_CODENAME' | cut -d '=' -f 2) \
-  ; version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paradedb/pg_analytics/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  ; curl -sSL https://github.com/paradedb/pg_analytics/releases/download/v${version}/postgresql-${PG_VERSION_MAJOR}-pg-analytics_${version}-1PARADEDB-${code_name}_amd64.deb -o pg-analytics.deb \
   ; version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paradedb/paradedb/releases | jq -r '.[0].tag_name' | cut -c 2-) \
   ; curl -sSL https://github.com/paradedb/paradedb/releases/download/v${version}/postgresql-${PG_VERSION_MAJOR}-pg-search_${version}-1PARADEDB-${code_name}_amd64.deb -o pg-search.deb \
-  ; dpkg -i pg-analytics.deb pg-search.deb \
+  ; dpkg -i pg-search.deb \
   ; cd /tmp \
   ; rm -rf paradedb \
   ;
