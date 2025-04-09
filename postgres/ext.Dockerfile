@@ -24,7 +24,7 @@ ARG PG_VERSION_MAJOR=17
 FROM ${BASEIMAGE} as builder-pg_mooncake
 ARG PG_VERSION_MAJOR=17
 
-WORKDIR /tmp/pg_vector
+WORKDIR /tmp
 RUN set -eux \
   ; git clone --recurse-submodules https://github.com/Mooncake-Labs/pg_mooncake.git \
   ; cd pg_mooncake \
