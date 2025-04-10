@@ -157,12 +157,12 @@ RUN set -eux \
   ;
 
 ## duckdb
-RUN set -eux \
-  ; mkdir .duckdb/ \
-  ; chmod -R a+rwX .duckdb/ \
-  ; mkdir /var/lib/postgresql/.duckdb/ \
-  ; chmod -R a+rwX /var/lib/postgresql/.duckdb/ \
-  ;
+# RUN set -eux \
+#   ; mkdir .duckdb/ \
+#   ; chmod -R a+rwX .duckdb/ \
+#   ; mkdir /var/lib/postgresql/.duckdb/ \
+#   ; chmod -R a+rwX /var/lib/postgresql/.duckdb/ \
+#   ;
 
 ### paradedb
 RUN set -eux \
