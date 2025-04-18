@@ -15,8 +15,7 @@ RUN set -eux \
         httpx aiofile aiostream fastapi uvicorn \
         debugpy pytest pydantic PyParsing \
         ipython typer pydantic-settings pyyaml \
-        boltons decorator deepmerge \
-        structlog python-json-logger \
+        boltons decorator \
         \
         Numpy Pandas numba Scikit-learn \
         apache-flink \

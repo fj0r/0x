@@ -73,7 +73,7 @@ RUN set -eux \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       pydantic PyParsing \
-      boltons decorator deepmerge \
+      boltons decorator \
       numpy httpx pyyaml \
   \
   ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \

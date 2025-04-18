@@ -72,7 +72,7 @@ RUN set -eux \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
       pydantic PyParsing \
-      boltons decorator deepmerge \
+      boltons decorator \
       numpy httpx pyyaml \
       pyiceberg[s3fs,pyarrow,pandas] \
   \

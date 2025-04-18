@@ -17,8 +17,7 @@ RUN set -eux \
         httpx aiofile aiostream fastapi uvicorn \
         debugpy pytest pydantic PyParsing \
         ipython typer pydantic-settings pyyaml \
-        boltons decorator deepmerge \
-        structlog python-json-logger \
+        boltons decorator \
         #pyiceberg[s3fs,pyarrow,pandas] \
   ; python3 -m playwright install \
   \
