@@ -30,4 +30,3 @@ RUN set -eux \
   ; opwd=$PWD; cd /root/.config/nushell; git log -1 --date=iso; cd $opwd \
   \
   ;
-

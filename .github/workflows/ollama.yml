@@ -51,11 +51,15 @@ jobs:
         id: changes
         with:
           filters: |
-            src:
-              - 'ollama/**'
+            ollama:
+              - 'ollama/Dockerfile'
+            rocm:
+              - 'ollama/rocm.Dockerfile'
+            vllm:
+              - 'vllm/Dockerfile'
 
       - name: Build ollama
-        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
+        if: steps.changes.outputs.ollama == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: ollama
@@ -64,18 +68,18 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ollama
           labels: ${{ steps.meta.outputs.labels }}
 
-      #- name: Build ollama:rocm
-      #  if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
-      #  uses: docker/build-push-action@v4
-      #  with:
-      #    context: ollama
-      #    file: ollama/rocm.Dockerfile
-      #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ollama-rocm
-      #    labels: ${{ steps.meta.outputs.labels }}
+      - name: Build ollama:rocm
+        if: steps.changes.outputs.rocm == 'true' || github.event.name == 'workflow_dispatch'
+        uses: docker/build-push-action@v4
+        with:
+          context: ollama
+          file: ollama/rocm.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ollama-rocm
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build vllm
-        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
+        if: steps.changes.outputs.vllm == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: vllm
