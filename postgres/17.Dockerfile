@@ -174,6 +174,14 @@ RUN set -eux \
   ; dpkg -i pg-search.deb \
   ; cd /tmp \
   ; rm -rf paradedb \
+  \
+  ; mkdir /tmp/vchord \
+  ; cd /tmp/vchord \
+  ; version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/tensorchord/VectorChord/releases | jq -r '.[0].tag_name') \
+  ; curl -sSL https://github.com/tensorchord/VectorChord/releases/download/${version}/postgresql-${PG_VERSION_MAJOR}-vchord_${version}-1_$(dpkg --print-architecture).deb -o vchord.deb \
+  ; dpkg -i vchord.deb \
+  ; cd /tmp \
+  ; rm -rf vchord \
   ;
 
 COPY .psqlrc /root
@@ -186,7 +194,7 @@ ENV PGCONF_RANDOM_PAGE_COST=1.1
 ENV PGCONF_WAL_LEVEL=logical
 ENV PGCONF_MAX_REPLICATION_SLOTS=10
 # ,citus,timescaledb
-ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search'"
+ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,vchord.so'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
 
