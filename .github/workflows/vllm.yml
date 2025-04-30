@@ -57,6 +57,10 @@ jobs:
               - 'ollama/rocm.Dockerfile'
             vllm:
               - 'vllm/Dockerfile'
+            sentence_transformers:
+              - 'vllm/sentence_transformers.Dockerfile'
+              - 'vllm/conan-embedding.Dockerfile'
+              - 'vllm/conan-embedding.py'
 
       - name: Build ollama
         if: steps.changes.outputs.ollama == 'true' || github.event.name == 'workflow_dispatch'
@@ -88,21 +92,23 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:vllm
           labels: ${{ steps.meta.outputs.labels }}
 
-      #- name: Build llava-phi3
+      #- name: Build sentence_transformers
+      #  if: steps.changes.outputs.sentence_transformers == 'true'
       #  uses: docker/build-push-action@v4
       #  with:
-      #    context: llm
-      #    file: llm/llava-phi3.Dockerfile
+      #    context: vllm
+      #    file: vllm/sentence_transformers.Dockerfile
       #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:llava-phi3
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sentence_transformers
       #    labels: ${{ steps.meta.outputs.labels }}
 
-      #- name: Build flag_embedding
+      #- name: Build conan-embedding
+      #  if: steps.changes.outputs.sentence_transformers == 'true'
       #  uses: docker/build-push-action@v4
       #  with:
-      #    context: llm
-      #    file: llm/flag_embedding.Dockerfile
+      #    context: vllm
+      #    file: vllm/conan-embedding.Dockerfile
       #    push: ${{ github.event_name != 'pull_request' }}
-      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:flag_embedding
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:conan-embedding
       #    labels: ${{ steps.meta.outputs.labels }}
 
