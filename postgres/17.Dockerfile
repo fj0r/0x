@@ -72,6 +72,7 @@ RUN set -eux \
       ${BUILD_DEPS:-} \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
+      psycopg[binary] \
       pydantic PyParsing \
       boltons decorator \
       numpy httpx pyyaml \
