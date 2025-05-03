@@ -13,6 +13,14 @@ pg_setup_conf() {
 	echo "## Setup \"$PGDATA/usr.conf\""
 	echo "" > $PGDATA/usr.conf
 
+	for i in "${!PGQONF_@}"; do
+		local k=$(echo ${i:7} | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
+		local v=$(eval "echo \"\$$i\"")
+		if [ -n "$v" ]; then
+			echo "$k = '$v'" >> $PGDATA/usr.conf
+		fi
+	done
+
 	for i in "${!PGCONF_@}"; do
 		local k=$(echo ${i:7} | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
 		local v=$(eval "echo \"\$$i\"")

@@ -1,6 +1,34 @@
---- docker-entrypoint.sh.origin	2024-05-09 14:10:41.646590745 +0800
-+++ docker-entrypoint.sh	2024-05-09 18:34:44.655801509 +0800
-@@ -298,6 +298,61 @@
+--- docker-entrypoint.sh.origin	2025-05-03 16:03:47.850115630 +0800
++++ docker-entrypoint.sh	2024-07-08 19:04:29.000000000 +0800
+@@ -104,7 +104,7 @@
+ # assumes database is not set up, ie: [ -z "$DATABASE_ALREADY_EXISTS" ]
+ docker_verify_minimum_env() {
+ 	case "${PG_MAJOR:-}" in
+-		13) # https://github.com/postgres/postgres/commit/67a472d71c98c3d2fa322a1b4013080b20720b98
++		12 | 13) # https://github.com/postgres/postgres/commit/67a472d71c98c3d2fa322a1b4013080b20720b98
+ 			# check password first so we can output the warning before postgres
+ 			# messes it up
+ 			if [ "${#POSTGRES_PASSWORD}" -ge 100 ]; then
+@@ -252,7 +252,7 @@
+ 		printf '\n'
+ 		if [ 'trust' = "$POSTGRES_HOST_AUTH_METHOD" ]; then
+ 			printf '# warning trust is enabled for all connections\n'
+-			printf '# see https://www.postgresql.org/docs/17/auth-trust.html\n'
++			printf '# see https://www.postgresql.org/docs/12/auth-trust.html\n'
+ 		fi
+ 		printf 'host all all all %s\n' "$POSTGRES_HOST_AUTH_METHOD"
+ 	} >> "$PGDATA/pg_hba.conf"
+@@ -269,9 +269,6 @@
+ 	# does not listen on external TCP/IP and waits until start finishes
+ 	set -- "$@" -c listen_addresses='' -p "${PGPORT:-5432}"
+ 
+-	# unset NOTIFY_SOCKET so the temporary server doesn't prematurely notify
+-	# any process supervisor.
+-	NOTIFY_SOCKET= \
+ 	PGUSER="${PGUSER:-$POSTGRES_USER}" \
+ 	pg_ctl -D "$PGDATA" \
+ 		-o "$(printf '%q ' "$@")" \
+@@ -301,6 +298,61 @@
  	return 1
  }
  
@@ -51,8 +79,8 @@
 +        readyset --address $"0.0.0.0:${READYSET_PORT:-5433}" \
 +            --database-type postgresql \
 +            --upstream-db-url postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB:-postgres} \
-+            --no-color --log-path /var/lib/readyset \
-+            --storage-dir /var/lib/readyset \
++            --no-color --log-path /var/lib/postgresql/readyset \
++            --storage-dir /var/lib/postgresql/readyset \
 +            --memory-limit ${READYSET_MEMORY_LIMIT} &
 +	fi
 +}
@@ -62,7 +90,7 @@
  _main() {
  	# if first arg looks like a flag, assume we want to run postgres server
  	if [ "${1:0:1}" = '-' ]; then
-@@ -315,6 +370,10 @@
+@@ -318,6 +370,10 @@
  
  		# only run initialization on an empty data directory
  		if [ -z "$DATABASE_ALREADY_EXISTS" ]; then
@@ -73,7 +101,7 @@
  			docker_verify_minimum_env
  
  			# check dir permissions to reduce likelihood of half-initialized database
-@@ -322,6 +381,10 @@
+@@ -325,6 +381,10 @@
  
  			docker_init_database_dir
  			pg_setup_hba_conf "$@"
@@ -84,7 +112,7 @@
  
  			# PGPASSWORD is required for psql when authentication is required for 'local' connections via pg_hba.conf and is otherwise harmless
  			# e.g. when '--auth=md5' or '--auth-local=md5' is used in POSTGRES_INITDB_ARGS
-@@ -348,6 +411,11 @@
+@@ -351,6 +411,11 @@
  		fi
  	fi
  

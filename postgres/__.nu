@@ -33,8 +33,8 @@ export def 'docker-entrypoint patch' [] {
         let x = $a | last | last
         [...$a, [$x, $i]]
     }
-    | range 1..
-    | each {|x| $o | range $x.0..($x.1 - 1) | get item | str join (char newline) }
+    | slice 1..
+    | each {|x| $o | slice $x.0..($x.1 - 1) | get item | str join (char newline) }
 
     $m | transpose k v
     | each {|x|
