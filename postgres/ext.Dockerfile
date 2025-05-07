@@ -19,27 +19,29 @@ ARG PG_VERSION_MAJOR=17
 #   ;
 
 ######################
-# pg_mooncake
+# pg_duckdb
 ######################
-FROM ${BASEIMAGE} as builder-pg_mooncake
+
+FROM ${BASEIMAGE} as builder-pg_duckdb
 ARG PG_VERSION_MAJOR=17
 
-WORKDIR /tmp
+WORKDIR /tmp/pg_duckdb
 RUN set -eux \
-  ; git clone --recurse-submodules https://github.com/Mooncake-Labs/pg_mooncake.git \
-  ; cd pg_mooncake \
-  ; make release -j$(nproc) \
+  ; apt update \
+  ; apt install -y --no-install-recommends \
+    libreadline-dev zlib1g-dev flex bison libxml2-dev libxslt-dev \
+    libssl-dev libxml2-utils xsltproc \
+    pkg-config libc++-dev libc++abi-dev libglib2.0-dev \
+    libtinfo5 libstdc++-12-dev liblz4-dev \
   \
-  ; mkdir -p /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
-  ; cp build/release/libduckdb.so /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
-  ; cp build/release/pg_mooncake.so /out/lib/postgresql/${PG_VERSION_MAJOR}/lib \
-  ; mkdir -p /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
-  ; cp *.control /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
-  ; cp sql/*.sql /out/share/postgresql/${PG_VERSION_MAJOR}/extension \
-  ; cd /out \
-  ; tar zcvf /tmp/pg_mooncake.tar.gz * \
+  ; git clone --depth=1 https://github.com/duckdb/pg_duckdb.git . \
+  ; git submodule update --init --recursive \
+  ; make -j$(nproc) \
+  ; DESTDIR=/out make install \
+  \
+  ; cd /out/usr \
+  ; tar zcvf /tmp/pg_duckdb.tar.gz * \
   ;
-
 
 ######################
 # pg_jsonschema
@@ -83,7 +85,7 @@ RUN set -eux \
 #   ;
 
 ######################
-# pgvector
+# pg_vector
 ######################
 
 FROM ${BASEIMAGE} as builder-pg_vector
@@ -131,7 +133,7 @@ FROM alpine as filer
 RUN mkdir -p /out \
   ;
 
-COPY --from=builder-pg_mooncake /tmp/pg_mooncake.tar.gz /tmp
+COPY --from=builder-pg_duckdb /tmp/pg_duckdb.tar.gz /tmp
 COPY --from=builder-pg_vector /tmp/pg_vector.tar.gz /tmp
 #COPY --from=builder-pg_vector /tmp/pg_vectorscale.tar.gz /tmp
 
@@ -142,7 +144,7 @@ COPY --from=builder-jsonschema /tmp/pg_jsonschema.tar.gz /tmp
 #COPY --from=builder-paradedb /tmp/pg_graphql.tar.gz /tmp
 
 RUN set -eux \
-  ; for x in mooncake vector jsonschema \
+  ; for x in duckdb vector jsonschema \
   ; do tar zxvf /tmp/pg_${x}.tar.gz -C /out \
   ; done \
   ;

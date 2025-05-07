@@ -195,7 +195,7 @@ ENV PGCONF_RANDOM_PAGE_COST=1.1
 ENV PGCONF_WAL_LEVEL=logical
 ENV PGCONF_MAX_REPLICATION_SLOTS=10
 # ,citus,timescaledb
-ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,vchord.so'"
+ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,pg_duckdb,vchord.so'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
 

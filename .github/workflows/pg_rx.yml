@@ -65,7 +65,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             PG_VERSION_MAJOR=17
-            PGRX_VERSION=0.12.7
+            PGRX_VERSION=0.14.1
 
       - name: Build pg_ext
         if:  (steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch') && !contains(github.event.head_commit.message, '-pg_rx')
