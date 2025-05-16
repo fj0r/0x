@@ -12,6 +12,13 @@ RUN set -eux \
   ; curl -sSL "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db" -o /opt/geoip.db \
   ; curl -sSL "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/cn_domain.yaml" -o /opt/cn_domain.yaml \
   \
+  ; watchexec_ver=$(curl --retry 3 -sSL https://api.github.com/repos/watchexec/watchexec/releases/latest  | jq -r '.tag_name' | cut -c 2-) \
+  ; watchexec_url="https://github.com/watchexec/watchexec/releases/latest/download/watchexec-${watchexec_ver}-x86_64-unknown-linux-musl.tar.xz" \
+  ; curl --retry 3 -sSL ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
+  \
+  ; yq_url="https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64.tar.gz" \
+  ; curl --retry 3 -sSL ${yq_url} | tar zxf - ./yq_linux_amd64 && mv yq_linux_amd64 /usr/local/bin/yq \
+  \
   ;
 
 COPY entrypoint/mihomo.sh /entrypoint/
