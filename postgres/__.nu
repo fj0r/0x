@@ -103,11 +103,11 @@ export def 'test' [...a:string@cmpl-test] {
             $args ++= [-e "POSTGRES_MAX_MEMORY_USAGE=16000,32"]
         }
     }
-    pp $env.CONTCTL run ...$args 'ghcr.lizzie.fun/fj0r/0x:pg17'
+    pp $env.CNTRCTL run ...$args 'ghcr.lizzie.fun/fj0r/0x:pg17'
 }
 
 export def 'backup' [] {
-    sudo $env.CONTCTL ...[
+    sudo $env.CNTRCTL ...[
         exec $env.rt.container
         bash -c
         $'pg_dumpall -U ($env.pg.user) > /backup/($env.pg.db).pg.sql'
@@ -116,10 +116,10 @@ export def 'backup' [] {
 }
 
 export def 'restore' [] {
-    pp $env.CONTCTL rm -f $env.rt.container
+    pp $env.CNTRCTL rm -f $env.rt.container
     sudo rm -rf $"($env.rt.dir)/"
     mkdir $env.rt.dir
-    pp $env.CONTCTL run ...[
+    pp $env.CNTRCTL run ...[
         -d --restart=always
         -v $"($env.PWD)/($env.rt.dir):/var/lib/postgresql/data"
         -v $"($env.PWD)/backup:/backup"
@@ -131,13 +131,13 @@ export def 'restore' [] {
         postgres:16
     ]
     wait-cmd -t 'wait postgresql' {
-        sudo $env.CONTCTL ...[
+        sudo $env.CNTRCTL ...[
             exec $env.rt.container
             bash -c
             $'pg_isready -U ($env.pg.user)'
         ]
     }
-    sudo $env.CONTCTL ...[
+    sudo $env.CNTRCTL ...[
         exec $env.rt.container
         bash -c
         $'cat /backup/($env.pg.db).pg.sql | psql -U ($env.pg.user)'
@@ -167,7 +167,7 @@ export def 'calc_mem' [a] {
 }
 
 export def 'pgcat' [] {
-    pp $env.CONTCTL run ...[
+    pp $env.CNTRCTL run ...[
         -d --name pgcat
         --restart=always
         --privileged

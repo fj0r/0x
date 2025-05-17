@@ -33,7 +33,7 @@ export def gen [file:string@cmpl-gen] {
     | update extension pdf
     | update parent {|x| [ out $x.parent] | path join }
     | path join
-    pp $env.CONTCTL run ...[
+    pp $env.CNTRCTL run ...[
         --name typst
         --rm
         --workdir '/world'

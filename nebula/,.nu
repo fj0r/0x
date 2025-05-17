@@ -6,7 +6,7 @@ $env.comma_scope = {|_|{
             let dir = open $a.0 | get name
             let img = image-select 'fj0rd/0x:nebula'
             let cmd = [
-                $env.CONTCTL run
+                $env.CNTRCTL run
                 --name nebula-util --rm
                 -v $"($_.wd)/data/($dir):/world"
                 --workdir=/world

@@ -13,7 +13,7 @@ export def 'dev container up' [port:int@cmpl-port] {
         port: $port, pubkey: $env.dev.pubkey
     } start
 
-    pp $env.CONTCTL network create $env.dev.id
+    pp $env.CNTRCTL network create $env.dev.id
 
     mut args = []
 
@@ -64,15 +64,15 @@ export def 'dev container up' [port:int@cmpl-port] {
     | items {|k,v| [-e $"($k)=($v)"]}
     | flatten)
 
-    pp $env.CONTCTL run --name $env.dev.id -d ...$args ...$env.dev.container
+    pp $env.CNTRCTL run --name $env.dev.id -d ...$args ...$env.dev.container
 }
 
 export def 'dev container down' [] {
-    let ns = ^$env.CONTCTL network ls | from ssv -a | get NAME
+    let ns = ^$env.CNTRCTL network ls | from ssv -a | get NAME
     if $env.dev.id in $ns {
         lg level 2 { container: $env.dev.id } 'stop'
-        pp $env.CONTCTL rm -f $env.dev.id
-        pp $env.CONTCTL network rm $env.dev.id
+        pp $env.CNTRCTL rm -f $env.dev.id
+        pp $env.CNTRCTL network rm $env.dev.id
     } else {
         lg level 3 { container: $env.dev.id } 'not running'
     }

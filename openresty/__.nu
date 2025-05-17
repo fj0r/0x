@@ -38,5 +38,5 @@ export def 'srv' [...a:string@cmpl] {
     if 'route' in $a { $args ++= [[-e ROUTEFILE=/etc/openresty/test.location.json]] }
     if 'site' in $a { $args ++= [[-e SITEFILE=/etc/openresty/test.site.json]] }
     if 'qng' in $a { $args ++= [[-e QNGCONFIG=/etc/openresty/qng.example.json]] }
-    pp $env.CONTCTL run ...$args localhost/0x:openresty bash
+    pp $env.CNTRCTL run ...$args localhost/0x:openresty bash
 }
