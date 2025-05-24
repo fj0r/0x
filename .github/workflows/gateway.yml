@@ -7,7 +7,7 @@ name: openresty (layer), ferron
 
 on:
   push:
-    branches: [ main, or, web, tg ]
+    branches: [ main, or, web, tg, ferron ]
   workflow_dispatch:
     inputs: {}
 

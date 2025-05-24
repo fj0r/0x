@@ -11,7 +11,7 @@ RUN set -eux \
   ; ferron_url="https://github.com/ferronweb/ferron/releases/download/${ferron_ver}/ferron-${ferron_ver}-x86_64-unknown-linux-musl.zip" \
   ; mkdir -p /opt/ferron \
   ; cd /opt/ferron \
-  ; curl --retry 3 -sSL ${ferron_url} -O ferron.zip \
+  ; curl --retry 3 -sSL ${ferron_url} -o ferron.zip \
   ; unzip ferron.zip \
   ; rm -f ferron.zip
 
