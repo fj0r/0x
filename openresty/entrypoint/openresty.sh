@@ -15,6 +15,7 @@ if [ -n "${QNGCONFIG}" ]; then
         echo "{}" > ${QNGCONFIG}
     fi
     qjs --std /etc/openresty/qng.js > /etc/openresty/nginx.conf
+    cat /etc/openresty/nginx.conf
 fi
 
 /opt/openresty/bin/openresty 2>&1 &

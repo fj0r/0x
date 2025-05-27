@@ -7,7 +7,7 @@ def cmpl-port [] {
 }
 
 export def 'dev container up' [port:int@cmpl-port] {
-    , dev container down
+    dev container down
     lg level 3 {
         container: $env.dev.id, workdir: $env.dev.wd
         port: $port, pubkey: $env.dev.pubkey
@@ -47,10 +47,12 @@ export def 'dev container up' [port:int@cmpl-port] {
     $args ++= $dev
 
     $args ++= [
+        -e QNGCONFIG=/etc/openresty/qng.example.json
+        -e QNG_ABOUT_ENABLE="0"
+        -e QNG_HELLO_ENABLE="1"
+        -e QNG_WORKER_PROCESSES="8"
         -e LOG_FORMAT=json
-        -v $"($env.PWD)/../openresty/config/nginx.conf.tmpl:/etc/openresty/nginx.conf.tmpl"
-        -v $"($env.PWD)/../openresty/config/site.conf.tmpl:/etc/openresty/site.conf.tmpl"
-        -v $"($env.PWD)/../openresty/config/default.json:/etc/openresty/default.json"
+        -v $"($env.PWD)/../openresty/config/qng.js:/etc/openresty/qng.js"
         #-e PHP_PROFILE='1'
         #-e PHP_DEBUG=host.containers.internal:9001
         -e PHP_DEBUG=localhost:9000

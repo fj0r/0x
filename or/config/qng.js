@@ -207,7 +207,15 @@ const modules = {
                 )
             }
         }
-
+    },
+    hello: {
+        location(o, _, $) {
+            if (o.hello.enable) {
+                $(`location = /${o.hello.path}`
+                    , `return 200 "hello";`
+                )
+            }
+        }
     },
     upload: {
         global(o, _, $, s) {
@@ -497,6 +505,10 @@ const default_config = {
             "CI_PIPELINE_BEGIN",
             "CI_PIPELINE_ID"
         ]
+    },
+    hello: {
+        enable: 0,
+        path: "hello"
     },
     nchan: {
         enable: 0

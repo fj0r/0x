@@ -26,17 +26,18 @@ export def 'srv' [...a:string@cmpl] {
         -v $"($env.PWD)/entrypoint/openresty.sh:/entrypoint/openresty.sh"
         $config
         -e ed25519_root=123
-        -e FASTCGI=php
-        -e IGNORE_INDEX=1
-        -e FASTCGI_PATHINFO=1
-        -e NCHAN=1
-        -e ABOUT=""
-        -e REAL_REMOTE=""
+        -e QNGCONFIG=/etc/openresty/qng.example.json
+        -e QNG_FASTCGI_TYPE=php
+        -e QNG_FASTCGI_IGNORE_INDEX=1
+        -e QNG_FASTCGI_PATHINFO=1
+        -e QNG_NCHAN=1
+        -e QNG_ABOUT=""
+        -e QNG_REAL_REMOTE=""
     ]
     if 'upload' in $a { $args ++= [[-e UPLOAD_ROOT=upload/]] }
     if 'pass' in $a { $args ++= [[-e HTPASSWD=admin:123]] }
     if 'route' in $a { $args ++= [[-e ROUTEFILE=/etc/openresty/test.location.json]] }
     if 'site' in $a { $args ++= [[-e SITEFILE=/etc/openresty/test.site.json]] }
     if 'qng' in $a { $args ++= [[-e QNGCONFIG=/etc/openresty/qng.example.json]] }
-    pp $env.CNTRCTL run ...$args localhost/0x:openresty bash
+    pp $env.CNTRCTL run ...$args '0x:openresty' bash
 }
