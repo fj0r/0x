@@ -77,6 +77,17 @@ RUN set -eux \
       boltons decorator \
       numpy httpx pyyaml \
   \
+  ; nu_ver=$(curl --retry 3 -sSL https://api.github.com/repos/nushell/nushell/releases/latest | jq -r '.tag_name') \
+  ; nu_url="https://github.com/nushell/nushell/releases/download/${nu_ver}/nu-${nu_ver}-x86_64-unknown-linux-musl.tar.gz" \
+  ; curl --retry 3 -sSL ${nu_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/nu' '*/nu_plugin_query' \
+  \
+  ; for x in nu nu_plugin_query \
+  ; do strip -s /usr/local/bin/$x; done \
+  \
+  ; echo '/usr/local/bin/nu' >> /etc/shells \
+  ; git clone --depth=3 https://github.com/fj0r/nushell.git /etc/nushell \
+  ; opwd=$PWD; cd /etc/nushell; git log -1 --date=iso; cd $opwd \
+  \
   ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
   ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \
   ; curl --retry 3 -sSL ${dust_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/dust' \
