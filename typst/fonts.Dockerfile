@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/io
+FROM ghcr.io/fj0r/io:root
 
 RUN set -eux \
   ; apt-get update -y \

@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/io:rs as build
+FROM ghcr.io/fj0r/io:rust as build
 
 RUN set -eux \
   ; cargo install mdbook mdbook-pdf mdbook-epub mdbook-typst \

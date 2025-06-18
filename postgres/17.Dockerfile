@@ -179,9 +179,9 @@ RUN set -eux \
 ## duckdb
 # RUN set -eux \
 #   ; mkdir .duckdb/ \
-#   ; chmod -R a+rwX .duckdb/ \
+#   ; chmod a+rwX -R .duckdb/ \
 #   ; mkdir /var/lib/postgresql/.duckdb/ \
-#   ; chmod -R a+rwX /var/lib/postgresql/.duckdb/ \
+#   ; chmod a+rwX -R /var/lib/postgresql/.duckdb/ \
 #   ;
 
 ### paradedb

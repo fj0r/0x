@@ -30,8 +30,8 @@ RUN set -eux \
   ; useradd -M -d /var/mail/vmail --shell=/usr/bin/nologin -u 5000 -g vmail vmail \
   ; chown vmail:vmail /var/mail/vmail \
   ; chmod 700 /var/mail/vmail \
-  ; chown -R vmail:dovecot /etc/dovecot \
-  ; chmod -R o-rwx /etc/dovecot
+  ; chown vmail:dovecot -R /etc/dovecot \
+  ; chmod o-rwx -R /etc/dovecot
 
 CMD ["srv"]
 

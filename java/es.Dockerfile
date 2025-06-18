@@ -10,4 +10,4 @@ RUN set eux \
     https://github.com/medcl/elasticsearch-analysis-pinyin/releases/download/v${plugin_version}/elasticsearch-analysis-pinyin-${plugin_version}.zip \
   ; elasticsearch-plugin install --batch \
     https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v${plugin_version}/elasticsearch-analysis-ik-${plugin_version}.zip \
-  ; chown -R 1000 plugins
+  ; chown 1000 -R plugins

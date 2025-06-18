@@ -18,10 +18,10 @@ RUN set -eux \
   ; apt-get clean -y \
   ; rm -rf /var/lib/apt/lists/*
 
-RUN set -eux \
-  ; cd /home/master/world \
-  ; sudo -u master mvn archetype:generate -DgroupId=com.java.hello -DartifactId=hello-java \
-        -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+#RUN set -eux \
+#  ; cd /home/master/world \
+#  ; sudo -u master env "PATH=$PATH" mvn archetype:generate -DgroupId=com.java.hello -DartifactId=hello-java \
+#        -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 
 # requires at least Java 17
 RUN set -eux \

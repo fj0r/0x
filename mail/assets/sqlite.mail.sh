@@ -22,7 +22,7 @@ if [ ! -d /etc/opendkim/keys/$MYHOST ]; then
     mkdir -p /etc/opendkim/keys/$MYHOST
     cd /etc/opendkim/keys/$MYHOST
     opendkim-genkey -d $MYHOST -s default --bits=1024
-    chown -R opendkim:opendkim /etc/opendkim/keys/$MYHOST
+    chown opendkim:opendkim -R /etc/opendkim/keys/$MYHOST
     echo "default._domainkey.$MYHOST $MYHOST:default:/etc/opendkim/keys/$MYHOST/default.private" >> /etc/opendkim/KeyTable
     echo "*@$MYHOST default._domainkey.$MYHOST" >> /etc/opendkim/SigningTable
     cd $curr

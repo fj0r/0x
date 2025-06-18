@@ -39,8 +39,8 @@ RUN set -eux \
   ; chown vmail:vmail /var/mail/vmail \
   ; chmod 700 /var/mail/vmail \
   \
-  ; chown -R vmail:dovecot /etc/dovecot \
-  ; chmod -R o-rwx /etc/dovecot
+  ; chown vmail:dovecot -R /etc/dovecot \
+  ; chmod o-rwx -R /etc/dovecot
 
 
 COPY entrypoint/mail.sh /entrypoint/

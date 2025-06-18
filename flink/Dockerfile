@@ -38,5 +38,5 @@ RUN set -eux \
   ; do \
         curl --retry 3 -sSLO ${repo}/${c} ; \
     done \
-  ; chown -R flink:flink ${FLINK_HOME}/lib/ \
+  ; chown flink:flink -R ${FLINK_HOME}/lib/ \
   ;

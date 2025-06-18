@@ -17,7 +17,7 @@ RUN set -eux \
   ; npm install --location=global \
         pyright \
         yaml-language-server \
-  ; chown -R root:root ${NODE_ROOT}/lib \
+  ; chown root:root -R ${NODE_ROOT}/lib \
   ; npm cache clean -f \
   \
   ; nvim_url="https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz" \
