@@ -1,10 +1,10 @@
-FROM fj0rd/io
+FROM fj0rd/io:root
 
 ENV PATH=/opt/mvn/bin:${LS_ROOT}/jdtls/bin:$PATH
 
 RUN set -eux \
   ; DEBIAN_FRONTEND=noninteractive \
-  ; curl --retry 3 -sSL https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add - \
+  ; curl --retry 3 -sSL https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - \
   ; add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ \
   ; apt-get update \
   ; apt-get upgrade -y \
@@ -13,7 +13,10 @@ RUN set -eux \
   ; mvn_version=$(curl --retry 3 -sSL https://api.github.com/repos/apache/maven/releases/latest | jq -r '.name') \
   ; curl https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
       | tar zxf - -C /opt/mvn --strip-components=1 \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
 
 ENV JAVA_HOME=/lib/jvm/java-8-openjdk-amd64
 

@@ -21,7 +21,8 @@ RUN set -eux \
         apache-flink \
         apache-flink-libraries \
         #apache-flink-statefun \
-  ; apt-get autoremove -y && apt-get clean -y \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
   ; rm -rf /var/lib/apt/lists/* \
   ;
 

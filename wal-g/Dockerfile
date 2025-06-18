@@ -8,7 +8,9 @@ RUN set -eux \
         postgresql-client \
         default-mysql-client \
         redis-tools \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   \
   ; ver=$(curl -sSL https://api.github.com/repos/wal-g/wal-g/releases/latest | jq -r '.tag_name') \
   ; os=ubuntu-20.04 \

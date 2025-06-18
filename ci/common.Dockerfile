@@ -25,7 +25,9 @@ RUN set -eux \
       psycopg[binary] kafka-python \
       pymongo github3.py \
   ; apt-get remove -y build-essential \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   \
   ; for i in \
         ansible.posix \

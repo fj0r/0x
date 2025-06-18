@@ -18,7 +18,10 @@ RUN set -eux \
 		-e 's/# \(en_US.UTF-8 UTF-8\)/\1/' \
 		-e 's/# \(zh_CN.UTF-8 UTF-8\)/\1/' \
   ; locale-gen \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
 
 RUN set -eux \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \

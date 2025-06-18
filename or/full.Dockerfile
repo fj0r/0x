@@ -67,7 +67,8 @@ RUN set -eux \
   ; ln -sf /dev/stdout /opt/openresty/nginx/logs/access.log \
   ; ln -sf /dev/stderr /opt/openresty/nginx/logs/error.log \
   \
-  ; cd ../../ && rm -rf $build_dir \
+  ; cd ../../ \
+  ; rm -rf $build_dir \
   ; opm install ledgetech/lua-resty-http \
   ; apk del .build-deps \
   #; mkdir -p /var/run/openresty \

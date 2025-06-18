@@ -63,7 +63,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ci
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BASEIMAGE=${{ env.REGISTRY }}/fj0r/io:latest
+            BASEIMAGE=${{ env.REGISTRY }}/fj0r/io:root
 
       #- name: Build ci.debug
       #  uses: docker/build-push-action@v4

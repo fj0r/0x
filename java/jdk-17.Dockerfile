@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/io
+FROM ghcr.io/fj0r/io:root
 
 ENV PATH=/opt/mvn/bin:${LS_ROOT}/jdtls/bin:$PATH
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
@@ -14,11 +14,13 @@ RUN set -eux \
   ; mvn_version=$(curl --retry 3 -sSL https://api.github.com/repos/apache/maven/releases/latest | jq -r '.name') \
   ; curl https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
       | tar zxf - -C /opt/mvn --strip-components=1 \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/*
 
 RUN set -eux \
-  ; cd /world \
-  ; mvn archetype:generate -DgroupId=com.java.hello -DartifactId=hello-java \
+  ; cd /home/master/world \
+  ; sudo -u master mvn archetype:generate -DgroupId=com.java.hello -DartifactId=hello-java \
         -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 
 # requires at least Java 17

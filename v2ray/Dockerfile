@@ -75,7 +75,8 @@ RUN set -eux \
 	    --add-module=../njs/nginx \
   ; make \
   ; make install \
-  ; cd .. && rm -rf nginx-${NGINX_VER} njs \
+  ; cd .. \
+  ; rm -rf nginx-${NGINX_VER} njs \
   ; ln -fs /opt/nginx/conf /etc/nginx \
   ; mkdir -p /etc/nginx/conf.d \
   ; echo 'shopt -s cdable_vars' >> /root/.bashrc \
@@ -87,7 +88,10 @@ RUN set -eux \
   ; curl --retry 3 -sSL ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
   \
   ; apt-get remove -y ${BUILD_DEPS} \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
 
 
 COPY services.d /etc/services.d

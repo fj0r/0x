@@ -104,11 +104,13 @@ RUN set -eux \
   ; mkdir -p $build_dir \
   \
   #; cd $build_dir \
-  #; mkdir pgvector && cd pgvector \
+  #; mkdir pgvector \
+  #; cd pgvector \
   #; pgvector_ver=$(curl --retry 3 -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
   #; curl --retry 3 -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${pgvector_ver}.tar.gz \
   #  | tar zxf - -C . --strip-components=1 \
-  #; make && make install \
+  #; make \
+  #; make install \
   \
   #; cd $build_dir \
   #; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
@@ -123,16 +125,19 @@ RUN set -eux \
   #; cd $build_dir \
   #; git clone --depth=1 https://github.com/adjust/clickhouse_fdw.git \
   #; cd clickhouse_fdw \
-  #; mkdir build && cd build \
+  #; mkdir build \
+  #; cd build \
   #; cmake .. \
-  #; make && make install \
+  #; make \
+  #; make install \
   \
   #; cd $build_dir \
   #; git clone --depth=1 https://github.com/timescale/timescaledb.git \
   #; cd timescaledb \
   #; git checkout main \
   #; ./bootstrap \
-  #; cd build && make \
+  #; cd build \
+  #; make \
   #; make install \
   #\
   #; cd $build_dir \
@@ -145,7 +150,8 @@ RUN set -eux \
   #; curl --retry 3 -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
   #; cd citus-${citus_version} \
   #; ./configure \
-  #; make && make install \
+  #; make \
+  #; make install \
   \
   #; cd $build_dir \
   #; anonymizer_version=$(curl --retry 3 -sSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
@@ -159,13 +165,15 @@ RUN set -eux \
   #; zson_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
   #; curl --retry 3 -sSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
   #; cd zson-${zson_version} \
-  #; make && make install \
+  #; make \
+  #; make install \
   \
   ; rm -rf $build_dir \
   \
   ; apt-get purge -y --auto-remove ${BUILD_DEPS:-} \
   #    ${BUILD_CITUS_DEPS:-} \
-  ; apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   ;
 
 ## duckdb

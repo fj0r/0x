@@ -5,7 +5,9 @@ RUN set -eux \
   ; DEBIAN_FRONTEND=noninteractive \
   ; apt-get install -y --no-install-recommends \
         ca-certificates \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   \
   ; mkdir /root/assets \
   ; cd /root/assets \

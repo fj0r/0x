@@ -19,7 +19,10 @@ RUN set -eux \
     -e 's/# \(zh_CN.UTF-8 UTF-8\)/\1/' \
   ; locale-gen \
   \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
 
 RUN set -eux \
   ; groupadd -g 5000 vmail \

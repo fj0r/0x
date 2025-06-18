@@ -11,7 +11,9 @@ RUN set -eux \
         libglib2.0-0 libatk1.0-0 libatk-bridge2.0-0 libxcb1 \
         libcups2 libdbus-1-3 libxkbcommon0 libgtk-3-0 libxt6 \
         libpango-1.0-0 libcairo2 libgdk-pixbuf2.0-0 libasound2 libatspi2.0-0 \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   ; pip3 install --default-timeout=100 --no-cache-dir ${PIP_FLAGS} \
         playwright html5lib \
         httpx aiofile aiostream fastapi uvicorn \

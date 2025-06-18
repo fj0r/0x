@@ -1,4 +1,4 @@
-ARG BASEIMAGE=fj0rd/io:latest
+ARG BASEIMAGE=fj0rd/io:root
 FROM ${BASEIMAGE}
 
 ARG PIP_FLAGS="--break-system-packages"
@@ -17,7 +17,9 @@ RUN set -eux \
       ansible kubernetes \
       psycopg[binary] kafka-python \
       pymongo github3.py \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   \
   ; for i in \
         ansible.posix \

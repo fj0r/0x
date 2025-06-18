@@ -19,7 +19,9 @@ RUN set -eux \
   ; apt-get install -y --no-install-recommends \
       libssl3 \
       tree \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/kafka-delta-ingest/target/release/kafka-delta-ingest /app/kafka-delta-ingest
 

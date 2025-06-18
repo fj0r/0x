@@ -10,14 +10,18 @@ ENV WG_LOG_LEVEL=info \
     WG_QUICK_USERSPACE_IMPLEMENTATION=boringtun-cli
 
 
-RUN apt-get update \
- && echo "resolvconf resolvconf/linkify-resolvconf boolean false" \
+RUN set eux \
+  ; apt-get update \
+  ; echo "resolvconf resolvconf/linkify-resolvconf boolean false" \
       | debconf-set-selections \
- && DEBIAN_FRONTEND=noninteractive \
+  ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
       wireguard-tools iptables resolvconf \
       curl socat \
- && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
 
 COPY entrypoint/wireguard.sh /entrypoint/
 CMD [ "srv" ]

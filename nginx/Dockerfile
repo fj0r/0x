@@ -67,7 +67,10 @@ RUN set -eux \
   ; echo 'shopt -s cdable_vars' >> /root/.bashrc \
   \
   ; apt-get -y remove ${BUILD_DEPS} \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
 
 COPY entrypoint/nginx.sh /entrypoint/
 COPY config /etc/nginx

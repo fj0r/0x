@@ -26,7 +26,9 @@ COPY entrypoint/registry.sh /entrypoint/
 RUN set -eux \
   ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
   ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \
-  ; mkdir dust-temp && cd dust-temp \
+  ; mkdir dust-temp \
+  ; cd dust-temp \
   ; curl --retry 3 -sSL ${dust_url} | tar zxf - --strip-components=1 \
   ; mv dust /usr/local/bin/ \
-  ; cd .. && rm -rf dust-temp
+  ; cd .. \
+  ; rm -rf dust-temp

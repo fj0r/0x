@@ -17,7 +17,8 @@ RUN set -eux \
   ; curl --retry 3 -sSL ${watchexec_url} | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/watchexec' \
   \
   ; yq_url="https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64.tar.gz" \
-  ; curl --retry 3 -sSL ${yq_url} | tar zxf - ./yq_linux_amd64 && mv yq_linux_amd64 /usr/local/bin/yq \
+  ; curl --retry 3 -sSL ${yq_url} | tar zxf - ./yq_linux_amd64 \
+  ; mv yq_linux_amd64 /usr/local/bin/yq \
   \
   ;
 

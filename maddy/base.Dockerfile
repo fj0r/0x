@@ -15,7 +15,9 @@ RUN set -eux \
     -e 's/# \(zh_CN.UTF-8 UTF-8\)/\1/' \
   ; locale-gen \
   \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   \
   ; mkdir /tmp/maddy \
   ; maddy_ver=$(curl --retry 3 -sSL https://api.github.com/repos/foxcpp/maddy/releases/latest | jq -r '.tag_name' | cut -c 2-) \

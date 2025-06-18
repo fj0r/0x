@@ -23,13 +23,15 @@ RUN set -eux \
   ; nvim_url="https://github.com/neovim/neovim/releases/download/${nvim_ver}/nvim-linux-x86_64.tar.gz" \
   ; curl --retry 3 -sSL ${nvim_url} | tar zxf - -C /usr/local --strip-components=1 \
   ; strip /usr/local/bin/nvim \
-  ; git clone --depth=3 https://github.com/fj0r/nvim-lua.git $XDG_CONFIG_HOME/nvim \
-  ; opwd=$PWD; cd $XDG_CONFIG_HOME/nvim; git log -1 --date=iso; cd $opwd \
+  ; git clone --depth=3 https://github.com/fj0r/nvim-lua.git /etc/nvim \
+  ; opwd=$PWD; cd /etc/nvim; git log -1 --date=iso; cd $opwd \
   ; nvim --headless "+Lazy! sync" +qa \
   \
-  ; rm -rf $XDG_CONFIG_HOME/nvim/lazy/packages/*/.git \
+  ; rm -rf /etc/nvim/lazy/packages/*/.git \
   ; apt-get remove -y git build-essential \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
   ;
 
 COPY entrypoint/vector.sh /entrypoint/

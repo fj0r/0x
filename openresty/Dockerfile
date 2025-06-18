@@ -57,7 +57,8 @@ RUN set -eux \
   ; make \
   ; make install \
   \
-  ; cd ../../ && rm -rf $build_dir \
+  ; cd ../../ \
+  ; rm -rf $build_dir \
   ; opm install ledgetech/lua-resty-http \
   #; opm install SkyLothar/lua-resty-jwt \
   ; opm install zmartzone/lua-resty-openidc \
@@ -66,7 +67,10 @@ RUN set -eux \
   ; echo 'shopt -s cdable_vars' >> /root/.bashrc \
   \
   ; apt-get remove -y ${DEV_DEPS} ${BUILD_DEPS} \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
 
 COPY config /etc/openresty
 WORKDIR /srv

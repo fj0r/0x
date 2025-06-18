@@ -30,4 +30,7 @@ RUN set -eux \
   ; rm -rf /etc/nvim/lazy/packages/*/.git \
   \
   ; apt remove -y git ripgrep gnupg2 build-essential \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  ; apt-get autoremove -y \
+  ; apt-get clean -y \
+  ; rm -rf /var/lib/apt/lists/* \
+  ;
