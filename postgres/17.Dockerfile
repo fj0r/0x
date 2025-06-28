@@ -72,10 +72,10 @@ RUN set -eux \
       ${BUILD_DEPS:-} \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-      psycopg[binary] \
+      psycopg[binary] lancedb duckdb \
+      numpy polars httpx pyyaml \
       pydantic PyParsing \
       boltons decorator \
-      numpy httpx pyyaml \
   \
   ; nu_ver=$(curl --retry 3 -sSL https://api.github.com/repos/nushell/nushell/releases/latest | jq -r '.tag_name') \
   ; nu_url="https://github.com/nushell/nushell/releases/download/${nu_ver}/nu-${nu_ver}-x86_64-unknown-linux-musl.tar.gz" \
