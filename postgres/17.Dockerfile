@@ -85,8 +85,8 @@ RUN set -eux \
   ; do strip -s /usr/local/bin/$x; done \
   \
   ; echo '/usr/local/bin/nu' >> /etc/shells \
-  ; git clone --depth=3 https://github.com/fj0r/nushell.git /etc/nushell \
-  ; opwd=$PWD; cd /etc/nushell; git log -1 --date=iso; cd $opwd \
+  ; git clone --depth=3 https://github.com/fj0r/nushell.git /root/.config/nushell \
+  ; opwd=$PWD; cd /root/.config/nushell; git log -1 --date=iso; cd $opwd \
   \
   ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
   ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \
