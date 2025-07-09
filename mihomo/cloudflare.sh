@@ -1,5 +1,5 @@
 cd /opt/CloudflareST
-./CloudflareST
+./cfst
 ip=$(cat result.csv | awk -F',' 'NR==2{print $1}')
 # CONFIG_CLOUDFLARE: /data/proxies/cloudflare.yaml|.proxies[0].server
 IFS='|' read -ra CONFIG <<< "$CONFIG_CLOUDFLARE"
