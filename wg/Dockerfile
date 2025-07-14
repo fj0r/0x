@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/scratch:boringtun as assets
+FROM ghcr.io/fj0r/scratch:boringtun AS assets
 
 FROM ghcr.io/fj0r/io:base
 

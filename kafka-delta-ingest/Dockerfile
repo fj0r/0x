@@ -1,4 +1,4 @@
-FROM rust as build
+FROM rust AS build
 
 WORKDIR /app
 RUN set -eux \

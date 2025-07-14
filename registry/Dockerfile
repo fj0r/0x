@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/io:base as reg
+FROM ghcr.io/fj0r/io:base AS reg
 
 RUN set -eux \
   ; reg_url=$(curl --retry 3 -sSL https://api.github.com/repos/distribution/distribution/releases/latest \

@@ -1,4 +1,4 @@
-FROM fj0rd/io:__dropbear__ as dropbear
+FROM fj0rd/io:__dropbear__ AS dropbear
 
 FROM alpine
 ARG OPENRESTY_ADDR=47.91.165.147

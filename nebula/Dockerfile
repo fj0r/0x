@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/io as build
+FROM ghcr.io/fj0r/io AS build
 
 RUN set -eux \
   ; apt-get update \

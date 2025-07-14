@@ -1,4 +1,4 @@
-FROM fj0rd/scratch:dropbear as dropbear
+FROM fj0rd/scratch:dropbear AS dropbear
 FROM fj0rd/io:base
 COPY --from=dropbear / /
 

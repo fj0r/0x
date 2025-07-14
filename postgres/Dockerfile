@@ -1,8 +1,8 @@
 ARG PG_VERSION_MAJOR=16
 ARG BASEIMAGE=ghcr.io/fj0r/0x:pg_ext
 
-FROM ${BASEIMAGE} as pg_ext
-FROM readysettech/readyset:latest as readyset
+FROM ${BASEIMAGE} AS pg_ext
+FROM readysettech/readyset:latest AS readyset
 
 FROM postgres:${PG_VERSION_MAJOR}
 

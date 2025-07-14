@@ -13,7 +13,7 @@ RUN set -eux \
   ; cp -r /app/ui/dist /target/ui \
   ; cp /app/.env /target
 
-FROM ghcr.io/fj0r/io:__dropbear__ as dropbear
+FROM ghcr.io/fj0r/io:__dropbear__ AS dropbear
 FROM ghcr.io/fj0r/0x:wg
 WORKDIR /app
 

@@ -1,4 +1,4 @@
-FROM alpine as builder
+FROM alpine AS builder
 RUN set -eux \
   ; apk --update add --no-cache \
     jq curl binutils \
@@ -7,7 +7,7 @@ RUN set -eux \
   ; curl --retry 3 -sSL ${skipper_url} | tar zxf - -C /usr/local/bin --strip-components 1
   #; strip /usr/local/bin/skipper \
 
-FROM fj0rd/scratch:dropbear-alpine as dropbear
+FROM fj0rd/scratch:dropbear-alpine AS dropbear
 FROM alpine:3
 COPY --from=dropbear / /
 COPY --from=builder /usr/local/bin/skipper /usr/local/bin

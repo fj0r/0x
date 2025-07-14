@@ -1,5 +1,5 @@
 ARG BASEIMAGE=ghcr.io/fj0r/0x:pg_rx
-FROM ${BASEIMAGE} as builder-paradedb
+FROM ${BASEIMAGE} AS builder-paradedb
 ARG PG_VERSION_MAJOR=17
 
 ######################
@@ -22,7 +22,7 @@ ARG PG_VERSION_MAJOR=17
 # pg_duckdb
 ######################
 
-FROM ${BASEIMAGE} as builder-pg_duckdb
+FROM ${BASEIMAGE} AS builder-pg_duckdb
 ARG PG_VERSION_MAJOR=17
 
 WORKDIR /tmp/pg_duckdb
@@ -47,7 +47,7 @@ RUN set -eux \
 # pg_jsonschema
 ######################
 
-FROM ${BASEIMAGE} as builder-jsonschema
+FROM ${BASEIMAGE} AS builder-jsonschema
 ARG PG_VERSION_MAJOR=17
 RUN set -eux \
   ; git clone --depth=1 https://github.com/supabase/pg_jsonschema.git /tmp/pg_jsonschema \
@@ -88,7 +88,7 @@ RUN set -eux \
 # pg_vector
 ######################
 
-FROM ${BASEIMAGE} as builder-pg_vector
+FROM ${BASEIMAGE} AS builder-pg_vector
 ARG PG_VERSION_MAJOR=17
 
 WORKDIR /tmp/pg_vector
@@ -128,7 +128,7 @@ RUN set -eux \
 #  ;
 
 
-FROM alpine as filer
+FROM alpine AS filer
 
 RUN mkdir -p /out \
   ;

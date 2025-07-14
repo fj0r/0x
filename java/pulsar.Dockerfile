@@ -1,4 +1,4 @@
-FROM fj0rd/0x:java17 as build
+FROM fj0rd/0x:java17 AS build
 
 WORKDIR /pulsar
 RUN set -eux \

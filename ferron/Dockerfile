@@ -1,4 +1,4 @@
-FROM ghcr.io/fj0r/io:__dropbear__ as dropbear
+FROM ghcr.io/fj0r/io:__dropbear__ AS dropbear
 FROM ghcr.io/fj0r/io:base
 COPY --from=dropbear / /
 
