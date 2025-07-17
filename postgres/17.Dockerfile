@@ -103,6 +103,12 @@ RUN set -eux \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
   \
+  ; cd $build_dir \
+  ; git clone --depth=1 https://github.com/supabase/pg_net.git \
+  ; cd pg_net \
+  ; make \
+  ; make install \
+  \
   #; cd $build_dir \
   #; mkdir pgvector \
   #; cd pgvector \
@@ -214,7 +220,7 @@ ENV PGCONF_RANDOM_PAGE_COST=1.1
 ENV PGCONF_WAL_LEVEL=logical
 ENV PGCONF_MAX_REPLICATION_SLOTS=10
 # ,citus,timescaledb
-ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,pg_duckdb,vchord.so'"
+ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_net,st_workspace_folderspg_cron,pg_search,pg_duckdb,vchord.so'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
 
