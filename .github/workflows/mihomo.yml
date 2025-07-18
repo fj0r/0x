@@ -7,7 +7,7 @@ name: mihomo
 
 on:
   push:
-    branches: [ main, mihomo ]
+    branches: [ mihomo ]
   workflow_dispatch:
     inputs: {}
 

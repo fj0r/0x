@@ -20,7 +20,7 @@ ARG polynote_repo=polynote/polynote
 
 WORKDIR /opt
 RUN set -eux \
-  ; spark_version=$(curl -sSL $github_api/${spark_repo}/releases $github_header | jq -r '.[0].tag_name'|cut -c 2-) \
+  ; spark_version=$(curl --retry 3 -sSL $github_api/${spark_repo}/releases $github_header | jq -r '.[0].tag_name'|cut -c 2-) \
   ; spark_version=3.1.2 \
   ; pip3 install \
       jep \
@@ -29,10 +29,10 @@ RUN set -eux \
       virtualenv \
       numpy \
       pandas \
-  ; curl -sSL http://apache.claz.org/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop3.2.tgz | tar -xzvpf - \
+  ; curl --retry 3 -sSL http://apache.claz.org/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop3.2.tgz | tar -xzvpf - \
   ; mv spark* /opt/spark \
-  ; polynote_version=$(curl -sSL $github_api/${polynote_repo}/releases $github_header | jq -r '.[0].tag_name') \
-  ; curl -sSL https://github.com/polynote/polynote/releases/download/${polynote_version}/polynote-dist.tar.gz | tar -xzvpf -
+  ; polynote_version=$(curl --retry 3 -sSL $github_api/${polynote_repo}/releases $github_header | jq -r '.[0].tag_name') \
+  ; curl --retry 3 -sSL https://github.com/polynote/polynote/releases/download/${polynote_version}/polynote-dist.tar.gz | tar -xzvpf -
 
 ENV PYSPARK_ALLOW_INSECURE_GATEWAY 1
 ENV SPARK_HOME /opt/spark

@@ -7,7 +7,7 @@ name: kafka-delta-ingest
 
 on:
   push:
-    branches: [ main, kafka-delta-ingest ]
+    branches: [ kafka-delta-ingest ]
   workflow_dispatch:
     inputs: {}
 

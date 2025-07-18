@@ -1,4 +1,4 @@
-name: postgres 16
+name: pg
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: postgres 16
 
 on:
   push:
-    branches: [ pg_dev ]
+    branches: [ pg ]
   workflow_dispatch:
     inputs: {}
 
@@ -47,12 +47,37 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build pg 16
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'postgres/17.Dockerfile'
+            gis:
+              - 'postgres/gis.Dockerfile'
+
+      - name: Build pg 17
+        if: steps.changes.outputs.src == 'true' || github.event.name == 'workflow_dispatch'
         uses: docker/build-push-action@v4
         with:
           context: postgres
-          file: postgres/16.Dockerfile
+          file: postgres/17.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PG_VERSION_MAJOR=17
+            BASEIMAGE=ghcr.io/fj0r/0x:pg17_ext
+
+      - name: Build pg gis
+        if: steps.changes.outputs.gis == 'true' || github.event.name == 'workflow_dispatch'
+        uses: docker/build-push-action@v4
+        with:
+          context: postgres
+          file: postgres/gis.Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pg17gis
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BASEIMAGE=ghcr.io/fj0r/0x:pg17
 

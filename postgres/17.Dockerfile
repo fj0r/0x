@@ -103,6 +103,12 @@ RUN set -eux \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
   \
+  ; cd $build_dir \
+  ; git clone --depth=1 https://github.com/supabase/pg_net.git \
+  ; cd pg_net \
+  ; make \
+  ; make install \
+  \
   #; cd $build_dir \
   #; mkdir pgvector \
   #; cd pgvector \
@@ -114,7 +120,7 @@ RUN set -eux \
   \
   #; cd $build_dir \
   #; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
-  #; curl -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
+  #; curl --retry 3 -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
   #; unzip -d . libduckdb-linux-amd64.zip \
   #; cp libduckdb.so $(pg_config --libdir)  \
   #; git clone --depth=1 https://github.com/alitrack/duckdb_fdw \
@@ -190,7 +196,7 @@ RUN set -eux \
   ; cd /tmp/paradedb \
   ; code_name=$(cat /etc/os-release | grep '^VERSION_CODENAME' | cut -d '=' -f 2) \
   ; version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/paradedb/paradedb/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  ; curl -sSL https://github.com/paradedb/paradedb/releases/download/v${version}/postgresql-${PG_VERSION_MAJOR}-pg-search_${version}-1PARADEDB-${code_name}_amd64.deb -o pg-search.deb \
+  ; curl --retry 3 -sSL https://github.com/paradedb/paradedb/releases/download/v${version}/postgresql-${PG_VERSION_MAJOR}-pg-search_${version}-1PARADEDB-${code_name}_amd64.deb -o pg-search.deb \
   ; dpkg -i pg-search.deb \
   ; cd /tmp \
   ; rm -rf paradedb \
@@ -198,7 +204,7 @@ RUN set -eux \
   ; mkdir /tmp/vchord \
   ; cd /tmp/vchord \
   ; version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/tensorchord/VectorChord/releases | jq -r '.[0].tag_name') \
-  ; curl -sSL https://github.com/tensorchord/VectorChord/releases/download/${version}/postgresql-${PG_VERSION_MAJOR}-vchord_${version}-1_$(dpkg --print-architecture).deb -o vchord.deb \
+  ; curl --retry 3 -sSL https://github.com/tensorchord/VectorChord/releases/download/${version}/postgresql-${PG_VERSION_MAJOR}-vchord_${version}-1_$(dpkg --print-architecture).deb -o vchord.deb \
   ; dpkg -i vchord.deb \
   ; cd /tmp \
   ; rm -rf vchord \
@@ -214,7 +220,7 @@ ENV PGCONF_RANDOM_PAGE_COST=1.1
 ENV PGCONF_WAL_LEVEL=logical
 ENV PGCONF_MAX_REPLICATION_SLOTS=10
 # ,citus,timescaledb
-ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_cron,pg_search,pg_duckdb,vchord.so'"
+ENV PGCONF_SHARED_PRELOAD_LIBRARIES="'pg_stat_statements,pg_net,st_workspace_folderspg_cron,pg_search,pg_duckdb,vchord.so'"
 ENV PGCONF_LOG_MIN_DURATION_STATEMENT=1000
 ENV PARADEDB_TELEMETRY=false
 

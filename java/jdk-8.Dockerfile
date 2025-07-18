@@ -11,7 +11,7 @@ RUN set -eux \
   ; apt-get install -y --no-install-recommends adoptopenjdk-8-hotspot build-essential \
   ; mkdir /opt/mvn \
   ; mvn_version=$(curl --retry 3 -sSL https://api.github.com/repos/apache/maven/releases/latest | jq -r '.name') \
-  ; curl https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
+  ; curl --retry 3 https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
       | tar zxf - -C /opt/mvn --strip-components=1 \
   ; apt-get autoremove -y \
   ; apt-get clean -y \
