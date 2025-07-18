@@ -76,14 +76,14 @@ RUN set -eux \
       numpy httpx pyyaml \
       pyiceberg[s3fs,pyarrow,pandas] \
   \
-  ; dust_ver=$(curl --retry 3 -sSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
+  ; dust_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
   ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \
-  ; curl --retry 3 -sSL ${dust_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/dust' \
+  ; curl --retry 3 -fsSL ${dust_url} | tar zxf - -C /usr/local/bin --strip-components=1 --wildcards '*/dust' \
   \
   ; curl --retry 3 -s https://packagecloud.io/install/repositories/timescale/timescaledb/script.deb.sh | bash \
   ; timescale_pkg=$(apt search timescaledb-[0-9]+-postgresql-${PG_MAJOR} 2>&1 | grep '/' | tail -n 1 | awk -F'/' '{print $1}') \
   \
-  ; curl --retry 3 -sSL https://install.citusdata.com/community/deb.sh | bash \
+  ; curl --retry 3 -fsSL https://install.citusdata.com/community/deb.sh | bash \
   ; citus_pkg=$(apt search postgresql-${PG_MAJOR}-citus 2>&1 | grep '/' | grep -v dbgsym | tail -n 1 | awk -F'/' '{print $1}') \
   \
   ; apt-get install -y --no-install-recommends ${timescale_pkg} ${citus_pkg} \
@@ -94,15 +94,15 @@ RUN set -eux \
   #; cd $build_dir \
   #; mkdir pgvector \
   #; cd pgvector \
-  #; pgvector_ver=$(curl --retry 3 -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
-  #; curl --retry 3 -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${pgvector_ver}.tar.gz \
+  #; pgvector_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
+  #; curl --retry 3 -fsSL https://github.com/pgvector/pgvector/archive/refs/tags/${pgvector_ver}.tar.gz \
   #  | tar zxf - -C . --strip-components=1 \
   #; make \
   #; make install \
   \
   #; cd $build_dir \
-  #; duckdb_ver=$(curl --retry 3 -sSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
-  #; curl --retry 3 -sSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
+  #; duckdb_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/duckdb/duckdb/releases/latest | jq -r '.tag_name') \
+  #; curl --retry 3 -fsSLO https://github.com/duckdb/duckdb/releases/download/${duckdb_ver}/libduckdb-linux-amd64.zip \
   #; unzip -d . libduckdb-linux-amd64.zip \
   #; cp libduckdb.so $(pg_config --libdir)  \
   #; git clone --depth=1 https://github.com/alitrack/duckdb_fdw \
@@ -144,24 +144,24 @@ RUN set -eux \
   #; make install \
   #\
   #; cd $build_dir \
-  #; citus_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  #; curl --retry 3 -sSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
+  #; citus_version=$(curl --retry 3 -fsSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/citusdata/citus/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  #; curl --retry 3 -fsSL https://github.com/citusdata/citus/archive/refs/tags/v${citus_version}.tar.gz | tar zxf - \
   #; cd citus-${citus_version} \
   #; ./configure \
   #; make \
   #; make install \
   \
   #; cd $build_dir \
-  #; anonymizer_version=$(curl --retry 3 -sSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
-  #; curl --retry 3 -sSL https://gitlab.com/dalibo/postgresql_anonymizer/-/archive/${anonymizer_version}/postgresql_anonymizer-${anonymizer_version}.tar.gz \
+  #; anonymizer_version=$(curl --retry 3 -fsSL "https://gitlab.com/api/v4/projects/7709206/releases" | jq -r '.[0].name') \
+  #; curl --retry 3 -fsSL https://gitlab.com/dalibo/postgresql_anonymizer/-/archive/${anonymizer_version}/postgresql_anonymizer-${anonymizer_version}.tar.gz \
   #  | tar zxf - \
   #; cd postgresql_anonymizer-${anonymizer_version} \
   #; make extension \
   #; make install \
   \
   #; cd $build_dir \
-  #; zson_version=$(curl --retry 3 -sSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
-  #; curl --retry 3 -sSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
+  #; zson_version=$(curl --retry 3 -fsSL -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/postgrespro/zson/releases | jq -r '.[0].tag_name' | cut -c 2-) \
+  #; curl --retry 3 -fsSL https://github.com/postgrespro/zson/archive/refs/tags/v${zson_version}.tar.gz | tar zxf - \
   #; cd zson-${zson_version} \
   #; make \
   #; make install \

@@ -1,5 +1,5 @@
 export def 'docker-entrypoint fetch' [] {
-    curl -sSLo docker-entrypoint.sh.origin https://raw.githubusercontent.com/docker-library/postgres/master/17/bookworm/docker-entrypoint.sh
+    curl -fsSLo docker-entrypoint.sh.origin https://raw.githubusercontent.com/docker-library/postgres/master/17/bookworm/docker-entrypoint.sh
 }
 
 export def 'docker-entrypoint patch' [] {

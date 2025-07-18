@@ -12,15 +12,15 @@ RUN set -eux \
   ; mkdir /root/assets \
   ; cd /root/assets \
   #\
-  #; coredns_url=$(curl --retry 3 -sSL https://api.github.com/repos/coredns/coredns/releases/latest \
+  #; coredns_url=$(curl --retry 3 -fsSL https://api.github.com/repos/coredns/coredns/releases/latest \
   #      | jq -r '.assets[].browser_download_url' | grep 'linux_amd64.tgz$') \
-  #; curl --retry 3 -sSL ${coredns_url} | tar zxf - \
+  #; curl --retry 3 -fsSL ${coredns_url} | tar zxf - \
   #; chmod +x coredns \
   #; strip -s coredns \
   \
-  ; url=$(curl --retry 3 -sSL https://api.github.com/repos/slackhq/nebula/releases/latest \
+  ; url=$(curl --retry 3 -fsSL https://api.github.com/repos/slackhq/nebula/releases/latest \
         | jq -r '.assets[].browser_download_url' | grep linux-amd64) \
-  ; curl --retry 3 -sSL ${url} | tar zxf - \
+  ; curl --retry 3 -fsSL ${url} | tar zxf - \
   #; strip -s nebula* \
   ;
 

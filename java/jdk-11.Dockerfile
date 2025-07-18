@@ -12,7 +12,7 @@ RUN set -eux \
     apt-get install -y --no-install-recommends \
       temurin-11-jdk \
   ; mkdir /opt/mvn \
-  ; mvn_version=$(curl --retry 3 -sSL https://api.github.com/repos/apache/maven/releases/latest | jq -r '.name') \
+  ; mvn_version=$(curl --retry 3 -fsSL https://api.github.com/repos/apache/maven/releases/latest | jq -r '.name') \
   ; curl --retry 3 https://dlcdn.apache.org/maven/maven-3/${mvn_version}/binaries/apache-maven-${mvn_version}-bin.tar.gz \
       | tar zxf - -C /opt/mvn --strip-components=1 \
   ; apt-get autoremove -y \

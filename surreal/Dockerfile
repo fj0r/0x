@@ -6,7 +6,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 RUN set -eux \
   ; sur_ver=$(curl --retry 3 https://api.github.com/repos/surrealdb/surrealdb/releases/latest | jq -r '.tag_name') \
   ; sur_url="https://github.com/surrealdb/surrealdb/releases/download/${sur_ver}/surreal-${sur_ver}.linux-amd64.tgz" \
-  ; curl --retry 3 -sSL ${sur_url} | tar zxf - -C /usr/local/bin \
+  ; curl --retry 3 -fsSL ${sur_url} | tar zxf - -C /usr/local/bin \
   ;
 
 VOLUME ["/var/lib/surrealdb"]

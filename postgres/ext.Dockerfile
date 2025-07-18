@@ -93,8 +93,8 @@ ARG PG_VERSION_MAJOR=17
 
 WORKDIR /tmp/pg_vector
 RUN set -eux \
-  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
-  ; curl --retry 3 -sSL https://github.com/pgvector/pgvector/archive/refs/tags/${ver}.tar.gz \
+  ; ver=$(curl --retry 3 -fsSL https://api.github.com/repos/pgvector/pgvector/tags | jq -r '.[0].name') \
+  ; curl --retry 3 -fsSL https://github.com/pgvector/pgvector/archive/refs/tags/${ver}.tar.gz \
     | tar zxf - -C . --strip-components=1 \
   ; export PG_CFLAGS="-Wall -Wextra -Werror -Wno-unused-parameter -Wno-sign-compare" \
   ; echo "trusted = true" >> vector.control \

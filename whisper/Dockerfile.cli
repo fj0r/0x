@@ -1,4 +1,4 @@
-FROM debian:testing-slim
+FROM debian:testing-fsSLim
 ARG PIP_FLAGS="--break-system-packages"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai

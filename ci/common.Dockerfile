@@ -48,11 +48,11 @@ RUN set -eux \
   ; chmod +x /usr/local/bin/kubectl \
   ; chmod +x /usr/local/bin/kubeadm \
   \
-  ; helm_ver=$(curl --retry 3 -sSL https://api.github.com/repos/helm/helm/releases/latest | jq -r '.tag_name' | cut -c 2-) \
+  ; helm_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/helm/helm/releases/latest | jq -r '.tag_name' | cut -c 2-) \
   ; curl --retry 3 -L https://get.helm.sh/helm-v${helm_ver}-linux-amd64.tar.gz \
       | tar zxvf - -C /usr/local/bin linux-amd64/helm --strip-components=1 \
   \
-  ; istio_ver=$(curl --retry 3 -sSL https://api.github.com/repos/istio/istio/releases/latest | jq -r '.tag_name') \
+  ; istio_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/istio/istio/releases/latest | jq -r '.tag_name') \
   ; curl --retry 3 -L https://github.com/istio/istio/releases/latest/download/istioctl-${istio_ver}-linux-amd64.tar.gz \
       | tar zxvf - -C /usr/local/bin istioctl \
   ;

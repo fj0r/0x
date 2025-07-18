@@ -25,10 +25,10 @@ RUN set -eux \
   ; apt-get clean -y \
   ; rm -rf /var/lib/apt/lists/* \
   ; mkdir -p /world/typst \
-  ; curl --retry 3 -sSL https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
+  ; curl --retry 3 -fsSL https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
     | tar Jxf - --strip-components=1 -C /usr/local/bin --wildcards '*/typst' \
   \
-  ; curl --retry 3 -sSLo /usr/local/bin/typst-lsp \
+  ; curl --retry 3 -fsSLo /usr/local/bin/typst-lsp \
     https://github.com/nvarner/typst-lsp/releases/latest/download/typst-lsp-x86_64-unknown-linux-musl \
   ; chmod +x /usr/local/bin/typst-lsp \
   ;

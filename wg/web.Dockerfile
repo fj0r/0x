@@ -20,9 +20,9 @@ WORKDIR /app
 COPY --from=dropbear / /
 COPY --from=build /target /app
 RUN set -eux \
-  ; coredns_url=$(curl --retry 3 -sSL https://api.github.com/repos/coredns/coredns/releases -H 'Accept: application/vnd.github.v3+json' \
+  ; coredns_url=$(curl --retry 3 -fsSL https://api.github.com/repos/coredns/coredns/releases -H 'Accept: application/vnd.github.v3+json' \
         | jq -r '[.[]|select(.prerelease == false)][0].assets[].browser_download_url' | grep 'linux_amd64.tgz$') \
-  ; curl --retry 3 -sSL ${coredns_url} | tar zxf - -C /usr/local/bin \
+  ; curl --retry 3 -fsSL ${coredns_url} | tar zxf - -C /usr/local/bin \
   ; chmod +x /usr/local/bin/coredns
 
 COPY entrypoint/coredns.sh /entrypoint/

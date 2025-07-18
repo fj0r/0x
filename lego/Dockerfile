@@ -20,9 +20,9 @@ RUN set -eux \
   \
   ; mkdir /tmpl \
   \
-  ; lego_ver=$(curl --retry 3 -sSL https://api.github.com/repos/go-acme/lego/releases/latest | jq -r '.tag_name') \
+  ; lego_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/go-acme/lego/releases/latest | jq -r '.tag_name') \
   ; lego_url="https://github.com/go-acme/lego/releases/download/${lego_ver}/lego_${lego_ver}_linux_amd64.tar.gz" \
-  ; curl --retry 3 -sSL ${lego_url} | tar zxf - -C /usr/local/bin lego \
+  ; curl --retry 3 -fsSL ${lego_url} | tar zxf - -C /usr/local/bin lego \
   ;
 
 WORKDIR /data

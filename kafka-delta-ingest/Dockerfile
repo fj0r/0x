@@ -13,7 +13,7 @@ RUN set -eux \
   ;
 
 
-FROM debian:stable-slim
+FROM debian:stable-fsSLim
 RUN set -eux \
   ; apt update \
   ; apt-get install -y --no-install-recommends \

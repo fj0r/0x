@@ -36,7 +36,7 @@ RUN set -eux \
         flink-sql-connector-kafka/${FLINK_VERSION}/flink-sql-connector-kafka-${FLINK_VERSION}.jar \
         flink-sql-connector-pulsar/3.0.0-1.16/flink-sql-connector-pulsar-3.0.0-1.16.jar \
   ; do \
-        curl --retry 3 -sSLO ${repo}/${c} ; \
+        curl --retry 3 -fsSLO ${repo}/${c} ; \
     done \
   ; chown flink:flink -R ${FLINK_HOME}/lib/ \
   ;

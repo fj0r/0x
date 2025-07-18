@@ -24,12 +24,12 @@ RUN set -eux \
   \
   ; cd $build_dir \
   ; mkdir nchan \
-  ; NCHAN_VER=$(curl --retry 3 -sSL https://api.github.com/repos/slact/nchan/tags -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].name' | cut -c 2-) \
-  ; curl --retry 3 -sSL https://github.com/slact/nchan/archive/v${NCHAN_VER}.tar.gz | tar -zxf - -C nchan --strip-components=1 \
+  ; NCHAN_VER=$(curl --retry 3 -fsSL https://api.github.com/repos/slact/nchan/tags -H 'Accept: application/vnd.github.v3+json' | jq -r '.[0].name' | cut -c 2-) \
+  ; curl --retry 3 -fsSL https://github.com/slact/nchan/archive/v${NCHAN_VER}.tar.gz | tar -zxf - -C nchan --strip-components=1 \
   \
   ; cd $build_dir \
-  ; OPENRESTY_VER=$(curl --retry 3 -sSL https://api.github.com/repos/openresty/openresty/releases/latest | jq -r '.tag_name' | cut -c 2-) \
-  ; curl --retry 3 -sSL https://openresty.org/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
+  ; OPENRESTY_VER=$(curl --retry 3 -fsSL https://api.github.com/repos/openresty/openresty/releases/latest | jq -r '.tag_name' | cut -c 2-) \
+  ; curl --retry 3 -fsSL https://openresty.org/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
   ; cd openresty-${OPENRESTY_VER} \
   ; ./configure --prefix=/opt/openresty \
         --with-luajit \

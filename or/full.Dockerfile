@@ -39,8 +39,8 @@ RUN set -eux \
   ; mkdir -p $build_dir \
   \
   ; cd $build_dir \
-  ; OPENRESTY_VER=$(curl --retry 3 -sSL https://api.github.com/repos/openresty/openresty/tags | jq -r '.[0].name' | cut -c 2-) \
-  ; curl --retry 3 -sSL https://openresty.org/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
+  ; OPENRESTY_VER=$(curl --retry 3 -fsSL https://api.github.com/repos/openresty/openresty/tags | jq -r '.[0].name' | cut -c 2-) \
+  ; curl --retry 3 -fsSL https://openresty.org/download/openresty-${OPENRESTY_VER}.tar.gz | tar -zxf - \
   ; cd openresty-${OPENRESTY_VER} \
   ; ./configure --prefix=/opt/openresty \
         --with-luajit \

@@ -12,10 +12,10 @@ RUN set -eux \
   ; apt-get clean -y \
   ; rm -rf /var/lib/apt/lists/* \
   \
-  ; ver=$(curl --retry 3 -sSL https://api.github.com/repos/wal-g/wal-g/releases/latest | jq -r '.tag_name') \
+  ; ver=$(curl --retry 3 -fsSL https://api.github.com/repos/wal-g/wal-g/releases/latest | jq -r '.tag_name') \
   ; os=ubuntu-20.04 \
   ; for db in pg mysql redis mongo; do\
-        curl --retry 3 -sSL https://github.com/wal-g/wal-g/releases/download/${ver}/wal-g-${db}-${os}-amd64.tar.gz \
+        curl --retry 3 -fsSL https://github.com/wal-g/wal-g/releases/download/${ver}/wal-g-${db}-${os}-amd64.tar.gz \
         | tar zxf - wal-g-${db}-${os}-amd64 ;\
         mv wal-g-${db}-${os}-amd64 /usr/local/bin/wal-g-${db} ;\
     done \
