@@ -72,7 +72,7 @@ RUN set -eux \
       ${BUILD_DEPS:-} \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-      psycopg[binary] lancedb duckdb \
+      psycopg[binary] lancedb \
       numpy polars httpx pyyaml \
       pydantic PyParsing \
       boltons decorator \
