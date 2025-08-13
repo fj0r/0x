@@ -3,7 +3,7 @@ FROM ${BASEIMAGE}
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TIMEZONE=Asia/Shanghai
 ENV DEV_DEPS \
-        libpcre3-dev libssl-dev \
+        libpcre2-dev libssl-dev \
         zlib1g-dev
 
 ENV BUILD_DEPS lsb-release software-properties-common build-essential gnupg binutils
@@ -16,7 +16,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-    openssl libpcre3 \
+    openssl libpcre2 \
     $DEV_DEPS $BUILD_DEPS \
   \
   ; build_dir=/root/build \

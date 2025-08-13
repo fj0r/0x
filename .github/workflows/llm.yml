@@ -82,15 +82,15 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ollama-rocm
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Build vllm
-        if: steps.changes.outputs.vllm == 'true' || github.event.name == 'workflow_dispatch'
-        uses: docker/build-push-action@v4
-        with:
-          context: vllm
-          file: vllm/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:vllm
-          labels: ${{ steps.meta.outputs.labels }}
+      #- name: Build vllm
+      #  if: steps.changes.outputs.vllm == 'true' || github.event.name == 'workflow_dispatch'
+      #  uses: docker/build-push-action@v4
+      #  with:
+      #    context: vllm
+      #    file: vllm/Dockerfile
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #    tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:vllm
+      #    labels: ${{ steps.meta.outputs.labels }}
 
       #- name: Build sentence_transformers
       #  if: steps.changes.outputs.sentence_transformers == 'true'

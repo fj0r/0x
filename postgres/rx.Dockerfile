@@ -3,7 +3,7 @@ FROM postgres:${PG_VERSION_MAJOR}
 
 ARG PG_VERSION_MAJOR=17
 ARG RUST_CHANNEL=stable
-ARG PGRX_VERSION=0.12.9
+ARG PGRX_VERSION=0.16.0
 ENV PGRX_VERSION=${PGRX_VERSION}
 
 ENV PATH="/root/.cargo/bin:$PATH"
@@ -11,7 +11,6 @@ ENV PGX_HOME=/usr/lib/postgresql/${PG_VERSION_MAJOR}
 RUN set -eux \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends \
-    software-properties-common \
     ca-certificates \
     build-essential \
     gnupg \

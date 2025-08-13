@@ -32,7 +32,7 @@ RUN set -eux \
     libreadline-dev zlib1g-dev flex bison libxml2-dev libxslt-dev \
     libssl-dev libxml2-utils xsltproc \
     pkg-config libc++-dev libc++abi-dev libglib2.0-dev \
-    libtinfo5 libstdc++-12-dev liblz4-dev \
+    libtinfo6 libicu-dev libstdc++-12-dev liblz4-dev \
   \
   ; git clone --depth=1 https://github.com/duckdb/pg_duckdb.git . \
   ; git submodule update --init --recursive \
