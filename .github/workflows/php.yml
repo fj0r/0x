@@ -7,7 +7,7 @@ name: php
 
 on:
   push:
-    branches: [ main, php, web ]
+    branches: [ php, web ]
   workflow_dispatch:
     inputs: {}
 
