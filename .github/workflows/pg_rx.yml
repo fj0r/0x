@@ -7,7 +7,7 @@ name: pg_rx
 
 on:
   push:
-    branches: [ main, pg_rx ]
+    branches: [ pg_rx ]
   workflow_dispatch:
     inputs: {}
 
