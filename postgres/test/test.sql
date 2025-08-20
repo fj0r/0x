@@ -1,2 +1,0 @@
--- ## rum
-CREATE extension rum;

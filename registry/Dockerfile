@@ -24,11 +24,11 @@ EXPOSE 80 5000
 COPY entrypoint/registry.sh /entrypoint/
 
 RUN set -eux \
-  ; dust_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/bootandy/dust/releases/latest | jq -r '.tag_name') \
-  ; dust_url="https://github.com/bootandy/dust/releases/latest/download/dust-${dust_ver}-x86_64-unknown-linux-musl.tar.gz" \
-  ; mkdir dust-temp \
-  ; cd dust-temp \
-  ; curl --retry 3 -fsSL ${dust_url} | tar zxf - --strip-components=1 \
-  ; mv dust /usr/local/bin/ \
+  ; dua_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/Byron/dua-cli/releases/latest | jq -r '.tag_name') \
+  ; dua_url="https://github.com/Byron/dua-cli/releases/download/${dua_ver}/dua-${dua_ver}-x86_64-unknown-linux-musl.tar.gz" \
+  ; mkdir dua-temp \
+  ; cd dua-temp \
+  ; curl --retry 3 -fsSL ${dua_url} | tar zxf - --strip-components=1 \
+  ; mv dua /usr/local/bin/ \
   ; cd .. \
-  ; rm -rf dust-temp
+  ; rm -rf dua-temp
