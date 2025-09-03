@@ -30,5 +30,6 @@ RUN set -eux \
   ; echo '/usr/local/bin/nu' >> /etc/shells \
   ; git clone --depth=3 https://github.com/fj0r/nushell.git /root/.config/nushell \
   ; opwd=$PWD; cd /root/.config/nushell; git log -1 --date=iso; cd $opwd \
+  ; nu -c "plugin add /usr/local/bin/nu_plugin_query" \
   \
   ;

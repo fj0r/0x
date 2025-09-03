@@ -19,6 +19,17 @@ RUN set -eux \
     openssl libpcre2 \
     $DEV_DEPS $BUILD_DEPS \
   \
+  ; qjs_ver=$(curl --retry 3 -fsSL https://bellard.org/quickjs/ | rg 'href="quickjs-([0-9\-]+).tar.xz"' -or '$1') \
+  ; qjs_url="https://bellard.org/quickjs/binary_releases/quickjs-linux-x86_64-${qjs_ver}.zip" \
+  ; mkdir out \
+  ; cd out \
+  ; curl --retry 3 -fsSL ${qjs_url} -o a.zip \
+  ; unzip a.zip \
+  ; ./qjs -e 'print(Date())' \
+  ; mv qjs /usr/local/bin/ \
+  ; cd .. \
+  ; rm -rf out \
+  \
   ; build_dir=/root/build \
   ; mkdir -p $build_dir \
   \
