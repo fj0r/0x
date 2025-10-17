@@ -14,7 +14,7 @@ RUN set -eux \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
         httpx aiofile aiostream fastapi uvicorn \
         debugpy pytest pydantic PyParsing \
-        ipython typer pydantic-settings pyyaml \
+        typer pydantic-settings pyyaml \
         boltons decorator \
         \
         Numpy Pandas numba Scikit-learn \

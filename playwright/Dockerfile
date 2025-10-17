@@ -18,7 +18,7 @@ RUN set -eux \
         playwright html5lib \
         httpx aiofile aiostream fastapi uvicorn \
         debugpy pytest pydantic PyParsing \
-        ipython typer pydantic-settings pyyaml \
+        typer pydantic-settings pyyaml \
         boltons decorator \
         #pyiceberg[s3fs,pyarrow,pandas] \
   ; python3 -m playwright install \
