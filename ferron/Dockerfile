@@ -7,7 +7,7 @@ EXPOSE 80
 ENV TIMEZONE=Asia/Shanghai
 
 RUN set -eux \
-  ; ferron_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/ferronweb/ferron/releases/latest | jq -r '.tag_name') \
+  ; ferron_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/ferronweb/ferron/releases | jq -r '.[0].name') \
   ; ferron_url="https://github.com/ferronweb/ferron/releases/download/${ferron_ver}/ferron-${ferron_ver}-x86_64-unknown-linux-musl.zip" \
   ; mkdir -p /opt/ferron \
   ; cd /opt/ferron \
