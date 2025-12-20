@@ -39,7 +39,7 @@ export def generate [
               tags: $"${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:($tag)"
               labels: "${{ steps.meta.outputs.labels }}"
             }
-            | merge deep ($ctx.repo | get -i $x | get -i $i | default {})
+            | merge deep ($ctx.repo | get -o $x | get -o $i | default {})
             {
                 name: $"Build ($x)"
                 if: $"steps.changes.outputs.($x) == 'true' || github.event.name == 'workflow_dispatch'"

@@ -17,5 +17,6 @@ RUN set -eux \
 
 
 COPY entrypoint/ferron.sh /entrypoint/
+COPY ferron.kdl /opt/ferron/ferron.kdl
 CMD ["srv"]
 WORKDIR /srv
