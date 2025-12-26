@@ -1,5 +1,7 @@
 :8080 {
   root "/srv"
+  // Pretty URLs for Laravel, Yii2
+  rewrite "^/(.*)" "/index.php/$1" file=#false directory=#false last=#true
   fcgi_php "unix:///var/run/php/php-fpm.sock"
 
   log "/dev/stdout"
