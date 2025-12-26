@@ -2,7 +2,7 @@ FROM ghcr.io/fj0r/io:__dropbear__ AS dropbear
 FROM ghcr.io/fj0r/io:base
 COPY --from=dropbear / /
 
-EXPOSE 80
+EXPOSE 8080
 
 ENV TIMEZONE=Asia/Shanghai
 

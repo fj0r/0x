@@ -1,7 +1,23 @@
-ARG BASEIMAGE=ghcr.io/fj0r/0x:openresty
-FROM ${BASEIMAGE}
-
 ARG PHP_VERSION=7.4
+FROM ghcr.io/fj0r/io:__dropbear__ AS dropbear
+FROM ghcr.io/fj0r/io:base
+COPY --from=dropbear / /
+
+EXPOSE 8080
+
+ENV TIMEZONE=Asia/Shanghai
+
+RUN set -eux \
+  ; ferron_ver=$(curl --retry 3 -fsSL https://api.github.com/repos/ferronweb/ferron/releases | jq -r '.[0].name') \
+  ; ferron_url="https://github.com/ferronweb/ferron/releases/download/${ferron_ver}/ferron-${ferron_ver}-x86_64-unknown-linux-musl.zip" \
+  ; mkdir -p /opt/ferron \
+  ; cd /opt/ferron \
+  ; curl --retry 3 -fsSL ${ferron_url} -o ferron.zip \
+  ; unzip ferron.zip \
+  ; rm -f ferron.zip
+
+ARG PHP_VERSION
+ARG DEBIAN_SOURCE=trixie
 ENV PHP_VERSION=${PHP_VERSION}
 ENV PHP_PKGS \
         php${PHP_VERSION} \
@@ -27,8 +43,9 @@ ENV PHP_PKGS \
 RUN set -eux \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends gnupg software-properties-common \
-  ; echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/sury-php.list \
-  ; curl --retry 3 https://packages.sury.org/php/apt.gpg | sudo apt-key add - \
+  ; curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg \
+  ; echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ ${DEBIAN_SOURCE} main" \
+    | tee /etc/apt/sources.list.d/php.list \
   ; apt-get update \
   ; apt-get install -y --no-install-recommends $PHP_PKGS \
   ; apt-get remove -y gnupg software-properties-common \
@@ -65,16 +82,16 @@ RUN set -eux \
   ;
 
 COPY setup-php /setup-php
-
-COPY entrypoint/php.sh /entrypoint/
+COPY entrypoint /entrypoint/
+COPY ferron.kdl /opt/ferron/ferron.kdl
+COPY index.php /srv/
 CMD ["srv"]
+WORKDIR /srv
 
 RUN set -ex \
   ; curl --retry 3 -fsSL https://getcomposer.org/installer \
     | php -- --install-dir=/usr/local/bin --filename=composer
 
-ENV FASTCGI=php
-ENV FASTCGI_PASS=unix:/var/run/php/php-fpm.sock
 ENV PHP_DEBUG=
 ENV PHP_PROFILE=
 ENV PHP_FPM_SERVERS=

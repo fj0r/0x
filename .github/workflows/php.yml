@@ -73,7 +73,7 @@ jobs:
         if: steps.changes.outputs.php == 'true' || github.event.name == 'workflow_dispatch'
         with:
           context: php
-          file: php/7.Dockerfile
+          file: php/v7.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php7
           labels: ${{ steps.meta.outputs.labels }}
@@ -85,7 +85,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: php
-          file: php/7.Dockerfile
+          file: php/v7.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php72
           labels: ${{ steps.meta.outputs.labels }}
@@ -97,7 +97,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: php
-          file: php/8.Dockerfile
+          file: php/v8.Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php8
           labels: ${{ steps.meta.outputs.labels }}

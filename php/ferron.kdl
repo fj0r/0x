@@ -1,0 +1,7 @@
+:8080 {
+  root "/srv"
+  fcgi_php "unix:///var/run/php/php-fpm.sock"
+
+  log "/dev/stdout"
+  error_log "/dev/stderr"
+}
