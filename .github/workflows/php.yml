@@ -56,19 +56,7 @@ jobs:
             php:
               - 'php/**'
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build openresty
-        if: steps.changes.outputs.openresty == 'true' || github.event.name == 'workflow_dispatch'
-        uses: docker/build-push-action@v4
-        with:
-          context: openresty
-          file: openresty/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build php7.4
+      - name: Build php7
         uses: docker/build-push-action@v4
         if: steps.changes.outputs.php == 'true' || github.event.name == 'workflow_dispatch'
         with:
@@ -80,17 +68,6 @@ jobs:
           build-args: PHP_VERSION=7.4
           #build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
 
-      - name: Build php7.2
-        if: steps.changes.outputs.php == 'true' || github.event.name == 'workflow_dispatch'
-        uses: docker/build-push-action@v4
-        with:
-          context: php
-          file: php/v7.Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:php72
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: PHP_VERSION=7.2
-          #build-args: BASEIMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:openresty-stable
 
       - name: Build php8
         if: steps.changes.outputs.php == 'true' || github.event.name == 'workflow_dispatch'
