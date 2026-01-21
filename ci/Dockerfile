@@ -11,6 +11,7 @@ RUN set -eux \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
       openssh-client \
+      nftables iptables \
       buildah skopeo podman \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
