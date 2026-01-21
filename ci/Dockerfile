@@ -14,6 +14,7 @@ RUN set -eux \
       buildah skopeo podman \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
+      furl \
       ansible kubernetes \
       psycopg[binary] kafka-python \
       pymongo github3.py \
@@ -48,4 +49,3 @@ RUN set -eux \
   ; curl --retry 3 -L https://github.com/istio/istio/releases/latest/download/istioctl-${istio_ver}-linux-amd64.tar.gz \
       | tar zxvf - -C /usr/local/bin istioctl \
   ;
-
