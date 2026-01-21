@@ -14,7 +14,7 @@ RUN set -eux \
       buildah skopeo podman \
   \
   ; pip3 install --no-cache-dir ${PIP_FLAGS} \
-      furl \
+      furl markdown \
       ansible kubernetes \
       psycopg[binary] kafka-python \
       pymongo github3.py \
